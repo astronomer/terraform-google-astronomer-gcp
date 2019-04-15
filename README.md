@@ -2,7 +2,6 @@
 
 Terraform scripts for the Astronomer Platform.
 
-Up first:
-
-* GCP
-* AWS
+* [GCP](/gcp)
+* [AWS](/aws)
+* [Azure](/azure)
