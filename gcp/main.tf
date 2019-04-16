@@ -107,7 +107,7 @@ resource "google_container_cluster" "primary" {
   }
   
   master_authorized_networks_config {
-    cidr_blocks = [{ cidr_block = "" }]
+    cidr_blocks = [{ cidr_block = "${google_compute_instance.bastion.network_interface.0.access_config.0.nat_ip}/32" }]
   }
 
   lifecycle {
@@ -149,8 +149,8 @@ resource "google_compute_instance" "bastion" {
   }
   
   service_account {
-    email = ""
-    scopes = [""]
+    email = "${google_service_account.admin.email}"
+    scopes = ["cloud-platform"]
   }
 
   tags = ["bastion"]
@@ -160,6 +160,16 @@ resource "google_compute_instance" "bastion" {
 resource "google_service_account" "admin" {
   account_id   = ""
   display_name = ""
+}
+
+# Role binding to service account
+resource "google_project_iam_binding" "astro" {
+  project = "${var.project}"
+  role    = "roles/container.admin"
+
+  members = [
+    "serviceAccount:${google_service_account.admin.email}",
+  ]
 }
 
 # IP address
@@ -204,4 +214,8 @@ resource "google_compute_router_nat" "nat" {
     name = "${google_compute_subnetwork.default.self_link}"
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
+}
+
+output "bastion_ip" {
+  value = "${google_compute_instance.bastion.network_interface.0.access_config.0.nat_ip}"
 }
