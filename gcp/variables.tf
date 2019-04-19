@@ -32,6 +32,14 @@ variable max_node_count {
 }
 
 variable node_version {
-  default     = "1.11.7-gke.12"
+  default     = "1.12.7-gke.7"
   description = "The version of Kubernetes in GKE cluster"
+}
+
+variable "gke_secondary_ip_ranges_pods" {
+  description = "GKE Secondary IP Ranges for Pods"
+}
+
+variable "gke_secondary_ip_ranges_services" {
+  description = "GKE Secondary IP Ranges for Services"
 }

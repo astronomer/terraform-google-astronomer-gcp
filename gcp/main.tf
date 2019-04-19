@@ -57,7 +57,9 @@ resource "google_container_cluster" "primary" {
   subnetwork         = "${google_compute_subnetwork.default.self_link}"
 
   ip_allocation_policy {
-    use_ip_aliases = true
+    use_ip_aliases                = true
+    cluster_secondary_range_name  = "${google_compute_subnetwork.default.secondary_ip_range.0.range_name}"
+    services_secondary_range_name = "${google_compute_subnetwork.default.secondary_ip_range.1.range_name}"
   }
 
   private_cluster_config {
@@ -82,6 +84,10 @@ resource "google_container_cluster" "primary" {
   master_auth {
     username = "admin"
     password = "${random_string.password.result}"
+
+    client_certificate_config {
+      issue_client_certificate = false
+    }
   }
 
   network_policy = {
