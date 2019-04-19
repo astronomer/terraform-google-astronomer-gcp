@@ -1,3 +1,10 @@
+terraform {
+  backend "gcs" {
+    bucket = "tf-state-ian"
+    prefix = "terraform/state"
+  }
+}
+
 variable region {
   default     = "us-east4"
   description = "The GCP region to deploy infrastructure into"
@@ -36,7 +43,7 @@ variable node_version {
   description = "The version of Kubernetes in GKE cluster"
 }
 
-provider google {
+provider google-beta {
   region  = "${var.region}"
   project = "${var.project}"
 }
@@ -58,6 +65,7 @@ resource "random_string" "network_tag" {
 resource "google_container_node_pool" "np" {
   name    = "${var.cluster_name}-np-${random_string.network_tag.result}"
   location    = "${var.region}"
+  project = "${var.project}"
   cluster = "${google_container_cluster.primary.name}"
 
   initial_node_count = "${var.min_node_count}"
@@ -91,6 +99,7 @@ resource "google_container_node_pool" "np" {
 resource "google_container_cluster" "primary" {
   name               = "${var.cluster_name}-${random_string.network_tag.result}"
   location               = "${var.region}"
+  project = "${var.project}"
   min_master_version = "${var.node_version}"
   node_version       = "${var.node_version}"
   enable_legacy_abac = false
@@ -149,7 +158,7 @@ resource "google_compute_instance" "bastion" {
   }
   
   service_account {
-    email = "${google_service_account.admin.email}"
+    email = "${google_service_account.read-only.email}"
     scopes = ["cloud-platform"]
   }
 
@@ -158,18 +167,38 @@ resource "google_compute_instance" "bastion" {
 
 # Service account
 resource "google_service_account" "admin" {
-  account_id   = ""
-  display_name = ""
+  account_id   = "cluster-admin"
+  display_name = "Cluster Admin"
+}
+
+resource "google_service_account" "read-only" {
+  account_id   = "cluster-read-only"
+  display_name = "Cluster Read Only"
 }
 
 # Role binding to service account
-resource "google_project_iam_binding" "astro" {
+resource "google_project_iam_binding" "admin" {
   project = "${var.project}"
   role    = "roles/container.admin"
 
   members = [
     "serviceAccount:${google_service_account.admin.email}",
   ]
+}
+
+resource "google_project_iam_binding" "read-only" {
+  project = "${var.project}"
+  role    = "roles/container.viewer"
+
+  members = [
+    "serviceAccount:${google_service_account.read-only.email}",
+  ]
+}
+
+# Service account key
+resource "google_service_account_key" "mykey" {
+  service_account_id = "${google_service_account.admin.name}"
+  private_key_type = "TYPE_GOOGLE_CREDENTIALS_FILE"
 }
 
 # IP address
@@ -216,6 +245,50 @@ resource "google_compute_router_nat" "nat" {
   }
 }
 
+# Cloud SQL
+resource "google_compute_global_address" "private_ip_address" {
+  provider = "google-beta"
+
+  name          = "private-ip-address"
+  purpose       = "VPC_PEERING"
+  address_type = "INTERNAL"
+  prefix_length = 16
+  network       = "${google_compute_network.default.self_link}"
+}
+
+resource "google_service_networking_connection" "private_vpc_connection" {
+  provider = "google-beta"
+
+  network       = "${google_compute_network.default.self_link}"
+  service       = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = ["${google_compute_global_address.private_ip_address.name}"]
+}
+
+resource "google_sql_database_instance" "instance" {
+  name = "cloud-sql-test"
+  project = "${var.project}"
+  region = "${var.region}"
+  database_version = "POSTGRES_9_6"
+  
+
+  depends_on = [
+    "google_service_networking_connection.private_vpc_connection"
+  ]
+
+  settings {
+    tier = "db-f1-micro"
+    availability_type = "REGIONAL"
+    ip_configuration {
+      ipv4_enabled = "false"
+      private_network = "${google_compute_network.default.self_link}"
+    }
+  }
+}
+
 output "bastion_ip" {
   value = "${google_compute_instance.bastion.network_interface.0.access_config.0.nat_ip}"
+}
+
+output "key" {
+  value = "${base64decode(google_service_account_key.mykey.private_key)}"
 }
