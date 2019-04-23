@@ -3,6 +3,12 @@ resource "random_string" "password" {
   special = true
 }
 
+resource "random_string" "cloud-sql-name" {
+  length = 5
+  upper = false
+}
+
+
 resource "random_string" "network_tag" {
   length  = 10
   upper   = false

@@ -1,5 +1,5 @@
 resource "google_sql_database_instance" "instance" {
-  name             = "cloud-sql-test"
+  name             = "${random_string.cloud-sql-name.result}-astro-db"
   project          = "${var.project}"
   region           = "${var.region}"
   database_version = "POSTGRES_9_6"
