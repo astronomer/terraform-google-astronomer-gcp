@@ -3,6 +3,7 @@ resource "google_compute_instance" "bastion" {
   name         = "bastion"
   machine_type = "${var.machine_type}"
   zone         = "${var.zone}"
+  project      = "${var.project}"
 
   boot_disk {
     initialize_params {
@@ -24,4 +25,9 @@ resource "google_compute_instance" "bastion" {
   }
 
   tags = ["bastion"]
+
+  metadata {
+    block-project-ssh-keys = "true"
+    enable-oslogin         = "true"
+  }
 }

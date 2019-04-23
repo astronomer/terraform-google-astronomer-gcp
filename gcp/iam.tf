@@ -16,3 +16,9 @@ resource "google_project_iam_binding" "read-only" {
     "serviceAccount:${google_service_account.read-only.email}",
   ]
 }
+
+resource "google_project_iam_member" "compute-os-login" {
+  project = "${var.project}"
+  role    = "roles/compute.osLogin"
+  member  = "serviceAccount:${google_service_account.read-only.email}"
+}
