@@ -1,3 +1,4 @@
+# https://www.terraform.io/docs/providers/google/r/compute_router_nat.html
 # VPC network
 resource "google_compute_network" "default" {
   name                    = "my-network"
@@ -26,6 +27,25 @@ resource "google_compute_subnetwork" "default" {
   }
 }
 
+# Router
+resource "google_compute_router" "router" {
+  name    = "router"
+  region  = "${google_compute_subnetwork.default.region}"
+  network = "${google_compute_network.default.self_link}"
+  project = "${var.project}"
+
+  bgp {
+    asn = 64514
+  }
+}
+
+# IP address
+resource "google_compute_address" "address" {
+  count  = 1
+  name   = "nat-external-address-${count.index}"
+  region = "${var.region}"
+}
+
 # Cloud NAT
 resource "google_compute_router_nat" "nat" {
   name                               = "nat-1"
@@ -42,6 +62,7 @@ resource "google_compute_router_nat" "nat" {
   }
 }
 
+# https://cloud.google.com/vpc/docs/configure-private-services-access#creating-connection
 resource "google_compute_global_address" "private_ip_address" {
   provider = "google-beta"
 
@@ -60,21 +81,13 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   reserved_peering_ranges = ["${google_compute_global_address.private_ip_address.name}"]
 }
 
-# IP address
-resource "google_compute_address" "address" {
-  count  = 1
-  name   = "nat-external-address-${count.index}"
-  region = "${var.region}"
-}
+// - Bastion Subnetwork --------------------------------------------------
+resource "google_compute_subnetwork" "bastion" {
+  name          = "bastion-subnet"
+  network       = "${google_compute_network.default.self_link}"
+  ip_cidr_range = "10.1.0.0/24"
+  region        = "${var.region}"
+  project       = "${var.project}"
 
-# Router
-resource "google_compute_router" "router" {
-  name    = "router"
-  region  = "${google_compute_subnetwork.default.region}"
-  network = "${google_compute_network.default.self_link}"
-  project = "${var.project}"
-
-  bgp {
-    asn = 64514
-  }
+  private_ip_google_access = true
 }

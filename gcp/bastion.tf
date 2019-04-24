@@ -12,7 +12,7 @@ resource "google_compute_instance" "bastion" {
   }
 
   network_interface {
-    subnetwork = "default"
+    subnetwork = "${google_compute_subnetwork.bastion.self_link}"
 
     access_config {
       # Ephemeral IP - leaving this block empty will generate a new external IP and assign it to the machine
