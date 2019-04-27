@@ -58,13 +58,13 @@ resource "google_container_cluster" "primary" {
   min_master_version = "${var.node_version}"
   node_version       = "${var.node_version}"
   enable_legacy_abac = false
-  network            = "${google_compute_network.default.self_link}"
-  subnetwork         = "${google_compute_subnetwork.default.self_link}"
+  network            = "${google_compute_network.core.self_link}"
+  subnetwork         = "${google_compute_subnetwork.gke.self_link}"
 
   ip_allocation_policy {
     use_ip_aliases                = true
-    cluster_secondary_range_name  = "${google_compute_subnetwork.default.secondary_ip_range.0.range_name}"
-    services_secondary_range_name = "${google_compute_subnetwork.default.secondary_ip_range.1.range_name}"
+    cluster_secondary_range_name  = "${google_compute_subnetwork.gke.secondary_ip_range.0.range_name}"
+    services_secondary_range_name = "${google_compute_subnetwork.gke.secondary_ip_range.1.range_name}"
   }
 
   private_cluster_config {

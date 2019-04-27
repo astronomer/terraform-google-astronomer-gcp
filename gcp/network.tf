@@ -1,15 +1,15 @@
 # https://www.terraform.io/docs/providers/google/r/compute_router_nat.html
 # VPC network
-resource "google_compute_network" "default" {
-  name                    = "my-network"
+resource "google_compute_network" "core" {
+  name                    = "core-network"
   auto_create_subnetworks = false
   project                 = "${var.project}"
 }
 
 #Subnetwork
-resource "google_compute_subnetwork" "default" {
-  name          = "my-subnet"
-  network       = "${google_compute_network.default.self_link}"
+resource "google_compute_subnetwork" "gke" {
+  name          = "gke-subnet"
+  network       = "${google_compute_network.core.self_link}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "${var.region}"
   project       = "${var.project}"
@@ -30,8 +30,8 @@ resource "google_compute_subnetwork" "default" {
 # Router
 resource "google_compute_router" "router" {
   name    = "router"
-  region  = "${google_compute_subnetwork.default.region}"
-  network = "${google_compute_network.default.self_link}"
+  region  = "${google_compute_subnetwork.gke.region}"
+  network = "${google_compute_network.core.self_link}"
   project = "${var.project}"
 
   bgp {
@@ -57,7 +57,7 @@ resource "google_compute_router_nat" "nat" {
   project                            = "${var.project}"
 
   subnetwork {
-    name                    = "${google_compute_subnetwork.default.self_link}"
+    name                    = "${google_compute_subnetwork.gke.self_link}"
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
 }
@@ -70,13 +70,13 @@ resource "google_compute_global_address" "private_ip_address" {
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
-  network       = "${google_compute_network.default.self_link}"
+  network       = "${google_compute_network.core.self_link}"
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {
   provider = "google-beta"
 
-  network                 = "${google_compute_network.default.self_link}"
+  network                 = "${google_compute_network.core.self_link}"
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = ["${google_compute_global_address.private_ip_address.name}"]
 }
@@ -84,7 +84,7 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 // - Bastion Subnetwork --------------------------------------------------
 resource "google_compute_subnetwork" "bastion" {
   name          = "bastion-subnet"
-  network       = "${google_compute_network.default.self_link}"
+  network       = "${google_compute_network.core.self_link}"
   ip_cidr_range = "10.1.0.0/24"
   region        = "${var.region}"
   project       = "${var.project}"
