@@ -60,6 +60,11 @@ resource "google_compute_router_nat" "nat" {
     name                    = "${google_compute_subnetwork.gke.self_link}"
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
+
+  subnetwork {
+    name                    = "${google_compute_subnetwork.bastion.self_link}"
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
 }
 
 # https://cloud.google.com/vpc/docs/configure-private-services-access#creating-connection
@@ -85,7 +90,7 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 resource "google_compute_subnetwork" "bastion" {
   name          = "bastion-subnet"
   network       = "${google_compute_network.core.self_link}"
-  ip_cidr_range = "10.1.0.0/24"
+  ip_cidr_range = "10.1.0.0/29"
   region        = "${var.region}"
   project       = "${var.project}"
 

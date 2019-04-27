@@ -4,8 +4,8 @@ resource "random_string" "password" {
 }
 
 resource "random_string" "cloud-sql-name" {
-  length = 5
-  upper  = false
+  length  = 5
+  upper   = false
   special = false
 }
 
@@ -74,9 +74,10 @@ resource "google_container_cluster" "primary" {
   }
 
   master_authorized_networks_config {
-    cidr_blocks = [{
-      cidr_block = "${google_compute_instance.bastion.network_interface.0.access_config.0.nat_ip}/32"
-    }]
+    cidr_blocks {
+      display_name = "${google_compute_subnetwork.bastion.name}"
+      cidr_block   = "${google_compute_subnetwork.bastion.ip_cidr_range}"
+    }
   }
 
   lifecycle {
