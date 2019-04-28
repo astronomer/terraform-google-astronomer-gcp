@@ -51,5 +51,9 @@ resource "google_project_iam_audit_config" "iap" {
     log_type = "DATA_WRITE"
   }
 
+  "audit_log_config" {
+    log_type = "ADMIN_READ"
+  }
+
   service = "iap.googleapis.com"
 }

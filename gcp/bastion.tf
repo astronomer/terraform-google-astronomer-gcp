@@ -26,4 +26,10 @@ resource "google_compute_instance" "bastion" {
   }
 
   allow_stopping_for_update = true
+
+  metadata_startup_script = <<EOF
+sudo apt-get -y update;
+sudo apt-get -y install postgresql-client;
+sudo snap install kubectl --classic
+EOF
 }

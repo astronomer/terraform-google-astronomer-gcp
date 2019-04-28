@@ -3,12 +3,6 @@ resource "random_string" "password" {
   special = true
 }
 
-resource "random_string" "cloud-sql-name" {
-  length  = 5
-  upper   = false
-  special = false
-}
-
 resource "random_string" "network_tag" {
   length  = 10
   upper   = false
@@ -59,8 +53,8 @@ resource "google_container_cluster" "primary" {
   min_master_version = "${var.node_version}"
   node_version       = "${var.node_version}"
   enable_legacy_abac = false
-  network            = "${google_compute_network.core.self_link}"
-  subnetwork         = "${google_compute_subnetwork.gke.self_link}"
+  network            = "${local.core_network_id}"
+  subnetwork         = "${local.gke_subnetwork_id}"
 
   ip_allocation_policy {
     use_ip_aliases                = true

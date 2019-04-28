@@ -62,3 +62,8 @@ variable "bastion_admins" {
   type        = "list"
   description = "List of email addresses of users with Sudo who be able to SSH into Bastion using Cloud IAP & OS Login"
 }
+
+variable "postgres_airflow_password" {
+  description = "Password for the 'airflow' user in Cloud SQL Postgres Instance. If not specified, creates a random Password."
+  default     = ""
+}

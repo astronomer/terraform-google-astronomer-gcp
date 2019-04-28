@@ -1,5 +1,11 @@
+resource "random_string" "cloud_sql_name" {
+  length  = 5
+  upper   = false
+  special = false
+}
+
 resource "google_sql_database_instance" "instance" {
-  name             = "${random_string.cloud-sql-name.result}-astro-db"
+  name             = "${random_string.cloud_sql_name.result}-astro-db"
   project          = "${var.project}"
   region           = "${var.region}"
   database_version = "POSTGRES_9_6"
@@ -17,4 +23,16 @@ resource "google_sql_database_instance" "instance" {
       private_network = "${google_compute_network.core.self_link}"
     }
   }
+}
+
+resource "random_string" "postgres_airflow_password" {
+  count   = "${ var.postgres_airflow_password == "" ? 1 : 0 }"
+  length  = 8
+  special = false
+}
+
+resource "google_sql_user" "airflow" {
+  name     = "airflow"
+  instance = "${google_sql_database_instance.instance.name}"
+  password = "${local.postgres_airflow_password}"
 }
