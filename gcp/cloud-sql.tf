@@ -1,5 +1,5 @@
 resource "random_string" "cloud_sql_name" {
-  length  = 5
+  length  = 8
   upper   = false
   special = false
 }
