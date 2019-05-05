@@ -14,7 +14,7 @@ resource "google_project_iam_binding" "container_viewer" {
 
   members = [
     "${var.bastion_users}",
-    "serviceAccount:${google_service_account.bastion.email}"
+    "serviceAccount:${google_service_account.bastion.email}",
   ]
 }
 
