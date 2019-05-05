@@ -1,11 +1,4 @@
-resource "random_string" "cloud_sql_name" {
-  length  = 8
-  upper   = false
-  special = false
-}
-
 resource "google_sql_database_instance" "instance" {
-  name             = "${random_string.cloud_sql_name.result}-astro-db"
   project          = "${var.project}"
   region           = "${var.region}"
   database_version = "POSTGRES_9_6"
