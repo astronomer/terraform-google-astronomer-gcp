@@ -9,7 +9,7 @@ variable zone {
 }
 
 variable project {
-  description = "The GCP project to deploy infrastructure into"
+  description = "The GCP project ID to deploy infrastructure into"
 }
 
 variable cluster_name {
@@ -66,4 +66,24 @@ variable "bastion_admins" {
 variable "postgres_airflow_password" {
   description = "Password for the 'airflow' user in Cloud SQL Postgres Instance. If not specified, creates a random Password."
   default     = ""
+}
+
+variable "cloud_sql_tier" {
+  default     = "db-f1-micro"
+  description = "The machine tier (First Generation) or type (Second Generation) to use. See https://cloud.google.com/sql/pricing for supported tiers."
+}
+
+variable "cloud_sql_availability_type" {
+  default     = "REGIONAL"
+  description = "Whether a PostgreSQL instance should be set up for high availability (REGIONAL) or single zone (ZONAL)."
+}
+
+variable "bastion_image_family" {
+  type        = "map"
+  description = "The Name & Project of the Image Family with which Bastion will be created."
+
+  default = {
+    name    = "ubuntu-1804-lts"
+    project = "ubuntu-os-cloud"
+  }
 }

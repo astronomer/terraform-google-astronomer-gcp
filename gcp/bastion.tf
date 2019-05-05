@@ -1,3 +1,9 @@
+// Get Latest Ubuntu Lts Image for the bastion
+data "google_compute_image" "ubuntu_lts_latest_image" {
+  family  = "${var.bastion_image_family["name"]}"
+  project = "${var.bastion_image_family["project"]}"
+}
+
 # Bastion host
 resource "google_compute_instance" "bastion" {
   name         = "bastion"
@@ -7,7 +13,7 @@ resource "google_compute_instance" "bastion" {
 
   boot_disk {
     initialize_params {
-      image = "ubuntu-1804-bionic-v20190404"
+      image = "${data.google_compute_image.ubuntu_lts_latest_image.self_link}"
     }
   }
 

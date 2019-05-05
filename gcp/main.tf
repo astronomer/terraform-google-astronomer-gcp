@@ -3,17 +3,9 @@ resource "random_string" "password" {
   special = true
 }
 
-resource "random_string" "network_tag" {
-  length  = 10
-  upper   = false
-  lower   = true
-  number  = false
-  special = false
-}
-
 # Node pool
 resource "google_container_node_pool" "np" {
-  name     = "${var.cluster_name}-np-${random_string.network_tag.result}"
+  name     = "${var.cluster_name}-np"
   location = "${var.region}"
   project  = "${var.project}"
   cluster  = "${google_container_cluster.primary.name}"
@@ -31,7 +23,6 @@ resource "google_container_node_pool" "np" {
 
   node_config {
     machine_type = "${var.machine_type}"
-    tags         = ["${random_string.network_tag.result}"]
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
@@ -47,7 +38,7 @@ resource "google_container_node_pool" "np" {
 
 # GKE cluster
 resource "google_container_cluster" "primary" {
-  name               = "${var.cluster_name}-${random_string.network_tag.result}"
+  name               = "${var.cluster_name}"
   location           = "${var.region}"
   project            = "${var.project}"
   min_master_version = "${var.node_version}"
