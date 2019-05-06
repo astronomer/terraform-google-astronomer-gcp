@@ -29,12 +29,12 @@ output "gke_subnetwork_selflink" {
 }
 
 output "gke_cluster_pods_cidr" {
-  value       = "${google_compute_subnetwork.gke.0.secondary_ip_range.ip_cidr_range}"
+  value       = "${google_compute_subnetwork.gke.secondary_ip_range.0.ip_cidr_range}"
   description = "CIDR Range for Cluster Pods"
 }
 
 output "gke_cluster_services_cidr" {
-  value       = "${google_compute_subnetwork.gke.1.secondary_ip_range.ip_cidr_range}"
+  value       = "${google_compute_subnetwork.gke.secondary_ip_range.1.ip_cidr_range}"
   description = "CIDR Range for Cluster Services"
 }
 
