@@ -1,59 +1,23 @@
 pipeline:
-  install:
-    image: alpine
-    commands:
-    - apk --update add curl
-    - curl --silent --output terraform.zip "https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip"
-    - unzip terraform.zip ; rm -f terraform.zip; chmod +x terraform
-
-  init:
+  terraform_lint_and_validate:
     image: alpine
     secrets: [ google_application_credentials ]
     commands:
-    - apk add --no-cache ca-certificates openssl
-    - export GOOGLE_CREDENTIALS=$${GOOGLE_APPLICATION_CREDENTIALS}
+    - apk add --no-cache ca-certificates openssl curl python3 git bash terraform
+    - pip3 install pre-commit
     - cd gcp
-    - ../terraform init
+    - pre-commit install --install-hooks
+    - pre-commit run -a
 
-  validate:
-    image: alpine
-    secrets: [ tf_var_project, tf_var_cluster_name, tf_var_gke_secondary_ip_ranges_pods,
-              tf_var_gke_secondary_ip_ranges_services, tf_var_bastion_admins, 
-              tf_var_bastion_users ]
-    commands:
-    - export TF_VAR_project=$${TF_VAR_PROJECT}
-    - export TF_VAR_cluster_name=$${TF_VAR_CLUSTER_NAME}
-    - export TF_VAR_gke_secondary_ip_ranges_pods=$${TF_VAR_GKE_SECONDARY_IP_RANGES_PODS}
-    - export TF_VAR_gke_secondary_ip_ranges_services=$${TF_VAR_GKE_SECONDARY_IP_RANGES_SERVICES}
-    - export TF_VAR_bastion_admins=$${TF_VAR_BASTION_ADMINS}
-    - export TF_VAR_bastion_users=$${TF_VAR_BASTION_USERS}
-    - cd gcp
-    - ../terraform validate
-
-  apply:
-    image: alpine
-    secrets: [ google_application_credentials, tf_var_region, tf_var_zone, tf_var_project, tf_var_cluster_name, 
-              tf_var_machine_type, tf_var_min_node_count, tf_var_max_node_count,
-              tf_var_node_version, tf_var_gke_secondary_ip_ranges_pods,
-              tf_var_gke_secondary_ip_ranges_services, tf_var_bastion_admins, 
-              tf_var_bastion_users ]
-    commands:
-    - apk add --no-cache ca-certificates openssl
-    - export GOOGLE_CREDENTIALS=$${GOOGLE_APPLICATION_CREDENTIALS}
-    - export TF_VAR_region=$${TF_VAR_REGION}
-    - export TF_VAR_zone=$${TF_VAR_ZONE}
-    - export TF_VAR_project=$${TF_VAR_PROJECT}
-    - export TF_VAR_cluster_name=$${TF_VAR_CLUSTER_NAME}
-    - export TF_VAR_machine_type=$${TF_VAR_MACHINE_TYPE}
-    - export TF_VAR_min_node_count=$${TF_VAR_MIN_NODE_COUNT}
-    - export TF_VAR_max_node_count=$${TF_VAR_MAX_NODE_COUNT}
-    - export TF_VAR_node_version=$${TF_VAR_NODE_VERSION}
-    - export TF_VAR_gke_secondary_ip_ranges_pods=$${TF_VAR_GKE_SECONDARY_IP_RANGES_PODS}
-    - export TF_VAR_gke_secondary_ip_ranges_services=$${TF_VAR_GKE_SECONDARY_IP_RANGES_SERVICES}
-    - export TF_VAR_bastion_admins=$${TF_VAR_BASTION_ADMINS}
-    - export TF_VAR_bastion_users=$${TF_VAR_BASTION_USERS}
-    - cd gcp
-    - ../terraform apply -auto-approve
+  trigger:
+    image: plugins/downstream
+    server: http://drone.astronomer.io
+    fork: true
+    secrets: [ downstream_token ]
+    repositories:
+      - astronomer/google-environments
+    when:
+      branch: [ master ]
 
   notify:
     image: plugins/slack

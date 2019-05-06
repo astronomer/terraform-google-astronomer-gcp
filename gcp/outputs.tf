@@ -39,6 +39,6 @@ output "gke_cluster_services_cidr" {
 }
 
 output "gke_cluster_master_cidr" {
-  value       = "${google_container_cluster.primary.private_cluster_config.master_ipv4_cidr_block}"
+  value       = "${google_container_cluster.primary.private_cluster_config.0.master_ipv4_cidr_block}"
   description = "CIDR Range for Cluster Master"
 }
