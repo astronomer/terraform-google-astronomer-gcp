@@ -3,7 +3,6 @@
 resource "google_compute_network" "core" {
   name                    = "core-network"
   auto_create_subnetworks = false
-  project                 = "${var.project}"
 }
 
 #Subnetwork
@@ -12,7 +11,6 @@ resource "google_compute_subnetwork" "gke" {
   network       = "${google_compute_network.core.self_link}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "${var.region}"
-  project       = "${var.project}"
 
   private_ip_google_access = true
 
@@ -32,7 +30,6 @@ resource "google_compute_router" "router" {
   name    = "router"
   region  = "${google_compute_subnetwork.gke.region}"
   network = "${google_compute_network.core.self_link}"
-  project = "${var.project}"
 
   bgp {
     asn = 64514
@@ -54,7 +51,6 @@ resource "google_compute_router_nat" "nat" {
   nat_ip_allocate_option             = "MANUAL_ONLY"
   nat_ips                            = ["${google_compute_address.address.*.self_link}"]
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
-  project                            = "${var.project}"
 
   subnetwork {
     name                    = "${google_compute_subnetwork.gke.self_link}"
@@ -92,7 +88,6 @@ resource "google_compute_subnetwork" "bastion" {
   network       = "${google_compute_network.core.self_link}"
   ip_cidr_range = "10.1.0.0/29"
   region        = "${var.region}"
-  project       = "${var.project}"
 
   private_ip_google_access = true
 }

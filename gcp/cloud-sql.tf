@@ -1,5 +1,4 @@
 resource "google_sql_database_instance" "instance" {
-  project          = "${var.project}"
   region           = "${var.region}"
   database_version = "POSTGRES_9_6"
 

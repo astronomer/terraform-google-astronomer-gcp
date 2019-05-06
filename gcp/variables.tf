@@ -8,10 +8,6 @@ variable zone {
   description = "The GCP zone to deploy infrastructure into"
 }
 
-variable project {
-  description = "The GCP project ID to deploy infrastructure into"
-}
-
 variable cluster_name {
   description = "The name of the GKE cluster"
 }

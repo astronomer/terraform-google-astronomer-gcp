@@ -1,7 +1,6 @@
 # Role binding to service account
 resource "google_project_iam_binding" "container_admin" {
-  project = "${var.project}"
-  role    = "roles/container.admin"
+  role = "roles/container.admin"
 
   members = [
     "${var.bastion_admins}",
@@ -9,8 +8,7 @@ resource "google_project_iam_binding" "container_admin" {
 }
 
 resource "google_project_iam_binding" "container_viewer" {
-  project = "${var.project}"
-  role    = "roles/container.viewer"
+  role = "roles/container.viewer"
 
   members = [
     "${var.bastion_users}",

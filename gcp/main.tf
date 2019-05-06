@@ -7,7 +7,6 @@ resource "random_string" "password" {
 resource "google_container_node_pool" "np" {
   name     = "${var.cluster_name}-np"
   location = "${var.region}"
-  project  = "${var.project}"
   cluster  = "${google_container_cluster.primary.name}"
 
   initial_node_count = "${var.min_node_count}"
@@ -40,7 +39,6 @@ resource "google_container_node_pool" "np" {
 resource "google_container_cluster" "primary" {
   name               = "${var.cluster_name}"
   location           = "${var.region}"
-  project            = "${var.project}"
   min_master_version = "${var.node_version}"
   node_version       = "${var.node_version}"
   enable_legacy_abac = false
