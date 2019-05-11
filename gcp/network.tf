@@ -45,7 +45,7 @@ resource "google_compute_address" "address" {
 
 # Cloud NAT
 resource "google_compute_router_nat" "nat" {
-  name                               = "nat-1"
+  name                               = "gke-bastion"
   region                             = "${var.region}"
   router                             = "${google_compute_router.router.name}"
   nat_ip_allocate_option             = "MANUAL_ONLY"
