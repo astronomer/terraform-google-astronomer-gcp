@@ -70,6 +70,7 @@ provider google-beta {
 |------|-------------|
 | bastion\_ip | Bastion IP Address |
 | bastion\_subnetwork\_selflink | Selflink for the Bastion SubNetwork |
+| container\_registry\_bucket\_name | Cloud Storage Bucket Name to be used for Container Registry |
 | gke\_cluster\_master\_cidr | CIDR Range for Cluster Master |
 | gke\_cluster\_pods\_cidr | CIDR Range for Cluster Pods |
 | gke\_cluster\_services\_cidr | CIDR Range for Cluster Services |

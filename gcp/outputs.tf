@@ -42,3 +42,8 @@ output "gke_cluster_master_cidr" {
   value       = "${google_container_cluster.primary.private_cluster_config.0.master_ipv4_cidr_block}"
   description = "CIDR Range for Cluster Master"
 }
+
+output "container_registry_bucket_name" {
+  value       = "${google_storage_bucket.container_registry.name}"
+  description = "Cloud Storage Bucket Name to be used for Container Registry"
+}
