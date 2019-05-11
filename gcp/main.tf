@@ -39,7 +39,7 @@ resource "google_container_node_pool" "np" {
 resource "google_container_cluster" "primary" {
   name               = "${var.cluster_name}"
   location           = "${var.region}"
-  min_master_version = "${var.node_version}"
+  min_master_version = "${var.min_master_version}"
   node_version       = "${var.node_version}"
   enable_legacy_abac = false
   network            = "${local.core_network_id}"

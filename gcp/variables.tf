@@ -27,8 +27,13 @@ variable max_node_count {
   description = "The maximum amount of worker nodes in GKE cluster"
 }
 
+variable "min_master_version" {
+  default     = "1.12.7-gke.10"
+  description = "The minimum version of the master."
+}
+
 variable node_version {
-  default     = "1.12.7-gke.7"
+  default     = "1.12.7-gke.10"
   description = "The version of Kubernetes in GKE cluster"
 }
 
