@@ -83,4 +83,8 @@ resource "google_container_cluster" "primary" {
   network_policy = {
     enabled = true
   }
+
+  istio_config {
+    disabled = false
+  }    
 }
