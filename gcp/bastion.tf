@@ -35,6 +35,7 @@ resource "google_compute_instance" "bastion" {
   metadata_startup_script = <<EOF
 sudo apt-get -y update;
 sudo apt-get -y install postgresql-client;
-sudo snap install kubectl --classic
+sudo snap install kubectl --classic;
+sudo snap install helm --classic
 EOF
 }
