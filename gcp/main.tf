@@ -37,6 +37,8 @@ resource "google_container_node_pool" "np" {
 
 # GKE cluster
 resource "google_container_cluster" "primary" {
+  provider = "google-beta"
+
   name               = "${var.cluster_name}"
   location           = "${var.region}"
   min_master_version = "${var.min_master_version}"
