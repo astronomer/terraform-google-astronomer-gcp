@@ -86,7 +86,9 @@ resource "google_container_cluster" "primary" {
     enabled = true
   }
 
-  istio_config {
-    disabled = false
-  }    
+  addons_config {
+    istio_config {
+      disabled = false
+    }
+  }  
 }
