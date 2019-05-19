@@ -90,5 +90,5 @@ resource "google_container_cluster" "primary" {
     istio_config {
       disabled = false
     }
-  }  
+  }
 }
