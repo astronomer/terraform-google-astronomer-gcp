@@ -189,6 +189,16 @@ resource "local_file" "kubeconfig" {
     filename = "./kubeconfig"
 }
 
+provider "kubernetes" {
+
+  /*
+  host = "${module.eks.aws_eks_cluster.this.endpoint}"
+  cluster_ca_certificate = "${module.eks.aws_eks_cluster.this.certificate_authority.0.data}"
+  */
+  config_path = "${module.eks.kubeconfig_filename}"
+  load_config_file = true
+}
+
 resource "kubernetes_namespace" "astronomer" {
   depends_on = ["kubernetes_namespace.astronomer"]
   metadata {

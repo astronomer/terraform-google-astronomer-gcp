@@ -15,7 +15,7 @@ variable "astronomer_version" {
 
 variable "base_domain" {
   # TODO
-  default = "astro.steven-miller.me"
+  default = "astro.steven-development.com"
   type = "string"
 }
 
