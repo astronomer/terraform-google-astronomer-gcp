@@ -64,5 +64,17 @@ resource "aws_instance" "bastion" {
 
   vpc_security_group_ids = ["${aws_security_group.bastion_sg.id}"]
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = "${local.tags}"
+
+  user_data = <<EOF
+#!/bin/bash
+sudo apt-get -y update;
+sudo apt-get -y install postgresql-client;
+sudo snap install kubectl --classic;
+sudo snap install helm --classic
+  EOF
 }
