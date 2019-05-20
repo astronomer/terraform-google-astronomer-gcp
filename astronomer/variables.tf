@@ -1,5 +1,5 @@
 variable "cluster_type" {
-  value = "astro.steven-miller.me"
+  default = "private"
   type    = "string"
 }
 
@@ -16,5 +16,9 @@ variable "astronomer_version" {
 variable "base_domain" {
   # TODO
   default = "astro.steven-miller.me"
+  type = "string"
+}
+
+variable "namespace_uid" {
   type = "string"
 }

@@ -31,14 +31,8 @@ resource "kubernetes_cluster_role_binding" "tiller-binding" {
     }
 }
 
-resource "kubernetes_namespace" "astronomer" {
-  metadata {
-    name = "astronomer"
-  }
-}
-
 resource "kubernetes_role" "tiller-role" {
-    depends_on = ["kubernetes_service_account.tiller", "kubernetes_namespace.astronomer"]
+    depends_on = ["kubernetes_service_account.tiller"]
     metadata {
         name = "tiller-manager"
         namespace = "astronomer"
@@ -120,4 +114,14 @@ nginx:
   privateLoadBalancer: ${var.cluster_type == "private" ? true: false}
 EOF
 ]
+}
+
+resource "helm_release" "astro-db" {
+
+    depends_on = ["kubernetes_service_account.tiller"]
+
+    wait = true
+    name = "astro-db"
+    chart = "stable/postgresql"
+    namespace = "astronomer"
 }

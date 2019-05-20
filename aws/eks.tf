@@ -188,3 +188,10 @@ resource "local_file" "kubeconfig" {
     content     = "${module.eks.kubeconfig}"
     filename = "./kubeconfig"
 }
+
+resource "kubernetes_namespace" "astronomer" {
+  depends_on = ["kubernetes_namespace.astronomer"]
+  metadata {
+    name = "astronomer"
+  }
+}
