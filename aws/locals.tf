@@ -12,7 +12,6 @@ resource "random_string" "suffix" {
 }
 
 locals {
-
   cluster_name = "${var.base_name}-cluster-${random_string.suffix.result}"
 
   azs = ["${var.aws_region}a", "${var.aws_region}b"]
@@ -31,14 +30,14 @@ locals {
       additional_userdata           = "echo 'hello world!'"
       subnets                       = "${join(",", module.vpc.private_subnets)}"
       additional_security_group_ids = "${aws_security_group.worker_group_mgmt_one.id},${aws_security_group.worker_group_mgmt_two.id}"
-      asg_desired_capacity = "2"
-      asg_min_size         = "2"
-      asg_max_size         = "${var.max_cluster_size}"
+      asg_desired_capacity          = "2"
+      asg_min_size                  = "2"
+      asg_max_size                  = "${var.max_cluster_size}"
     },
   ]
 
   tags = {
     Environment = "${var.environment}"
-    Owner = "${var.owner}"
+    Owner       = "${var.owner}"
   }
 }

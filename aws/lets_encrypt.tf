@@ -18,8 +18,9 @@ resource "acme_registration" "user_registration" {
 }
 
 resource "acme_certificate" "lets_encrypt" {
-  account_key_pem           = "${acme_registration.user_registration.account_key_pem}"
-  common_name               = "*.astro.${var.route53_domain}"
+  account_key_pem = "${acme_registration.user_registration.account_key_pem}"
+  common_name     = "*.astro.${var.route53_domain}"
+
   dns_challenge {
     provider = "route53"
   }
@@ -38,11 +39,10 @@ resource "aws_route53_record" "astronomer" {
 }
 
 resource "kubernetes_secret" "astronomer-tls" {
-
   depends_on = ["kubernetes_namespace.astronomer"]
 
   metadata {
-    name = "astronomer-tls"
+    name      = "astronomer-tls"
     namespace = "astronomer"
   }
 
@@ -52,5 +52,4 @@ resource "kubernetes_secret" "astronomer-tls" {
     "tls.crt" = "${acme_certificate.lets_encrypt.certificate_pem}"
     "tls.key" = "${acme_certificate.lets_encrypt.private_key_pem}"
   }
-
 }

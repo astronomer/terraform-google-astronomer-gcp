@@ -12,8 +12,10 @@ data "aws_elb" "nginx_elb" {
 
 data "aws_lambda_invocation" "elb_name" {
   depends_on = ["aws_lambda_function.elb_lookup",
-                "aws_iam_role_policy.elb_lookup_policy",
-                "module.astronomer"]
+    "aws_iam_role_policy.elb_lookup_policy",
+    "module.astronomer",
+  ]
+
   function_name = "${aws_lambda_function.elb_lookup.function_name}"
 
   input = "{}"
@@ -22,6 +24,7 @@ data "aws_lambda_invocation" "elb_name" {
 resource "aws_iam_role_policy" "elb_lookup_policy" {
   name = "elb_lookup_policy"
   role = "${aws_iam_role.elb_lookup_role.id}"
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -42,6 +45,7 @@ EOF
 
 resource "aws_iam_role" "elb_lookup_role" {
   name = "elb_lookup_role"
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -66,7 +70,6 @@ data "archive_file" "elb_lookup" {
 }
 
 resource "aws_lambda_function" "elb_lookup" {
-
   depends_on       = ["data.archive_file.elb_lookup"]
   filename         = "elb_lookup.py.zip"
   function_name    = "elb_lookup_function"
@@ -77,7 +80,7 @@ resource "aws_lambda_function" "elb_lookup" {
 
   environment {
     variables = {
-      VPC_ID = "${module.vpc.vpc_id}"
+      VPC_ID       = "${module.vpc.vpc_id}"
       CLUSTER_NAME = "${local.cluster_name}"
     }
   }

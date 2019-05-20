@@ -5,18 +5,18 @@ variable "cluster_type" {
 
 variable "git_clone_from" {
   default = "https://github.com/astronomer/helm.astronomer.io.git"
-  type = "string"
+  type    = "string"
 }
 
 variable "astronomer_version" {
   default = "master"
-  type = "string"
+  type    = "string"
 }
 
 variable "base_domain" {
   # TODO
   default = "astro.steven-development.com"
-  type = "string"
+  type    = "string"
 }
 
 variable "namespace_uid" {

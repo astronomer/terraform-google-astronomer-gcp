@@ -4,8 +4,7 @@
 */
 
 module "vpc" {
-
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
   version = "1.14.0"
 
   name = "${var.base_name}-${var.environment}-vpc"
@@ -15,12 +14,12 @@ module "vpc" {
   azs = "${local.azs}"
 
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets     = ["10.0.3.0/24", "10.0.4.0/24"]
+  public_subnets  = ["10.0.3.0/24", "10.0.4.0/24"]
 
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  tags               = "${local.tags}"
+  tags = "${local.tags}"
 
   public_subnet_tags = {
     "${var.cluster_type == "private" ? "bastion_subnet" : format("%s", "kubernetes.io/cluster/${local.cluster_name}")}" = "${var.cluster_type == "private" ? "1" : "shared"}"

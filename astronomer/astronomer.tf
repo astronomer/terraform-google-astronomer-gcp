@@ -1,7 +1,7 @@
 # Initialize kubectl
 
 provider "kubernetes" {
-  config_path = "./kubeconfig"
+  config_path      = "./kubeconfig"
   load_config_file = true
 }
 
@@ -9,66 +9,70 @@ provider "kubernetes" {
 
 resource "kubernetes_service_account" "tiller" {
   metadata {
-    name = "tiller"
+    name      = "tiller"
     namespace = "kube-system"
   }
 }
 
 resource "kubernetes_cluster_role_binding" "tiller-binding" {
-    depends_on = ["kubernetes_service_account.tiller"]
-    metadata {
-        name = "tiller-binding"
-    }
-    role_ref {
-        api_group = "rbac.authorization.k8s.io"
-        kind = "ClusterRole"
-        name = "cluster-admin"
-    }
-    subject {
-        kind = "ServiceAccount"
-        name = "tiller"
-        namespace = "kube-system"
-    }
+  depends_on = ["kubernetes_service_account.tiller"]
+
+  metadata {
+    name = "tiller-binding"
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = "tiller"
+    namespace = "kube-system"
+  }
 }
 
 resource "kubernetes_role" "tiller-role" {
-    depends_on = ["kubernetes_service_account.tiller"]
-    metadata {
-        name = "tiller-manager"
-        namespace = "astronomer"
-    }
+  depends_on = ["kubernetes_service_account.tiller"]
 
-    rule {
-        api_groups = ["", "batch", "extensions", "apps"]
-        resources  = ["*"]
-        verbs      = ["*"]
-    }
+  metadata {
+    name      = "tiller-manager"
+    namespace = "astronomer"
+  }
+
+  rule {
+    api_groups = ["", "batch", "extensions", "apps"]
+    resources  = ["*"]
+    verbs      = ["*"]
+  }
 }
 
 # Initialize helm
 provider "helm" {
-    service_account = "tiller"
-    debug = true
-    kubernetes {
-        config_path = "./kubeconfig"
-    }
+  service_account = "tiller"
+  debug           = true
+
+  kubernetes {
+    config_path = "./kubeconfig"
+  }
 }
 
 data "kubernetes_secret" "astro-db-postgresql" {
   depends_on = ["helm_release.astro-db"]
 
   metadata {
-    name = "astro-db-postgresql"
+    name      = "astro-db-postgresql"
     namespace = "astronomer"
   }
 }
 
 resource "kubernetes_secret" "astronomer-bootstrap" {
-
   depends_on = ["helm_release.astro-db"]
 
   metadata {
-    name = "astronomer-bootstrap"
+    name      = "astronomer-bootstrap"
     namespace = "astronomer"
   }
 
@@ -77,7 +81,6 @@ resource "kubernetes_secret" "astronomer-bootstrap" {
   data {
     "connection" = "postgres://postgres:${lookup(data.kubernetes_secret.astro-db-postgresql.data,"postgresql-password")}@astro-db-postgresql.astronomer.svc.cluster.local:5432"
   }
-
 }
 
 # TODO
@@ -92,6 +95,7 @@ resource "null_resource" "helm_repo" {
 
 resource "null_resource" "checkout_astronomer_version" {
   depends_on = ["null_resource.helm_repo"]
+
   provisioner "local-exec" {
     command = "cd ./helm.astronomer.io && git checkout ${var.astronomer_version} && cd .."
   }
@@ -99,11 +103,14 @@ resource "null_resource" "checkout_astronomer_version" {
 
 resource "helm_release" "astronomer" {
   depends_on = ["kubernetes_secret.astronomer-bootstrap",
-                "null_resource.checkout_astronomer_version"]
-  name = "astronomer"
-  chart = "./helm.astronomer.io"
+    "null_resource.checkout_astronomer_version",
+  ]
+
+  name      = "astronomer"
+  chart     = "./helm.astronomer.io"
   namespace = "astronomer"
-  wait = true
+  wait      = true
+
   values = [<<EOF
 ---
 global:
@@ -113,15 +120,14 @@ nginx:
   loadBalancerIP: ~
   privateLoadBalancer: ${var.cluster_type == "private" ? true: false}
 EOF
-]
+  ]
 }
 
 resource "helm_release" "astro-db" {
+  depends_on = ["kubernetes_service_account.tiller"]
 
-    depends_on = ["kubernetes_service_account.tiller"]
-
-    wait = true
-    name = "astro-db"
-    chart = "stable/postgresql"
-    namespace = "astronomer"
+  wait      = true
+  name      = "astro-db"
+  chart     = "stable/postgresql"
+  namespace = "astronomer"
 }

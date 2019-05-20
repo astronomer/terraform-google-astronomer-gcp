@@ -10,7 +10,7 @@ variable "cluster_type" {
 # this is the basename that will be used
 # for naming other things
 variable "base_name" {
-  type    = "string"
+  type = "string"
 }
 
 variable "cluster_version" {
@@ -19,7 +19,7 @@ variable "cluster_version" {
 }
 
 variable "owner" {
-  type    = "string"
+  type = "string"
 }
 
 variable "environment" {
@@ -34,8 +34,9 @@ variable "aws_region" {
 
 variable "lb_instance_type" {
   default = "t2.small"
+
   # default = "m5.xlarge"
-  type    = "string"
+  type = "string"
 }
 
 variable "worker_instance_type" {
@@ -61,19 +62,19 @@ variable "min_cluster_size" {
 
 variable "percent_on_demand" {
   default = "0"
-  type = "string"
+  type    = "string"
 }
 
 variable "map_roles" {
   default = []
-  type = "list"
+  type    = "list"
 }
 
 # this is odd but necessary
 # should correspond to the above
 variable "map_roles_count" {
   default = 0
-  type = "string"
+  type    = "string"
 }
 
 # TODO: determine minimal required permissions to deploy
@@ -86,7 +87,7 @@ variable "map_users" {
       user_arn = "arn:aws:iam::668666347261:root"
       username = "steven"
       group    = "system:masters"
-    }
+    },
   ]
 }
 
@@ -94,23 +95,24 @@ variable "map_users" {
 # should correspond to the above
 variable "map_users_count" {
   default = 1
-  type = "string"
+  type    = "string"
 }
+
 variable "map_accounts" {
   default = []
-  type = "list"
+  type    = "list"
 }
 
 # this is odd but necessary
 # should correspond to the above
 variable "map_accounts_count" {
   default = 0
-  type = "string"
+  type    = "string"
 }
 
 variable "acme_server" {
   default = "https://acme-staging-v02.api.letsencrypt.org/directory"
-  type = "string"
+  type    = "string"
 }
 
 variable "admin_email" {
