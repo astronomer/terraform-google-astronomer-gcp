@@ -37,19 +37,3 @@ resource "aws_route53_record" "astronomer" {
   ttl     = "5"
   records = ["${data.aws_elb.nginx_elb.dns_name}"]
 }
-
-resource "kubernetes_secret" "astronomer_tls" {
-  depends_on = ["kubernetes_namespace.astronomer"]
-
-  metadata {
-    name      = "astronomer-tls"
-    namespace = "astronomer"
-  }
-
-  type = "kubernetes.io/tls"
-
-  data {
-    "tls.crt" = "${acme_certificate.lets_encrypt.certificate_pem}"
-    "tls.key" = "${acme_certificate.lets_encrypt.private_key_pem}"
-  }
-}

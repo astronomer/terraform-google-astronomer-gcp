@@ -49,9 +49,8 @@ resource "aws_security_group" "bastion_sg" {
 }
 
 resource "aws_key_pair" "bastion_ssh_key" {
-  key_name   = "bastion_ssh_key_${label}"
+  key_name   = "bastion_ssh_key_${var.label}"
   public_key = "${file("~/.ssh/id_rsa.pub")}"
-  tags       = "${local.tags}"
 }
 
 resource "aws_instance" "bastion" {
@@ -77,7 +76,8 @@ resource "aws_instance" "bastion" {
 
   user_data = <<EOF
 #!/bin/bash -xe
-mkdir -p /opt/terraform_install
+mkdir -p /opt/terraform_install;
+mkdir -p /opt/astronomer_certs;
 sudo apt-get -y update;
 sudo apt-get -y install postgresql-client;
 sudo snap install kubectl --classic;
@@ -86,15 +86,23 @@ cd /opt/terraform_install && wget https://releases.hashicorp.com/terraform/${var
 EOF
 
   provisioner "file" {
+    content     = "${acme_certificate.lets_encrypt.certificate_pem}"
+    destination = "/opt/astronomer_certs/tls.crt"
+  }
+
+  provisioner "file" {
+    content     = "${acme_certificate.lets_encrypt.private_key_pem}"
+    destination = "/opt/astronomer_certs/tls.key"
+  }
+
+  provisioner "file" {
     source      = "../astronomer"
     destination = "/opt"
   }
 
   provisioner "remote-exec" {
-    on_failure = "fail"
-
     inline = [
-      "cd /opt/astronomer && terraform apply -var 'base_domain=app.${var.route53_domain}' -var 'cluster_type=${var.cluster_type}'",
+      "cd /opt/astronomer && terraform apply -var 'base_domain=astro.${var.route53_domain}' -var 'cluster_type=${var.cluster_type}' -var 'admin_email=${var.admin_email}'",
     ]
   }
 }

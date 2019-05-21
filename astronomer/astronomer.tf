@@ -145,3 +145,19 @@ resource "helm_release" "astro_db" {
   chart     = "stable/postgresql"
   namespace = "astronomer"
 }
+
+resource "kubernetes_secret" "astronomer_tls" {
+  depends_on = ["kubernetes_namespace.astronomer"]
+
+  metadata {
+    name      = "astronomer-tls"
+    namespace = "astronomer"
+  }
+
+  type = "kubernetes.io/tls"
+
+  data {
+    "tls.crt" = "${file("/opt/astronomer_certs/tls.crt")}"
+    "tls.key" = "${file("/opt/astronomer_certs/tls.key")}"
+  }
+}

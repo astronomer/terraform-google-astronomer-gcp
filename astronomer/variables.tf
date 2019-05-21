@@ -16,3 +16,8 @@ variable "astronomer_version" {
 variable "base_domain" {
   type = "string"
 }
+
+variable "admin_email" {
+  description = "An email address"
+  type        = "string"
+}

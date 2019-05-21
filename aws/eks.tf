@@ -25,19 +25,13 @@ module "eks" {
   worker_additional_security_group_ids = ["${aws_security_group.all_worker_mgmt.id}"]
   map_roles = [
     {
-      user_arn = "${aws_iam_user.kube_admin.arn}"
-      username = "${aws_iam_user.kube_admin.name}"
+      role_arn = "${aws_iam_role.kube_admin.arn}"
+      username = "astronomer_kube_admin_role"
       group    = "system:masters"
     },
   ]
-  map_accounts = "${var.map_accounts}"
-  map_users = [
-    {
-      user_arn = "${aws_iam_user.kube_admin.arn}"
-      username = "${aws_iam_user.kube_admin.name}"
-      group    = "system:masters"
-    },
-  ]
+  map_accounts                    = "${var.map_accounts}"
+  map_users                       = []
   cluster_endpoint_private_access = "${var.cluster_type == "private" ? true : false}"
 
   # For now, the strategy is to leave the management API public
@@ -46,7 +40,7 @@ module "eks" {
 
   cluster_endpoint_public_access = "${var.management_api == "public" ? true : false}"
   map_roles_count                = "1"
-  map_users_count                = "1"
+  map_users_count                = "0"
   map_accounts_count             = "${var.map_accounts_count}"
   # TODO: check later for solution or better option
   # There is a terraform 'gotcha' - does not work to

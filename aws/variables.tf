@@ -71,11 +71,6 @@ variable "map_accounts_count" {
   type    = "string"
 }
 
-variable "acme_server" {
-  default = "https://acme-staging-v02.api.letsencrypt.org/directory"
-  type    = "string"
-}
-
 variable "admin_email" {
   description = "An email address"
   type        = "string"
@@ -93,5 +88,10 @@ variable "management_api" {
 
 variable "bastion_terraform_version" {
   default = "0.11.13"
+  type    = "string"
+}
+
+variable "acme_server" {
+  default = "https://acme-staging-v02.api.letsencrypt.org/directory"
   type    = "string"
 }

@@ -1,9 +1,3 @@
-resource "aws_iam_user" "kube_admin" {
-  name = "astronomer_kube_admin_${var.label}"
-  path = "/astronomer/"
-  tags = "${local.tags}"
-}
-
 resource "aws_iam_role" "kube_admin" {
   name = "astronomer_kube_admin_role_${var.label}"
 
@@ -28,7 +22,6 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "bastion_instance_profile" {
-  name = "astronomer_bastion_kube_admin_${var.label}"
+  name = "astronomer_bastion_kube_admin_${var.label}_${var.environment}"
   role = "${aws_iam_role.kube_admin.name}"
-  tags = "${local.tags}"
 }
