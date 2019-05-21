@@ -19,6 +19,20 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
+  # "
+  # When you enable endpoint private access for your cluster, Amazon EKS creates
+  # a Route 53 private hosted zone on your behalf and associates it with your
+  # cluster's VPC. This private hosted zone is managed by Amazon EKS, and it doesn't
+  # appear in your account's Route 53 resources. In order for the private hosted zone
+  # to properly route traffic to your API server, your VPC must have enableDnsHostnames
+  # and enableDnsSupport set to true
+  # "
+  # copied from (5/21/19):
+  # https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html
+  enable_dns_hostnames = true
+
+  enable_dns_support = true
+
   tags = "${local.tags}"
 
   public_subnet_tags = {
