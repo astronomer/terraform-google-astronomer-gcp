@@ -12,7 +12,7 @@ resource "random_string" "suffix" {
 }
 
 locals {
-  cluster_name = "${var.base_name}-cluster-${random_string.suffix.result}"
+  cluster_name = "astronomer-${var.label}-${var.environment}-${random_string.suffix.result}"
 
   azs = ["${var.aws_region}a", "${var.aws_region}b"]
 

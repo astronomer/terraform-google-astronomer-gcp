@@ -9,8 +9,9 @@ variable "cluster_type" {
 
 # this is the basename that will be used
 # for naming other things
-variable "base_name" {
-  type = "string"
+variable "label" {
+  description = "this lowercase, letters-only string will be used to label/prefix some of your AWS resources"
+  type        = "string"
 }
 
 variable "cluster_version" {
@@ -19,12 +20,13 @@ variable "cluster_version" {
 }
 
 variable "owner" {
-  type = "string"
+  description = "In your organization, who is responsible for this infrastructure? Please use lowercase, letters only."
+  type        = "string"
 }
 
 variable "environment" {
-  default = "dev"
-  type    = "string"
+  description = "Choose 'dev', 'qa', or 'prod'"
+  type        = "string"
 }
 
 variable "aws_region" {
@@ -34,21 +36,13 @@ variable "aws_region" {
 
 variable "lb_instance_type" {
   default = "t2.small"
-
-  # default = "m5.xlarge"
-  type = "string"
-}
-
-variable "worker_instance_type" {
-  # default = "t2.small"
-  default = "m5.xlarge"
   type    = "string"
 }
 
-# variable "other_instance_types" {
-#   default = "t2.micro,t3.small,t3.micro"
-#   type    = "string"
-# }
+variable "worker_instance_type" {
+  default = "m5.xlarge"
+  type    = "string"
+}
 
 variable "max_cluster_size" {
   default = "8"
@@ -62,39 +56,6 @@ variable "min_cluster_size" {
 
 variable "percent_on_demand" {
   default = "0"
-  type    = "string"
-}
-
-variable "map_roles" {
-  default = []
-  type    = "list"
-}
-
-# this is odd but necessary
-# should correspond to the above
-variable "map_roles_count" {
-  default = 0
-  type    = "string"
-}
-
-# TODO: determine minimal required permissions to deploy
-variable "map_users" {
-  description = "Additional IAM users to add to the aws-auth configmap."
-  type        = "list"
-
-  default = [
-    {
-      user_arn = "arn:aws:iam::668666347261:root"
-      username = "steven"
-      group    = "system:masters"
-    },
-  ]
-}
-
-# this is odd but necessary
-# should correspond to the above
-variable "map_users_count" {
-  default = 1
   type    = "string"
 }
 
@@ -116,14 +77,21 @@ variable "acme_server" {
 }
 
 variable "admin_email" {
-  type = "string"
+  description = "An email address"
+  type        = "string"
 }
 
 variable "route53_domain" {
-  type = "string"
+  description = "The route53 domain in your account you want to use for the *.astro.route53_domain subdomain"
+  type        = "string"
 }
 
 variable "management_api" {
-  default = "public"
+  default = "private"
+  type    = "string"
+}
+
+variable "bastion_terraform_version" {
+  default = "0.11.13"
   type    = "string"
 }

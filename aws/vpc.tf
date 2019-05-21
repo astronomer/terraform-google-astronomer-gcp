@@ -7,7 +7,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "1.14.0"
 
-  name = "${var.base_name}-${var.environment}-vpc"
+  name = "astronomer-${var.label}-${var.environment}-vpc"
 
   cidr = "10.0.0.0/16"
 

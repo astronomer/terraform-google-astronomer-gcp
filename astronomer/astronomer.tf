@@ -1,8 +1,13 @@
 # Initialize kubectl
-
 provider "kubernetes" {
   config_path      = "./kubeconfig"
   load_config_file = true
+}
+
+resource "kubernetes_namespace" "astronomer" {
+  metadata {
+    name = "astronomer"
+  }
 }
 
 # Create prerequisite resources
@@ -35,7 +40,9 @@ resource "kubernetes_cluster_role_binding" "tiller_binding" {
 }
 
 resource "kubernetes_role" "tiller_role" {
-  depends_on = ["kubernetes_service_account.tiller"]
+  depends_on = ["kubernetes_service_account.tiller",
+    "kubernetes_namespace.astronomer",
+  ]
 
   metadata {
     name      = "tiller-manager"
@@ -60,7 +67,9 @@ provider "helm" {
 }
 
 data "kubernetes_secret" "astro_db_postgresql" {
-  depends_on = ["helm_release.astro_db"]
+  depends_on = ["helm_release.astro_db",
+    "kubernetes_namespace.astronomer",
+  ]
 
   metadata {
     name      = "astro-db-postgresql"
@@ -69,7 +78,9 @@ data "kubernetes_secret" "astro_db_postgresql" {
 }
 
 resource "kubernetes_secret" "astronomer_bootstrap" {
-  depends_on = ["helm_release.astro_db"]
+  depends_on = ["helm_release.astro_db",
+    "kubernetes_namespace.astronomer",
+  ]
 
   metadata {
     name      = "astronomer-bootstrap"
@@ -104,6 +115,7 @@ resource "null_resource" "checkout_astronomer_version" {
 resource "helm_release" "astronomer" {
   depends_on = ["kubernetes_secret.astronomer_bootstrap",
     "null_resource.checkout_astronomer_version",
+    "kubernetes_namespace.astronomer",
   ]
 
   name      = "astronomer"
@@ -124,7 +136,9 @@ EOF
 }
 
 resource "helm_release" "astro_db" {
-  depends_on = ["kubernetes_service_account.tiller"]
+  depends_on = ["kubernetes_service_account.tiller",
+    "kubernetes_namespace.astronomer",
+  ]
 
   wait      = true
   name      = "astro-db"

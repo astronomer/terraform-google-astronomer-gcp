@@ -4,7 +4,6 @@ provider "aws" {
 }
 
 # Create the EKS cluster
-
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
 
@@ -24,18 +23,30 @@ module "eks" {
   # worker_groups_launch_template        = "${local.worker_groups_launch_template}"
 
   worker_additional_security_group_ids = ["${aws_security_group.all_worker_mgmt.id}"]
-  map_roles                            = "${var.map_roles}"
-  map_accounts                         = "${var.map_accounts}"
-  map_users                            = "${var.map_users}"
-  cluster_endpoint_private_access      = "${var.cluster_type == "private" ? true : false}"
+  map_roles = [
+    {
+      user_arn = "${aws_iam_user.kube_admin.arn}"
+      username = "${aws_iam_user.kube_admin.name}"
+      group    = "system:masters"
+    },
+  ]
+  map_accounts = "${var.map_accounts}"
+  map_users = [
+    {
+      user_arn = "${aws_iam_user.kube_admin.arn}"
+      username = "${aws_iam_user.kube_admin.name}"
+      group    = "system:masters"
+    },
+  ]
+  cluster_endpoint_private_access = "${var.cluster_type == "private" ? true : false}"
 
   # For now, the strategy is to leave the management API public
   # this way the whole thing can be deployed from remote node, then we just
   # disable the public endpoint and then everything is private.
 
   cluster_endpoint_public_access = "${var.management_api == "public" ? true : false}"
-  map_roles_count                = "${var.map_roles_count}"
-  map_users_count                = "${var.map_users_count}"
+  map_roles_count                = "1"
+  map_users_count                = "1"
   map_accounts_count             = "${var.map_accounts_count}"
   # TODO: check later for solution or better option
   # There is a terraform 'gotcha' - does not work to
@@ -47,17 +58,4 @@ module "eks" {
 resource "local_file" "kubeconfig" {
   content  = "${module.eks.kubeconfig}"
   filename = "./kubeconfig"
-}
-
-provider "kubernetes" {
-  config_path      = "${module.eks.kubeconfig_filename}"
-  load_config_file = true
-}
-
-resource "kubernetes_namespace" "astronomer" {
-  depends_on = ["local_file.kubeconfig"]
-
-  metadata {
-    name = "astronomer"
-  }
 }

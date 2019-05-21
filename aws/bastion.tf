@@ -49,12 +49,17 @@ resource "aws_security_group" "bastion_sg" {
 }
 
 resource "aws_key_pair" "bastion_ssh_key" {
-  key_name   = "bastion_ssh_key"
+  key_name   = "bastion_ssh_key_${label}"
   public_key = "${file("~/.ssh/id_rsa.pub")}"
+  tags       = "${local.tags}"
 }
 
 resource "aws_instance" "bastion" {
+  depends_on = ["module.eks"]
+
   ami = "${data.aws_ami.ubuntu.id}"
+
+  iam_instance_profile = "${aws_iam_instance_profile.bastion_instance_profile.name}"
 
   key_name = "${aws_key_pair.bastion_ssh_key.key_name}"
 
@@ -71,10 +76,25 @@ resource "aws_instance" "bastion" {
   tags = "${local.tags}"
 
   user_data = <<EOF
-#!/bin/bash
+#!/bin/bash -xe
+mkdir -p /opt/terraform_install
 sudo apt-get -y update;
 sudo apt-get -y install postgresql-client;
 sudo snap install kubectl --classic;
-sudo snap install helm --classic
-  EOF
+sudo snap install helm --classic;
+cd /opt/terraform_install && wget https://releases.hashicorp.com/terraform/${var.bastion_terraform_version}/terraform_${var.bastion_terraform_version}_linux_amd64.zip && unzip terraform_${var.bastion_terraform_version}_linux_amd64.zip && mv terraform /usr/local/bin/
+EOF
+
+  provisioner "file" {
+    source      = "../astronomer"
+    destination = "/opt"
+  }
+
+  provisioner "remote-exec" {
+    on_failure = "fail"
+
+    inline = [
+      "cd /opt/astronomer && terraform apply -var 'base_domain=app.${var.route53_domain}' -var 'cluster_type=${var.cluster_type}'",
+    ]
+  }
 }
