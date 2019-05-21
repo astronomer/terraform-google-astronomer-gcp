@@ -68,22 +68,38 @@ resource "aws_instance" "bastion" {
 
   vpc_security_group_ids = ["${aws_security_group.bastion_sg.id}"]
 
-  lifecycle {
-    create_before_destroy = true
+  tags = "${local.tags}"
+}
+
+# managed separately so the bastion doesn't need to
+# redeploy during development
+resource "null_resource" "bastion_setup" {
+  connection {
+    type        = "ssh"
+    host        = "${aws_instance.bastion.public_ip}"
+    user        = "ubuntu"
+    private_key = "${file("~/.ssh/id_rsa")}"
+    port        = "22"
   }
 
-  tags = "${local.tags}"
-
-  user_data = <<EOF
-#!/bin/bash -xe
-mkdir -p /opt/terraform_install;
-mkdir -p /opt/astronomer_certs;
-sudo apt-get -y update;
-sudo apt-get -y install postgresql-client;
-sudo snap install kubectl --classic;
-sudo snap install helm --classic;
-cd /opt/terraform_install && wget https://releases.hashicorp.com/terraform/${var.bastion_terraform_version}/terraform_${var.bastion_terraform_version}_linux_amd64.zip && unzip terraform_${var.bastion_terraform_version}_linux_amd64.zip && mv terraform /usr/local/bin/
-EOF
+  # Using terraform provisioner instead of UserData
+  # in order to avoid a race condition. Provisioners
+  # are executed sequentally, in order top to bottom.
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p /opt/terraform_install",
+      "sudo mkdir -p /opt/astronomer_certs",
+      "sudo mkdir -p /opt/astronomer",
+      "sudo chown -R ubuntu:ubuntu /opt",
+      "sudo apt-get -y update;",
+      "sudo apt-get -y install postgresql-client unzip",
+      "sudo snap install kubectl --classic",
+      "sudo snap install helm --classic",
+      "sudo snap install aws-cli --classic",
+      "cd /opt/terraform_install && wget https://releases.hashicorp.com/terraform/${var.bastion_terraform_version}/terraform_${var.bastion_terraform_version}_linux_amd64.zip && sudo unzip terraform_${var.bastion_terraform_version}_linux_amd64.zip && sudo mv terraform /usr/local/bin/",
+      "cd /usr/local/bin && sudo curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/aws-iam-authenticator && sudo chmod +x aws-iam-authenticator",
+    ]
+  }
 
   provisioner "file" {
     content     = "${acme_certificate.lets_encrypt.certificate_pem}"
@@ -96,13 +112,30 @@ EOF
   }
 
   provisioner "file" {
+    content     = "${module.eks.kubeconfig}"
+    destination = "/opt/astronomer/kubeconfig"
+  }
+
+  provisioner "file" {
     source      = "../astronomer"
     destination = "/opt"
+  }
+}
+
+resource "null_resource" "astronomer_deploy" {
+  depends_on = ["null_resource.bastion_setup"]
+
+  connection {
+    type        = "ssh"
+    host        = "${aws_instance.bastion.public_ip}"
+    user        = "ubuntu"
+    private_key = "${file("~/.ssh/id_rsa")}"
+    port        = "22"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "cd /opt/astronomer && terraform apply -var 'base_domain=astro.${var.route53_domain}' -var 'cluster_type=${var.cluster_type}' -var 'admin_email=${var.admin_email}'",
+      "KUBECONFIG=./kubeconfig cd /opt/astronomer && terraform init && terraform apply -var 'base_domain=astro.${var.route53_domain}' -var 'cluster_type=${var.cluster_type}' -var 'admin_email=${var.admin_email}' --auto-approve",
     ]
   }
 }

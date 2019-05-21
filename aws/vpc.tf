@@ -25,10 +25,16 @@ module "vpc" {
     "${var.cluster_type == "private" ? "bastion_subnet" : format("%s", "kubernetes.io/cluster/${local.cluster_name}")}" = "${var.cluster_type == "private" ? "1" : "shared"}"
   }
 
-  private_subnet_tags = {
+  /*
+  public_subnet_tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
+  */
 
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
+  }
   vpc_tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }

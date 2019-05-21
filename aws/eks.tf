@@ -32,7 +32,7 @@ module "eks" {
   ]
   map_accounts                    = "${var.map_accounts}"
   map_users                       = []
-  cluster_endpoint_private_access = "${var.cluster_type == "private" ? true : false}"
+  cluster_endpoint_private_access = "true"
 
   # For now, the strategy is to leave the management API public
   # this way the whole thing can be deployed from remote node, then we just

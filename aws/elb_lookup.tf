@@ -13,7 +13,7 @@ data "aws_elb" "nginx_elb" {
 data "aws_lambda_invocation" "elb_name" {
   depends_on = ["aws_lambda_function.elb_lookup",
     "aws_iam_role_policy.elb_lookup_policy",
-    "aws_instance.bastion",
+    "null_resource.astronomer_deploy",
   ]
 
   function_name = "${aws_lambda_function.elb_lookup.function_name}"
