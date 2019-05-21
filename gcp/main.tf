@@ -88,7 +88,8 @@ resource "google_container_cluster" "primary" {
 
   addons_config {
     istio_config {
-      disabled = false
+      disabled = "${var.istio_disabled}"
+      auth     = "${var.istio_auth}"
     }
   }
 }

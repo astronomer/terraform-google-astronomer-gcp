@@ -88,3 +88,11 @@ variable "bastion_image_family" {
     project = "ubuntu-os-cloud"
   }
 }
+
+variable "istio_disabled" {
+  default = true
+}
+
+variable "istio_auth" {
+  default = "AUTH_MUTUAL_TLS"
+}
