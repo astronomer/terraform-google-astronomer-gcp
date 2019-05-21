@@ -50,13 +50,12 @@ resource "local_file" "kubeconfig" {
 }
 
 provider "kubernetes" {
-  config_path = "${module.eks.kubeconfig_filename}"
-
+  config_path      = "${module.eks.kubeconfig_filename}"
   load_config_file = true
 }
 
 resource "kubernetes_namespace" "astronomer" {
-  depends_on = ["kubernetes_namespace.astronomer"]
+  depends_on = ["local_file.kubeconfig"]
 
   metadata {
     name = "astronomer"

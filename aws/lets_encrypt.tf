@@ -38,7 +38,7 @@ resource "aws_route53_record" "astronomer" {
   records = ["${data.aws_elb.nginx_elb.dns_name}"]
 }
 
-resource "kubernetes_secret" "astronomer-tls" {
+resource "kubernetes_secret" "astronomer_tls" {
   depends_on = ["kubernetes_namespace.astronomer"]
 
   metadata {

@@ -14,7 +14,7 @@ resource "kubernetes_service_account" "tiller" {
   }
 }
 
-resource "kubernetes_cluster_role_binding" "tiller-binding" {
+resource "kubernetes_cluster_role_binding" "tiller_binding" {
   depends_on = ["kubernetes_service_account.tiller"]
 
   metadata {
@@ -34,7 +34,7 @@ resource "kubernetes_cluster_role_binding" "tiller-binding" {
   }
 }
 
-resource "kubernetes_role" "tiller-role" {
+resource "kubernetes_role" "tiller_role" {
   depends_on = ["kubernetes_service_account.tiller"]
 
   metadata {
@@ -59,8 +59,8 @@ provider "helm" {
   }
 }
 
-data "kubernetes_secret" "astro-db-postgresql" {
-  depends_on = ["helm_release.astro-db"]
+data "kubernetes_secret" "astro_db_postgresql" {
+  depends_on = ["helm_release.astro_db"]
 
   metadata {
     name      = "astro-db-postgresql"
@@ -68,8 +68,8 @@ data "kubernetes_secret" "astro-db-postgresql" {
   }
 }
 
-resource "kubernetes_secret" "astronomer-bootstrap" {
-  depends_on = ["helm_release.astro-db"]
+resource "kubernetes_secret" "astronomer_bootstrap" {
+  depends_on = ["helm_release.astro_db"]
 
   metadata {
     name      = "astronomer-bootstrap"
@@ -79,7 +79,7 @@ resource "kubernetes_secret" "astronomer-bootstrap" {
   type = "kubernetes.io/generic"
 
   data {
-    "connection" = "postgres://postgres:${lookup(data.kubernetes_secret.astro-db-postgresql.data,"postgresql-password")}@astro-db-postgresql.astronomer.svc.cluster.local:5432"
+    "connection" = "postgres://postgres:${lookup(data.kubernetes_secret.astro_db_postgresql.data,"postgresql-password")}@astro-db-postgresql.astronomer.svc.cluster.local:5432"
   }
 }
 
@@ -102,7 +102,7 @@ resource "null_resource" "checkout_astronomer_version" {
 }
 
 resource "helm_release" "astronomer" {
-  depends_on = ["kubernetes_secret.astronomer-bootstrap",
+  depends_on = ["kubernetes_secret.astronomer_bootstrap",
     "null_resource.checkout_astronomer_version",
   ]
 
@@ -123,7 +123,7 @@ EOF
   ]
 }
 
-resource "helm_release" "astro-db" {
+resource "helm_release" "astro_db" {
   depends_on = ["kubernetes_service_account.tiller"]
 
   wait      = true
