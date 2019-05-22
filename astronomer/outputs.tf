@@ -1,3 +1,3 @@
-output "access_the_application_here" {
+output "application_url" {
   value = "https://app.${var.base_domain}/"
 }

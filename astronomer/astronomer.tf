@@ -20,8 +20,6 @@ resource "kubernetes_service_account" "tiller" {
 }
 
 resource "kubernetes_cluster_role_binding" "tiller_binding" {
-  depends_on = ["kubernetes_service_account.tiller"]
-
   metadata {
     name = "tiller-binding"
   }
@@ -34,7 +32,7 @@ resource "kubernetes_cluster_role_binding" "tiller_binding" {
 
   subject {
     kind      = "ServiceAccount"
-    name      = "tiller"
+    name      = "${kubernetes_service_account.tiller.name}"
     namespace = "kube-system"
   }
 }
@@ -100,21 +98,19 @@ resource "kubernetes_secret" "astronomer_bootstrap" {
 
 resource "null_resource" "helm_repo" {
   provisioner "local-exec" {
-    command = "if ! [ -d ./helm.astronomer.io ]; then git clone ${var.git_clone_from}; fi"
-  }
-}
-
-resource "null_resource" "checkout_astronomer_version" {
-  depends_on = ["null_resource.helm_repo"]
-
-  provisioner "local-exec" {
-    command = "cd ./helm.astronomer.io && git checkout ${var.astronomer_version} && cd .."
+    command = <<EOF
+    if ! [ -d ./helm.astronomer.io ];
+    then git clone ${var.git_clone_from};
+    fi
+    cd ./helm.astronomer.io && \
+    git checkout ${var.astronomer_version}
+    EOF
   }
 }
 
 resource "helm_release" "astronomer" {
   depends_on = ["kubernetes_secret.astronomer_bootstrap",
-    "null_resource.checkout_astronomer_version",
+    "null_resource.helm_repo",
     "kubernetes_namespace.astronomer",
   ]
 
