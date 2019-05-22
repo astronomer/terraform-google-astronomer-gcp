@@ -96,6 +96,13 @@ resource "null_resource" "bastion_setup" {
       "sudo snap install kubectl --classic",
       "sudo snap install helm --classic",
       "sudo snap install aws-cli --classic",
+    ]
+  }
+
+  # this is separate from the above in order to load a new shell
+  # so that unzip is present in the PATH
+  provisioner "remote-exec" {
+    inline = [
       "cd /opt/terraform_install && wget https://releases.hashicorp.com/terraform/${var.bastion_terraform_version}/terraform_${var.bastion_terraform_version}_linux_amd64.zip && sudo unzip terraform_${var.bastion_terraform_version}_linux_amd64.zip && sudo mv terraform /usr/local/bin/",
       "cd /usr/local/bin && sudo curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/aws-iam-authenticator && sudo chmod +x aws-iam-authenticator",
     ]
@@ -120,10 +127,31 @@ resource "null_resource" "bastion_setup" {
     source      = "../astronomer"
     destination = "/opt"
   }
+
+  # TODO: avoid the need to provision with public API, then disable
+  # the IAM user that calls the eks module is the only master user
+  # and has to perform the configmap update before the bastion
+  # is authorized
+
+  /*
+  provisioner "local-exec" {
+    working_dir = "${path.module}"
+
+    command = <<EOS
+    CLUSTER_ENDPOINT=${replace(module.eks.cluster_endpoint,"https://","")}
+    echo "127.0.0.1 $CLUSTER_ENDPOINT" >> /etc/hosts
+    # this background process is automatically killed when the local-exec shell quits
+    ssh -o StrictHostKeyChecking=no -N -L 443:$CLUSTER_ENDPOINT:443 ubuntu@${aws_instance.bastion.public_ip} &
+    kubectl apply -f config-map-aws-auth_${local.cluster_name}.yaml --kubeconfig ${module.eks.kubeconfig_filename}
+    EOS
+  }
+  */
 }
 
 resource "null_resource" "astronomer_deploy" {
-  depends_on = ["null_resource.bastion_setup"]
+  depends_on = ["null_resource.bastion_setup",
+    "aws_security_group_rule.bastion_connection_to_private_kube_api",
+  ]
 
   connection {
     type        = "ssh"

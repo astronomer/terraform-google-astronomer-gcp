@@ -82,7 +82,7 @@ variable "route53_domain" {
 }
 
 variable "management_api" {
-  default = "private"
+  default = "public"
   type    = "string"
 }
 

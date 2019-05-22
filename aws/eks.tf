@@ -49,6 +49,37 @@ module "eks" {
   worker_group_launch_template_count = "0"
 }
 
+resource "aws_security_group_rule" "bastion_connection_to_private_kube_api" {
+  description       = "Connect the bastion to the EKS private endpoint"
+  security_group_id = "${module.eks.cluster_security_group_id}"
+
+  cidr_blocks = ["${aws_instance.bastion.private_ip}/32"]
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
+  type        = "ingress"
+}
+
+/*
+resource "aws_security_group" "cluster" {
+  name_prefix = "${local.cluster_name}"
+  description = "Astronomer EKS cluster security group."
+  vpc_id      = "${module.vpc.vpc_id}"
+  tags        = "${merge(local.tags, map("Name", "${var.cluster_name}-eks_cluster_sg"))}"
+}
+
+resource "aws_security_group_rule" "cluster_egress_internet" {
+  count             = "${var.cluster_create_security_group ? 1 : 0}"
+  description       = "Allow cluster egress access to the Internet."
+  protocol          = "-1"
+  security_group_id = "${aws_security_group.cluster.id}"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 0
+  to_port           = 0
+  type              = "egress"
+}
+*/
+
 resource "local_file" "kubeconfig" {
   content  = "${module.eks.kubeconfig}"
   filename = "./kubeconfig"
