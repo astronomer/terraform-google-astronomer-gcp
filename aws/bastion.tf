@@ -148,7 +148,7 @@ resource "null_resource" "bastion_setup" {
   */
 }
 
-resource "null_resource" "astronomer_deploy" {
+resource "null_resource" "astronomer_prepare" {
   depends_on = ["null_resource.bastion_setup",
     "aws_security_group_rule.bastion_connection_to_private_kube_api",
   ]
@@ -161,13 +161,46 @@ resource "null_resource" "astronomer_deploy" {
     port        = "22"
   }
 
+  provisioner "file" {
+    content = <<EOF
+base_domain  = "astro.${var.route53_domain}"
+cluster_type = "${var.cluster_type}"
+admin_email  = "${var.admin_email}"
+EOF
+
+    destination = "/opt/astronomer/terraform.tfvars"
+  }
+
   provisioner "remote-exec" {
-    inline = [
-      "export KUBECONFIG=./kubeconfig",
-      "cd /opt/astronomer",
-      "helm init",
-      "terraform init",
-      "terraform apply -var 'base_domain=astro.${var.route53_domain}' -var 'cluster_type=${var.cluster_type}' -var 'admin_email=${var.admin_email}' --auto-approve",
+    inline = [<<EOF
+#!/bin/bash
+export KUBECONFIG=./kubeconfig;
+cd /opt/astronomer;
+/snap/bin/helm init;
+EOF
+    ]
+  }
+}
+
+resource "null_resource" "astronomer_deploy" {
+  depends_on = ["null_resource.astronomer_prepare"]
+
+  connection {
+    type        = "ssh"
+    host        = "${aws_instance.bastion.public_ip}"
+    user        = "ubuntu"
+    private_key = "${file("~/.ssh/id_rsa")}"
+    port        = "22"
+  }
+
+  provisioner "remote-exec" {
+    inline = [<<EOF
+#!/bin/bash
+export KUBECONFIG=./kubeconfig;
+cd /opt/astronomer;
+terraform init;
+terraform apply --auto-approve;
+EOF
     ]
   }
 }
