@@ -20,6 +20,8 @@ resource "kubernetes_service_account" "tiller" {
 }
 
 resource "kubernetes_cluster_role_binding" "tiller_binding" {
+  depends_on = ["kubernetes_service_account.tiller"]
+
   metadata {
     name = "tiller-binding"
   }
@@ -32,7 +34,7 @@ resource "kubernetes_cluster_role_binding" "tiller_binding" {
 
   subject {
     kind      = "ServiceAccount"
-    name      = "${kubernetes_service_account.tiller.name}"
+    name      = "tiller"
     namespace = "kube-system"
   }
 }
