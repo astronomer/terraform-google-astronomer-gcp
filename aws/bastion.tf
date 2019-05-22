@@ -163,7 +163,11 @@ resource "null_resource" "astronomer_deploy" {
 
   provisioner "remote-exec" {
     inline = [
-      "KUBECONFIG=./kubeconfig cd /opt/astronomer && terraform init && terraform apply -var 'base_domain=astro.${var.route53_domain}' -var 'cluster_type=${var.cluster_type}' -var 'admin_email=${var.admin_email}' --auto-approve",
+      "export KUBECONFIG=./kubeconfig",
+      "cd /opt/astronomer",
+      "helm init",
+      "terraform init",
+      "terraform apply -var 'base_domain=astro.${var.route53_domain}' -var 'cluster_type=${var.cluster_type}' -var 'admin_email=${var.admin_email}' --auto-approve",
     ]
   }
 }
