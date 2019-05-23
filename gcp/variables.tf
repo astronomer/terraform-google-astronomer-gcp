@@ -1,3 +1,7 @@
+variable label {
+  description = "A short, lowercase-letters-only identifier for this deployment"
+}
+
 variable region {
   default     = "us-east4"
   description = "The GCP region to deploy infrastructure into"
@@ -8,8 +12,8 @@ variable zone {
   description = "The GCP zone to deploy infrastructure into"
 }
 
-variable cluster_name {
-  description = "The name of the GKE cluster"
+variable project {
+  description = "The Google Cloud project name to use"
 }
 
 variable machine_type {
@@ -54,12 +58,12 @@ variable "iap_cidr_ranges" {
   ]
 }
 
-variable "bastion_users" {
+variable "bastion_user_emails" {
   type        = "list"
   description = "List of email addresses of users who be able to SSH into Bastion using Cloud IAP & OS Login"
 }
 
-variable "bastion_admins" {
+variable "bastion_admin_emails" {
   type        = "list"
   description = "List of email addresses of users with Sudo who be able to SSH into Bastion using Cloud IAP & OS Login"
 }

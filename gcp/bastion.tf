@@ -6,7 +6,7 @@ data "google_compute_image" "ubuntu_lts_latest_image" {
 
 # Bastion host
 resource "google_compute_instance" "bastion" {
-  name         = "bastion"
+  name         = "${var.label}-bastion"
   machine_type = "${var.machine_type}"
   zone         = "${var.zone}"
 

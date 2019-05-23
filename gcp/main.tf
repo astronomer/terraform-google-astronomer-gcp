@@ -5,7 +5,7 @@ resource "random_string" "password" {
 
 # Node pool
 resource "google_container_node_pool" "np" {
-  name     = "${var.cluster_name}-np"
+  name     = "${var.label}-node-pool"
   location = "${var.region}"
   cluster  = "${google_container_cluster.primary.name}"
 
@@ -37,7 +37,7 @@ resource "google_container_node_pool" "np" {
 
 # GKE cluster
 resource "google_container_cluster" "primary" {
-  name               = "${var.cluster_name}"
+  name               = "${var.label}-cluster"
   location           = "${var.region}"
   min_master_version = "${var.min_master_version}"
   node_version       = "${var.node_version}"
