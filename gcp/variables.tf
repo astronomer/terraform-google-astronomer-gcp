@@ -17,18 +17,13 @@ variable project {
 }
 
 variable machine_type {
-  default     = "n1-standard-8"
+  default     = "n1-standard-4"
   description = "The GCP machine type for GKE worker nodes"
-}
-
-variable min_node_count {
-  default     = 3
-  description = "The minimum amount of worker nodes in GKE cluster"
 }
 
 variable max_node_count {
   default     = 10
-  description = "The maximum amount of worker nodes in GKE cluster"
+  description = "The approximate maximum number of nodes in the GKE worker node pool. The exact max will be 3 * ceil(your_value / 3.0) ."
 }
 
 variable "min_master_version" {
