@@ -37,6 +37,7 @@ resource "google_container_node_pool" "np" {
 
 # GKE cluster
 resource "google_container_cluster" "primary" {
+  provider           = "google-beta"
   name               = "${var.label}-cluster"
   location           = "${var.region}"
   min_master_version = "${var.min_master_version}"
@@ -82,5 +83,12 @@ resource "google_container_cluster" "primary" {
 
   network_policy = {
     enabled = true
+  }
+
+  addons_config {
+    istio_config {
+      disabled = "${var.istio_disabled}"
+      auth     = "${var.istio_auth}"
+    }
   }
 }

@@ -9,16 +9,6 @@ pipeline:
     - pre-commit install --install-hooks
     - pre-commit run -a
 
-  trigger:
-    image: plugins/downstream
-    server: http://drone.astronomer.io
-    fork: true
-    secrets: [ downstream_token ]
-    repositories:
-      - astronomer/google-environments
-    when:
-      branch: [ master ]
-
   notify:
     image: plugins/slack
     secrets: [ slack_webhook ]
