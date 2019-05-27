@@ -1,8 +1,3 @@
-resource "random_string" "password" {
-  length  = 16
-  special = true
-}
-
 # Node pool
 resource "google_container_node_pool" "np" {
   name = "${var.label}-node-pool"
@@ -105,13 +100,24 @@ resource "google_container_cluster" "primary" {
     "${var.region}-c",
   ]
 
+  # Setting an empty username and password explicitly disables basic auth
   master_auth {
-    username = "admin"
-    password = "${random_string.password.result}"
+    username = ""
+    password = ""
 
     client_certificate_config {
-      issue_client_certificate = false
+      issue_client_certificate = true
     }
+  }
+
+  # There is a known issue with issue_client_certificate = true
+  # where on the first run, it will issue the cert, then will set
+  # it to 'false'. So, when we run again, terraform thinks we should
+  # tear down the cluster, which we don't want. This is a work around.
+  # Applicable to Kubernetes 1.12
+  # https://github.com/terraform-providers/terraform-provider-google/issues/3369
+  lifecycle {
+    ignore_changes = ["master_auth"]
   }
 
   network_policy = {

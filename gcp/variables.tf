@@ -2,6 +2,20 @@ variable label {
   description = "A short, lowercase-letters-only identifier for this deployment"
 }
 
+variable "bastion_terraform_version" {
+  default = "0.11.13"
+  type    = "string"
+}
+
+variable "acme_server" {
+  default = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  type    = "string"
+}
+
+variable google_domain {
+  description = "A domain you own in this google account that you want to use for the deployment"
+}
+
 variable region {
   default     = "us-east4"
   description = "The GCP region to deploy infrastructure into"
@@ -19,6 +33,11 @@ variable project {
 variable machine_type {
   default     = "n1-standard-4"
   description = "The GCP machine type for GKE worker nodes"
+}
+
+variable machine_type_bastion {
+  default     = "f1-micro"
+  description = "The GCP machine type for the bastion"
 }
 
 variable max_node_count {
@@ -94,4 +113,8 @@ variable "istio_disabled" {
 
 variable "istio_auth" {
   default = "AUTH_MUTUAL_TLS"
+}
+
+variable "astronomer_namespace" {
+  default = "astronomer"
 }
