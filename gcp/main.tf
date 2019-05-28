@@ -1,3 +1,8 @@
+resource "random_string" "password" {
+  length  = 16
+  special = true
+}
+
 # Node pool
 resource "google_container_node_pool" "np" {
   name = "${var.label}-node-pool"
@@ -83,8 +88,9 @@ resource "google_container_cluster" "primary" {
   }
 
   private_cluster_config {
-    enable_private_nodes   = true
-    master_ipv4_cidr_block = "172.16.0.0/28"
+    enable_private_endpoint = true
+    enable_private_nodes    = true
+    master_ipv4_cidr_block  = "172.16.0.0/28"
   }
 
   master_authorized_networks_config {
@@ -100,15 +106,9 @@ resource "google_container_cluster" "primary" {
     "${var.region}-c",
   ]
 
-  # Setting an empty username and password explicitly disables basic auth
-  master_auth {
-    username = ""
-    password = ""
-
-    client_certificate_config {
-      issue_client_certificate = true
-    }
-  }
+  /*
+  # TODO: use certificate auth
+  # after this issue is resolved
 
   # There is a known issue with issue_client_certificate = true
   # where on the first run, it will issue the cert, then will set
@@ -120,10 +120,28 @@ resource "google_container_cluster" "primary" {
     ignore_changes = ["master_auth"]
   }
 
+  # Setting an empty username and password explicitly disables basic auth
+  master_auth {
+    username = ""
+    password = ""
+
+    client_certificate_config {
+      issue_client_certificate = true
+    }
+  }
+  */
+
+  master_auth {
+    username = "admin"
+    password = "${random_string.password.result}"
+
+    client_certificate_config {
+      issue_client_certificate = false
+    }
+  }
   network_policy = {
     enabled = true
   }
-
   addons_config {
     istio_config {
       disabled = "${var.istio_disabled}"

@@ -17,6 +17,11 @@ variable "base_domain" {
   type = "string"
 }
 
+variable "astronomer_namespace" {
+  default = "astronmer"
+  type    = "string"
+}
+
 variable "admin_email" {
   description = "An email address"
   type        = "string"
