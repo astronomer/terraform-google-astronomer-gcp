@@ -9,7 +9,8 @@ variable "git_clone_from" {
 }
 
 variable "astronomer_version" {
-  default = "v0.8.2"
+  # default = "v0.8.2"
+  default = "master"
   type    = "string"
 }
 
@@ -18,7 +19,7 @@ variable "base_domain" {
 }
 
 variable "astronomer_namespace" {
-  default = "astronmer"
+  default = "astronomer"
   type    = "string"
 }
 

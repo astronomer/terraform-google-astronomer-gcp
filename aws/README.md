@@ -1,6 +1,6 @@
 ## Astronomer deployment on EKS
 
-Private deployment
+Private cloud deployment: Run Astronomer in our account and peer it to the customer's cloud
 
 ## Architecture:
 

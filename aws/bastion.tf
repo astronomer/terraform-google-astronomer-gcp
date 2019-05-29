@@ -74,6 +74,11 @@ resource "aws_instance" "bastion" {
 # managed separately so the bastion doesn't need to
 # redeploy during development
 resource "null_resource" "bastion_setup" {
+  # this makes this resource run each time
+  triggers {
+    build_number = "${timestamp()}"
+  }
+
   connection {
     type        = "ssh"
     host        = "${aws_instance.bastion.public_ip}"
@@ -88,7 +93,8 @@ resource "null_resource" "bastion_setup" {
   provisioner "remote-exec" {
     inline = [
       "sudo mkdir -p /opt/terraform_install",
-      "sudo mkdir -p /opt/astronomer_certs",
+      "sudo mkdir -p /opt/db_password",
+      "sudo mkdir -p /opt/tls_secrets",
       "sudo mkdir -p /opt/astronomer",
       "sudo chown -R ubuntu:ubuntu /opt",
       "sudo apt-get -y update;",
@@ -103,19 +109,30 @@ resource "null_resource" "bastion_setup" {
   # so that unzip is present in the PATH
   provisioner "remote-exec" {
     inline = [
+      "rm /opt/terraform_install/*",
       "cd /opt/terraform_install && wget https://releases.hashicorp.com/terraform/${var.bastion_terraform_version}/terraform_${var.bastion_terraform_version}_linux_amd64.zip && sudo unzip terraform_${var.bastion_terraform_version}_linux_amd64.zip && sudo mv terraform /usr/local/bin/",
       "cd /usr/local/bin && sudo curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.12.7/2019-03-27/bin/linux/amd64/aws-iam-authenticator && sudo chmod +x aws-iam-authenticator",
     ]
   }
 
   provisioner "file" {
+    content     = "postgres://${module.aurora.this_rds_cluster_master_username}:${module.aurora.this_rds_cluster_master_password}@${module.aurora.this_rds_cluster_endpoint}:${module.aurora.this_rds_cluster_port}"
+    destination = "/opt/db_password/connection_string"
+  }
+
+  provisioner "file" {
     content     = "${acme_certificate.lets_encrypt.certificate_pem}"
-    destination = "/opt/astronomer_certs/tls.crt"
+    destination = "/opt/tls_secrets/tls.crt"
   }
 
   provisioner "file" {
     content     = "${acme_certificate.lets_encrypt.private_key_pem}"
-    destination = "/opt/astronomer_certs/tls.key"
+    destination = "/opt/tls_secrets/tls.key"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/../astronomer"
+    destination = "/opt"
   }
 
   provisioner "file" {
@@ -123,15 +140,18 @@ resource "null_resource" "bastion_setup" {
     destination = "/opt/astronomer/kubeconfig"
   }
 
-  provisioner "file" {
-    source      = "../astronomer"
-    destination = "/opt"
-  }
-
   # TODO: avoid the need to provision with public API, then disable
   # the IAM user that calls the eks module is the only master user
   # and has to perform the configmap update before the bastion
   # is authorized
+
+  provisioner "local-exec" {
+    working_dir = "${path.module}"
+
+    command = <<EOS
+    kubectl apply -f config-map-aws-auth_${local.cluster_name}.yaml --kubeconfig ${module.eks.kubeconfig_filename}
+    EOS
+  }
 
   /*
   provisioner "local-exec" {
@@ -148,10 +168,25 @@ resource "null_resource" "bastion_setup" {
   */
 }
 
+resource "local_file" "turn_off_strict_host_checking" {
+  content = <<EOF
+Host *
+    StrictHostKeyChecking no
+EOF
+
+  filename = "/tmp/sshconfig_no_checking"
+}
+
 resource "null_resource" "astronomer_prepare" {
   depends_on = ["null_resource.bastion_setup",
+    "local_file.turn_off_strict_host_checking",
     "aws_security_group_rule.bastion_connection_to_private_kube_api",
   ]
+
+  # this makes this resource run each time
+  triggers {
+    build_number = "${timestamp()}"
+  }
 
   connection {
     type        = "ssh"
@@ -176,9 +211,16 @@ EOF
 #!/bin/bash
 export KUBECONFIG=./kubeconfig;
 cd /opt/astronomer;
-/snap/bin/helm init;
+/snap/bin/kubectl create serviceaccount --namespace kube-system tiller
+/snap/bin/kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+/snap/bin/kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+/snap/bin/helm init --service-account tiller --upgrade
 EOF
     ]
+  }
+
+  provisioner "local-exec" {
+    command = "py.test --host='ssh://ubuntu@${aws_instance.bastion.public_ip}:22' --ssh-config=/tmp/sshconfig_no_checking ../test_bastion.py"
   }
 }
 
@@ -200,6 +242,18 @@ export KUBECONFIG=./kubeconfig;
 cd /opt/astronomer;
 terraform init;
 terraform apply --auto-approve;
+EOF
+    ]
+  }
+
+  provisioner "remote-exec" {
+    when = "destroy"
+
+    inline = [<<EOF
+#!/bin/bash
+export KUBECONFIG=./kubeconfig;
+cd /opt/astronomer;
+terraform destroy --auto-approve;
 EOF
     ]
   }

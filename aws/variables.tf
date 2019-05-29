@@ -1,7 +1,6 @@
 #
 # Variables Configuration
 #
-
 variable "cluster_type" {
   default = "private"
   type    = "string"
@@ -17,6 +16,12 @@ variable "label" {
 variable "cluster_version" {
   default = "1.12"
   type    = "string"
+}
+
+variable "postgres_airflow_password" {
+  default     = ""
+  description = "The password for the 'airflow' user in postgres. If blank, will be auto-generated"
+  type        = "string"
 }
 
 variable "owner" {
@@ -41,6 +46,11 @@ variable "lb_instance_type" {
 
 variable "worker_instance_type" {
   default = "m5.xlarge"
+  type    = "string"
+}
+
+variable "db_instance_type" {
+  default = "db.r4.large"
   type    = "string"
 }
 
@@ -92,6 +102,15 @@ variable "bastion_terraform_version" {
 }
 
 variable "acme_server" {
-  default = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  # default = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  default = "https://acme-v02.api.letsencrypt.org/directory"
   type    = "string"
+}
+
+variable "peer_vpc_id" {
+  type = "string"
+}
+
+variable "peer_account_id" {
+  type = "string"
 }

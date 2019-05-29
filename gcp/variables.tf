@@ -8,7 +8,8 @@ variable "bastion_terraform_version" {
 }
 
 variable "acme_server" {
-  default = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  # default = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  default = "https://acme-v02.api.letsencrypt.org/directory"
   type    = "string"
 }
 

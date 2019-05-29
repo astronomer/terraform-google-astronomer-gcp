@@ -14,6 +14,8 @@ resource "random_string" "suffix" {
 locals {
   cluster_name = "astronomer-${var.label}-${var.environment}-${random_string.suffix.result}"
 
+  postgres_airflow_password = "${ var.postgres_airflow_password == "" ? random_string.postgres_airflow_password.result : var.postgres_airflow_password }"
+
   azs = ["${var.aws_region}a", "${var.aws_region}b"]
 
   worker_groups = [
