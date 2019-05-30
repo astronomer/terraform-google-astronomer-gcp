@@ -25,11 +25,13 @@ variable "postgres_airflow_password" {
 }
 
 variable "owner" {
+  default     = "astronomer"
   description = "In your organization, who is responsible for this infrastructure? Please use lowercase, letters only."
   type        = "string"
 }
 
 variable "environment" {
+  default     = "prod"
   description = "Choose 'dev', 'qa', or 'prod'"
   type        = "string"
 }
@@ -82,11 +84,13 @@ variable "map_accounts_count" {
 }
 
 variable "admin_email" {
-  description = "An email address"
+  default     = "steven@astronomer.io"
+  description = "An email address that will be used to create the let's encrypt cert"
   type        = "string"
 }
 
 variable "route53_domain" {
+  default     = "airflow.run"
   description = "The route53 domain in your account you want to use for the *.<customer_id>.route53_domain subdomain"
   type        = "string"
 }
