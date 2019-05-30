@@ -50,39 +50,30 @@ mv terraform /usr/local/bin/
 EOF
 }
 
-resource "local_file" "k8_admin_password" {
-  sensitive_content = "${google_container_cluster.primary.master_auth.0.password}"
-  filename          = "${path.module}/kubeconfig/admin_password"
+resource "local_file" "kubeconfig" {
+  sensitive_content = <<EOF
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://${google_container_cluster.primary.endpoint}
+    certificate-authority-data: ${google_container_cluster.primary.master_auth.0.cluster_ca_certificate}
+  name: cluster
+contexts:
+- context:
+    cluster: cluster
+    user: admin
+  name: context
+current-context: "context"
+kind: Config
+preferences: {}
+users:
+- name: admin
+  user:
+    password: ${google_container_cluster.primary.master_auth.0.password}
+    username: admin
+EOF
 
-  # Only available on first run
-  lifecycle {
-    ignore_changes = ["sensitive_content"]
-  }
-}
-
-resource "local_file" "client_certificate" {
-  sensitive_content = "${google_container_cluster.primary.master_auth.0.client_certificate}"
-  filename          = "${path.module}/kubeconfig/client_certificate.pem"
-
-  # Only available on first run
-  lifecycle {
-    ignore_changes = ["sensitive_content"]
-  }
-}
-
-resource "local_file" "client_key" {
-  sensitive_content = "${google_container_cluster.primary.master_auth.0.client_key}"
-  filename          = "${path.module}/kubeconfig/client_key.pem"
-
-  # Only available on first run
-  lifecycle {
-    ignore_changes = ["sensitive_content"]
-  }
-}
-
-resource "local_file" "cluster_ca_certificate" {
-  sensitive_content = "${base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)}"
-  filename          = "${path.module}/kubeconfig/cluster_ca_certificate.pem"
+  filename = "${path.module}/kubeconfig"
 }
 
 resource "local_file" "tls_key" {
@@ -103,13 +94,8 @@ resource "local_file" "db_password" {
 resource "local_file" "bastion_providers" {
   content = <<EOF
 provider "kubernetes" {
-  host                   = "https://${google_container_cluster.primary.endpoint}"
-  # client_certificate     = "$${file("/opt/kubeconfig/client_certificate.pem")}"
-  # client_key             = "$${file("/opt/kubeconfig/client_key.pem")}"
-  cluster_ca_certificate = "$${file("/opt/kubeconfig/cluster_ca_certificate.pem")}"
-  username = "admin"
-  password = "$${file("/opt/kubeconfig/admin_password")}"
-  load_config_file = false
+  config_path = "/opt/astronomer/kubeconfig"
+  load_config_file = true
 }
 
 provider "helm" {
@@ -117,12 +103,8 @@ provider "helm" {
   debug           = true
 
   kubernetes {
-    host                   = "https://${google_container_cluster.primary.endpoint}"
-    # client_certificate     = "$${file("/opt/kubeconfig/client_certificate.pem")}"
-    # client_key             = "$${file("/opt/kubeconfig/client_key.pem")}"
-    cluster_ca_certificate = "$${file("/opt/kubeconfig/cluster_ca_certificate.pem")}"
-    username = "admin"
-    password = "$${file("/opt/kubeconfig/admin_password")}"
+    config_path = "/opt/astronomer/kubeconfig"
+    load_config_file = true
   }
 }
 EOF
@@ -132,11 +114,7 @@ EOF
 
 resource "null_resource" "astronomer_prepare" {
   depends_on = [
-    #"local_file.client_certificate",
-    #"local_file.client_key",
-    "local_file.k8_admin_password",
-
-    "local_file.cluster_ca_certificate",
+    "local_file.kubeconfig",
     "local_file.bastion_providers",
     "local_file.tls_key",
     "local_file.tls_cert",
@@ -164,7 +142,8 @@ resource "null_resource" "astronomer_prepare" {
     gcloud beta compute scp --recurse ${path.module}/db_password $NAME:/opt --zone $ZONE && \
     gcloud beta compute scp --recurse ${path.module}/../astronomer $NAME:/opt --zone $ZONE && \
     gcloud beta compute scp /tmp/providers.tf.bastion $NAME:/opt/astronomer/providers.tf --zone $ZONE && \
-    gcloud beta compute ssh --zone $ZONE $NAME -- 'sudo chown -R root:root /opt'
+    gcloud beta compute scp ${path.module}/files/prepare_k8.sh $NAME:/opt/astronomer/prepare_k8.sh --zone $ZONE && \
+    gcloud beta compute ssh --zone $ZONE $NAME -- "cd /opt/astronomer && sudo ZONE=$ZONE NAME=$NAME /bin/bash ./prepare_k8.sh"
     EOS
   }
 }

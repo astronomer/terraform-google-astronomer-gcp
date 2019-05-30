@@ -4,3 +4,4 @@ providers.tf
 kubeconfig/*
 tls_secrets/*
 db_password/*
+kubeconfig
