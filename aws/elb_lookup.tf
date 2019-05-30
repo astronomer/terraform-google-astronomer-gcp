@@ -22,7 +22,7 @@ data "aws_lambda_invocation" "elb_name" {
 }
 
 resource "aws_iam_role_policy" "elb_lookup_policy" {
-  name = "elb_lookup_policy"
+  name = "${var.customer_id}_elb_lookup_policy"
   role = "${aws_iam_role.elb_lookup_role.id}"
 
   policy = <<EOF
@@ -44,7 +44,7 @@ EOF
 }
 
 resource "aws_iam_role" "elb_lookup_role" {
-  name = "elb_lookup_role"
+  name = "${var.customer_id}_elb_lookup_role"
 
   assume_role_policy = <<EOF
 {
@@ -72,7 +72,7 @@ data "archive_file" "elb_lookup" {
 resource "aws_lambda_function" "elb_lookup" {
   depends_on       = ["data.archive_file.elb_lookup"]
   filename         = "elb_lookup.py.zip"
-  function_name    = "elb_lookup_function"
+  function_name    = "${var.customer_id}_elb_lookup_function"
   role             = "${aws_iam_role.elb_lookup_role.arn}"
   handler          = "elb_lookup.my_handler"
   source_code_hash = "${data.archive_file.elb_lookup.output_base64sha256}"

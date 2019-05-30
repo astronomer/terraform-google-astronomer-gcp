@@ -181,6 +181,7 @@ resource "null_resource" "astronomer_prepare" {
   depends_on = ["null_resource.bastion_setup",
     "local_file.turn_off_strict_host_checking",
     "aws_security_group_rule.bastion_connection_to_private_kube_api",
+    "module.aurora",
   ]
 
   # this makes this resource run each time
