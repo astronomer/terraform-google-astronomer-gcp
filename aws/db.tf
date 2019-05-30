@@ -10,7 +10,7 @@ resource "random_string" "postgres_airflow_password" {
 
 module "aurora" {
   source                          = "terraform-aws-modules/rds-aurora/aws"
-  name                            = "${var.label}astrodb"
+  name                            = "${var.customer_id}astrodb"
   engine                          = "aurora-postgresql"
   engine_version                  = "9.6.9"
   subnets                         = ["${module.vpc.database_subnets}"]

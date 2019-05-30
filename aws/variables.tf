@@ -8,8 +8,8 @@ variable "cluster_type" {
 
 # this is the basename that will be used
 # for naming other things
-variable "label" {
-  description = "this lowercase, letters-only string will be used to label/prefix some of your AWS resources. In the case of a peered private-cloud deployment, please provide a string indicating the customer name. This will be used to create a subdomain and will be frequently visible to customers and often typed by the users."
+variable "customer_id" {
+  description = "this lowercase, letters-only string will be used to label/prefix/customer_id some of your AWS resources. In the case of a peered private-cloud deployment, please provide a string indicating the customer name. This will be used to create a subdomain and will be frequently visible to customers and often typed by the users."
   type        = "string"
 }
 
@@ -87,7 +87,7 @@ variable "admin_email" {
 }
 
 variable "route53_domain" {
-  description = "The route53 domain in your account you want to use for the *.<label>.route53_domain subdomain"
+  description = "The route53 domain in your account you want to use for the *.<customer_id>.route53_domain subdomain"
   type        = "string"
 }
 

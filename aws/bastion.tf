@@ -49,7 +49,7 @@ resource "aws_security_group" "bastion_sg" {
 }
 
 resource "aws_key_pair" "bastion_ssh_key" {
-  key_name   = "bastion_ssh_key_${var.label}"
+  key_name   = "bastion_ssh_key_${var.customer_id}"
   public_key = "${file("~/.ssh/id_rsa.pub")}"
 }
 
@@ -198,7 +198,7 @@ resource "null_resource" "astronomer_prepare" {
 
   provisioner "file" {
     content = <<EOF
-base_domain  = "${var.label}.${var.route53_domain}"
+base_domain  = "${var.customer_id}.${var.route53_domain}"
 cluster_type = "${var.cluster_type}"
 admin_email  = "${var.admin_email}"
 EOF
