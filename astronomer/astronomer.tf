@@ -46,17 +46,17 @@ resource "kubernetes_secret" "astronomer_tls" {
 resource "null_resource" "helm_repo" {
   provisioner "local-exec" {
     command = <<EOF
-    if ! [ -d ${path.module}/helm.astronomer.io ];
+    if ! [ -d "${path.module}/helm.astronomer.io" ];
     then git clone ${var.git_clone_from};
     fi
-    cd ${path.module}/helm.astronomer.io && \
+    cd "${path.module}/helm.astronomer.io" && \
     git checkout ${var.astronomer_version}
     EOF
   }
 
   provisioner "local-exec" {
     when    = "destroy"
-    command = "rm -rf ${path.module}/helm.astronomer.io"
+    command = "rm -rf '${path.module}/helm.astronomer.io'"
   }
 }
 

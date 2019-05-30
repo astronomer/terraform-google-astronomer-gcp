@@ -50,26 +50,6 @@ mv terraform /usr/local/bin/
 EOF
 }
 
-/*
-resource "local_file" "client_certificate" {
-  sensitive_content  = "${google_container_cluster.primary.master_auth.0.client_certificate}"
-  filename = "${path.module}/kubeconfig/client_certificate.pem"
-  # Only available on first run
-  lifecycle {
-    ignore_changes = ["sensitive_content"]
-  }
-}
-
-resource "local_file" "client_key" {
-  sensitive_content  = "${google_container_cluster.primary.master_auth.0.client_key}"
-  filename = "${path.module}/kubeconfig/client_key.pem"
-  # Only available on first run
-  lifecycle {
-    ignore_changes = ["sensitive_content"]
-  }
-}
-*/
-
 resource "local_file" "k8_admin_password" {
   sensitive_content = "${google_container_cluster.primary.master_auth.0.password}"
   filename          = "${path.module}/kubeconfig/admin_password"

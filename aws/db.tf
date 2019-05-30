@@ -16,7 +16,7 @@ module "aurora" {
   subnets                         = ["${module.vpc.database_subnets}"]
   vpc_id                          = "${module.vpc.vpc_id}"
   replica_count                   = 1
-  instance_type                   = "db.r4.large"
+  instance_type                   = "${var.db_instance_type}"
   apply_immediately               = true
   skip_final_snapshot             = "${ var.environment == "dev" ? true : false }"
   db_parameter_group_name         = "${aws_db_parameter_group.aurora_db_postgres96_parameter_group.id}"
@@ -32,15 +32,15 @@ module "aurora" {
 }
 
 resource "aws_db_parameter_group" "aurora_db_postgres96_parameter_group" {
-  name        = "test-aurora-db-postgres96-parameter-group"
+  name        = "${var.customer_id}-aurora-db-postgres96-parameter-group"
   family      = "aurora-postgresql9.6"
-  description = "test-aurora-db-postgres96-parameter-group"
+  description = "${var.customer_id}-aurora-db-postgres96-parameter-group"
 }
 
 resource "aws_rds_cluster_parameter_group" "aurora_cluster_postgres96_parameter_group" {
-  name        = "test-aurora-postgres96-cluster-parameter-group"
+  name        = "${var.customer_id}-aurora-postgres96-cluster-parameter-group"
   family      = "aurora-postgresql9.6"
-  description = "test-aurora-postgres96-cluster-parameter-group"
+  description = "${var.customer_id}-aurora-postgres96-cluster-parameter-group"
 }
 
 # this permission is used to validate the connection
