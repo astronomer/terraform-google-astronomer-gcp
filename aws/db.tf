@@ -4,7 +4,7 @@ resource "random_id" "db_name_suffix" {
 
 resource "random_string" "postgres_airflow_password" {
   count   = "${ var.postgres_airflow_password == "" ? 1 : 0 }"
-  length  = 8
+  length  = 32
   special = false
 }
 
