@@ -34,7 +34,7 @@ def read_arguments():
     except IndexError:
         print("Please execute like this:")
         print(
-            f"{sys.argv[0]} <peer_account_id> <peer_vpc_id> <peer_region> <my_vpc_id> <this_subnet_should_be_peered> <also_peer_this_subnet> <you_can_peer_as_many_as_you_like> ..."
+            f"python3 {sys.argv[0]} <peer_account_id> <peer_vpc_id> <peer_region> <my_vpc_id> <this_subnet_should_be_peered> <also_peer_this_subnet> <you_can_peer_as_many_as_you_like> ..."
         )
         exit(1)
 
@@ -44,7 +44,7 @@ def request_and_wait_for_peering_connection(client,
                                             peer_vpc_id,
                                             peer_region,
                                             my_vpc_id,
-                                            timeout=1000):
+                                            timeout=60*15):
     ''' Initiate a peering connection and
     wait for it to be accepted.
 
@@ -210,7 +210,7 @@ def get_route_table_of_subnet(client,
             ]
         },
         {
-            'Name': 'subnet-id',
+            'Name': 'association.subnet-id',
             'Values': [
                 subnet_id,
             ]

@@ -198,7 +198,7 @@ resource "null_resource" "astronomer_prepare" {
 
   provisioner "file" {
     content = <<EOF
-base_domain  = "astro.${var.route53_domain}"
+base_domain  = "${var.label}.${var.route53_domain}"
 cluster_type = "${var.cluster_type}"
 admin_email  = "${var.admin_email}"
 EOF

@@ -19,7 +19,7 @@ resource "acme_registration" "user_registration" {
 
 resource "acme_certificate" "lets_encrypt" {
   account_key_pem = "${acme_registration.user_registration.account_key_pem}"
-  common_name     = "*.astro.${var.route53_domain}"
+  common_name     = "*.${var.label}.${var.route53_domain}"
 
   dns_challenge {
     provider = "route53"
@@ -32,7 +32,7 @@ data "aws_route53_zone" "selected" {
 
 resource "aws_route53_record" "astronomer" {
   zone_id = "${data.aws_route53_zone.selected.zone_id}"
-  name    = "*.astro.${data.aws_route53_zone.selected.name}"
+  name    = "*.${var.label}.${data.aws_route53_zone.selected.name}"
   type    = "CNAME"
   ttl     = "5"
   records = ["${data.aws_elb.nginx_elb.dns_name}"]
