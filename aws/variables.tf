@@ -120,3 +120,11 @@ variable "peer_vpc_id" {
   description = "The VPC ID to pair with, if this is an empty string, then we will not peer with any VPC"
   type        = "string"
 }
+
+variable "ten_dot_what_cidr" {
+  description = "10.X.0.0/16 - choose X"
+
+  # This is probably not that common
+  default = "234"
+  type    = "string"
+}
