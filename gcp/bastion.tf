@@ -200,8 +200,8 @@ resource "null_resource" "astronomer_deploy" {
     command = <<EOS
     ZONE="${google_compute_instance.bastion.zone}"
     NAME="${google_compute_instance.bastion.name}"
-    gcloud beta compute ssh --zone $ZONE $NAME -- 'sudo terraform init /opt/astronomer'
-    gcloud beta compute ssh --zone $ZONE $NAME -- 'sudo terraform apply -var base_domain="astro.${var.google_domain}" -var admin_email="${var.bastion_admin_emails[0]}" --auto-approve /opt/astronomer'
+    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform init'
+    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform apply -var base_domain="astro.${var.google_domain}" -var admin_email="${var.bastion_admin_emails[0]}" --auto-approve'
     EOS
   }
 }
