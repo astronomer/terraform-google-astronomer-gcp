@@ -1,5 +1,5 @@
 resource "google_compute_firewall" "bastion_iap_ingress" {
-  name        = "${var.label}-bastion-iap-ingress"
+  name        = "${var.deployment_id}-bastion-iap-ingress"
   network     = "${google_compute_network.core.self_link}"
   description = "Allows SSH traffic (port 22) from the GCP's IAP CIDR range to Bastion"
   priority    = 10000
@@ -16,7 +16,7 @@ resource "google_compute_firewall" "bastion_iap_ingress" {
 }
 
 resource "google_compute_firewall" "bastion_deny_all_ingress" {
-  name        = "${var.label}-bastion-deny-all-ingress"
+  name        = "${var.deployment_id}-bastion-deny-all-ingress"
   network     = "${google_compute_network.core.self_link}"
   description = "Denies all ingress traffic on bastion"
   priority    = 65534

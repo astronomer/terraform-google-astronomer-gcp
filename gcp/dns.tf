@@ -9,7 +9,7 @@ resource "random_id" "collision_avoidance" {
 }
 
 resource "google_dns_managed_zone" "public_zone" {
-  name     = "${var.label}-zone-${random_id.collision_avoidance.hex}"
+  name     = "${var.deployment_id}-zone-${random_id.collision_avoidance.hex}"
   dns_name = "${var.google_domain}."
 }
 

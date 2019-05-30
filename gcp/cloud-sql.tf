@@ -3,7 +3,7 @@ resource "random_id" "db_name_suffix" {
 }
 
 resource "google_sql_database_instance" "instance" {
-  name             = "${var.label}-astro-db-${random_id.db_name_suffix.hex}"
+  name             = "${var.deployment_id}-astro-db-${random_id.db_name_suffix.hex}"
   region           = "${var.region}"
   database_version = "POSTGRES_9_6"
 

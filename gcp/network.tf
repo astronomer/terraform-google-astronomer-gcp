@@ -1,13 +1,13 @@
 # https://www.terraform.io/docs/providers/google/r/compute_router_nat.html
 # VPC network
 resource "google_compute_network" "core" {
-  name                    = "${var.label}-core-network"
+  name                    = "${var.deployment_id}-core-network"
   auto_create_subnetworks = false
 }
 
 #Subnetwork
 resource "google_compute_subnetwork" "gke" {
-  name          = "${var.label}-gke-subnet"
+  name          = "${var.deployment_id}-gke-subnet"
   network       = "${google_compute_network.core.self_link}"
   ip_cidr_range = "10.0.0.0/16"
   region        = "${var.region}"
@@ -15,19 +15,19 @@ resource "google_compute_subnetwork" "gke" {
   private_ip_google_access = true
 
   secondary_ip_range {
-    range_name    = "${var.label}-gke-pods"
+    range_name    = "${var.deployment_id}-gke-pods"
     ip_cidr_range = "${var.gke_secondary_ip_ranges_pods}"
   }
 
   secondary_ip_range {
-    range_name    = "${var.label}-gke-services"
+    range_name    = "${var.deployment_id}-gke-services"
     ip_cidr_range = "${var.gke_secondary_ip_ranges_services}"
   }
 }
 
 # Router
 resource "google_compute_router" "router" {
-  name    = "${var.label}-router"
+  name    = "${var.deployment_id}-router"
   region  = "${google_compute_subnetwork.gke.region}"
   network = "${google_compute_network.core.self_link}"
 
@@ -39,13 +39,13 @@ resource "google_compute_router" "router" {
 # IP address
 resource "google_compute_address" "address" {
   count  = 1
-  name   = "${var.label}-nat-external-address-${count.index}"
+  name   = "${var.deployment_id}-nat-external-address-${count.index}"
   region = "${var.region}"
 }
 
 # Cloud NAT
 resource "google_compute_router_nat" "nat" {
-  name                               = "${var.label}-gke-bastion"
+  name                               = "${var.deployment_id}-gke-bastion"
   region                             = "${var.region}"
   router                             = "${google_compute_router.router.name}"
   nat_ip_allocate_option             = "MANUAL_ONLY"
@@ -67,7 +67,7 @@ resource "google_compute_router_nat" "nat" {
 resource "google_compute_global_address" "private_ip_address" {
   provider = "google-beta"
 
-  name          = "${var.label}-private-ip-address"
+  name          = "${var.deployment_id}-private-ip-address"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
@@ -84,7 +84,7 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 
 // - Bastion Subnetwork --------------------------------------------------
 resource "google_compute_subnetwork" "bastion" {
-  name          = "${var.label}-bastion-subnet"
+  name          = "${var.deployment_id}-bastion-subnet"
   network       = "${google_compute_network.core.self_link}"
   ip_cidr_range = "10.1.0.0/29"
   region        = "${var.region}"

@@ -1,4 +1,4 @@
-variable label {
+variable deployment_id {
   description = "A short, lowercase-letters-only identifier for this deployment"
 }
 

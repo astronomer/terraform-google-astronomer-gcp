@@ -5,7 +5,7 @@ resource "random_string" "password" {
 
 # Node pool
 resource "google_container_node_pool" "np" {
-  name = "${var.label}-node-pool"
+  name = "${var.deployment_id}-node-pool"
 
   location = "${var.region}"
   cluster  = "${google_container_cluster.primary.name}"
@@ -56,7 +56,7 @@ resource "google_container_node_pool" "np" {
 # GKE cluster
 resource "google_container_cluster" "primary" {
   provider = "google-beta"
-  name     = "${var.label}-cluster"
+  name     = "${var.deployment_id}-cluster"
 
   # "
   # We can't create a cluster with no node pool defined, but we want to only use
