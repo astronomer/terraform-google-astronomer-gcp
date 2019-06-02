@@ -3,6 +3,11 @@ variable "cluster_type" {
   type    = "string"
 }
 
+variable "istio_helm_release_version" {
+  default = "1.1.7"
+  type    = "string"
+}
+
 variable "git_clone_from" {
   default = "https://github.com/astronomer/helm.astronomer.io.git"
   type    = "string"

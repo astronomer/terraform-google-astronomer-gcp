@@ -3,6 +3,10 @@
 resource "kubernetes_namespace" "astronomer" {
   metadata {
     name = "${var.astronomer_namespace}"
+
+    labels {
+      istio-injection = "enabled"
+    }
   }
 }
 
@@ -64,6 +68,7 @@ resource "helm_release" "astronomer" {
   depends_on = ["kubernetes_secret.astronomer_bootstrap",
     "null_resource.helm_repo",
     "kubernetes_namespace.astronomer",
+    "helm_release.istio",
   ]
 
   name      = "astronomer"
