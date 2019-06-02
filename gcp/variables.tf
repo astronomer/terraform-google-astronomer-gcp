@@ -37,7 +37,7 @@ variable machine_type {
 }
 
 variable machine_type_bastion {
-  default     = "f1-micro"
+  default     = "g1-small"
   description = "The GCP machine type for the bastion"
 }
 

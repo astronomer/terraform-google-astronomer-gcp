@@ -56,7 +56,7 @@ resource "null_resource" "helm_repo" {
 
   provisioner "local-exec" {
     when    = "destroy"
-    command = "rm -rf '${path.module}/helm.astronomer.io'"
+    command = "rm -rf ${path.module}/helm.astronomer.io"
   }
 }
 
@@ -77,8 +77,9 @@ global:
   baseDomain: ${var.base_domain}
   tlsSecret: astronomer-tls
 nginx:
-  loadBalancerIP: ~
+  loadBalancerIP: ${var.load_balancer_ip == "" ? "~": var.load_balancer_ip}
   privateLoadBalancer: ${var.cluster_type == "private" ? true: false}
+  perserveSourceIP: true
 EOF
   ]
 }

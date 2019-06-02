@@ -44,14 +44,14 @@ resource "acme_certificate" "lets_encrypt" {
   }
 }
 
-/*
-resource "google_dns_record_set" "cname" {
-  name = "*.astro.${google_dns_managed_zone.public_zone.dns_name}"
-  managed_zone = "${google_dns_managed_zone.public_zone.name}"
-  type = "CNAME"
-  ttl  = 300
-  TODO: this should point to the static IP
-  rrdatas = ["frontend.mydomain.com."]
+resource "google_compute_address" "nginx_address" {
+  name = "${var.deployment_id}-nginx-address"
 }
-*/
 
+resource "google_dns_record_set" "a_record" {
+  name         = "*.astro.${google_dns_managed_zone.public_zone.dns_name}"
+  managed_zone = "${google_dns_managed_zone.public_zone.name}"
+  type         = "A"
+  ttl          = 300
+  rrdatas      = ["${google_compute_address.nginx_address.address}"]
+}

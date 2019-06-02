@@ -1,0 +1,1 @@
+gcloud beta compute ssh --zone $ZONE $NAME -- 'KUBECONFIG=/opt/astronomer/kubeconfig /snap/bin/kubectl get svc astronomer-nginx -n astronomer --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}"'

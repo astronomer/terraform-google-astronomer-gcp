@@ -9,7 +9,12 @@ variable "git_clone_from" {
 }
 
 variable "astronomer_version" {
-  default = "master"
+  default = "v0.9.1-alpha.1"
+  type    = "string"
+}
+
+variable "load_balancer_ip" {
+  default = ""
   type    = "string"
 }
 

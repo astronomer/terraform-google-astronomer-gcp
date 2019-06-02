@@ -121,10 +121,11 @@ resource "null_resource" "astronomer_prepare" {
     "local_file.db_password",
   ]
 
-  # this makes this resource run each time
+  /*
   triggers {
     build_number = "${timestamp()}"
   }
+  */
 
   provisioner "local-exec" {
     working_dir = "${path.module}"
@@ -137,13 +138,15 @@ resource "null_resource" "astronomer_prepare" {
     # then switch it back to root
     gcloud beta compute ssh --zone $ZONE $NAME -- 'sudo mkdir /opt || true'
     gcloud beta compute ssh --zone $ZONE $NAME -- 'export MYUSER=$(whoami); sudo -E chown -R $MYUSER /opt' && \
-    gcloud beta compute scp --recurse ${path.module}/kubeconfig $NAME:/opt --zone $ZONE && \
+    gcloud beta compute scp ${path.module}/kubeconfig $NAME:/opt/astronomer/kubeconfig --zone $ZONE && \
     gcloud beta compute scp --recurse ${path.module}/tls_secrets $NAME:/opt --zone $ZONE && \
     gcloud beta compute scp --recurse ${path.module}/db_password $NAME:/opt --zone $ZONE && \
     gcloud beta compute scp --recurse ${path.module}/../astronomer $NAME:/opt --zone $ZONE && \
     gcloud beta compute scp /tmp/providers.tf.bastion $NAME:/opt/astronomer/providers.tf --zone $ZONE && \
     gcloud beta compute scp ${path.module}/files/prepare_k8.sh $NAME:/opt/astronomer/prepare_k8.sh --zone $ZONE && \
-    gcloud beta compute ssh --zone $ZONE $NAME -- "cd /opt/astronomer && sudo ZONE=$ZONE NAME=$NAME /bin/bash ./prepare_k8.sh"
+    gcloud beta compute scp ${path.module}/files/rbac-config.yaml $NAME:/opt/astronomer/rbac-config.yaml --zone $ZONE && \
+    gcloud beta compute ssh --zone $ZONE $NAME -- "sudo chmod +x /opt/astronomer/prepare_k8.sh"
+    gcloud beta compute ssh --zone $ZONE $NAME -- "cd /opt/astronomer && sudo KUBECONFIG=./kubeconfig ./prepare_k8.sh"
     EOS
   }
 }
@@ -159,8 +162,16 @@ resource "null_resource" "astronomer_deploy" {
     command = <<EOS
     ZONE="${google_compute_instance.bastion.zone}"
     NAME="${google_compute_instance.bastion.name}"
-    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform init'
-    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform apply -var base_domain="astro.${var.google_domain}" -var admin_email="${var.bastion_admin_emails[0]}" --auto-approve'
+    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform init' && \
+    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform apply -var cluster_type=public -var base_domain="astro.${var.google_domain}" -var admin_email="${var.bastion_admin_emails[0]}" -var load_balancer_ip=${google_compute_address.nginx_address.address} --auto-approve'
     EOS
+  }
+
+  provisioner "local-exec" {
+    when = "destroy"
+
+    command = <<EOF
+    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform destroy -var cluster_type=public -var base_domain="astro.${var.google_domain}" -var admin_email="${var.bastion_admin_emails[0]}" -var load_balancer_ip=${google_compute_address.nginx_address.address} --auto-approve'
+    EOF
   }
 }
