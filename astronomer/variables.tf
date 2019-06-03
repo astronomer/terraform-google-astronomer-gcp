@@ -19,7 +19,7 @@ variable "git_clone_from" {
 }
 
 variable "astronomer_version" {
-  default = "v0.9.1-alpha.1"
+  default = "master"
   type    = "string"
 }
 
