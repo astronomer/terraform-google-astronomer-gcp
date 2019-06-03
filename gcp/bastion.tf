@@ -121,11 +121,10 @@ resource "null_resource" "astronomer_prepare" {
     "local_file.db_password",
   ]
 
-  /*
+  # this makes this resource run each time
   triggers {
     build_number = "${timestamp()}"
   }
-  */
 
   provisioner "local-exec" {
     working_dir = "${path.module}"

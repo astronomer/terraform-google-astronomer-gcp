@@ -60,7 +60,7 @@ resource "null_resource" "helm_repo" {
 
   provisioner "local-exec" {
     when    = "destroy"
-    command = "rm -rf ${path.module}/helm.astronomer.io"
+    command = "rm -rf '${path.module}/helm.astronomer.io'"
   }
 }
 

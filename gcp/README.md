@@ -7,40 +7,9 @@
 * Cloud SQL with Postgres
 * Bastion host for secure cluster administration
 
-## Usage
+## Architecture
 
-```hcl
-module "gcp-astro" {
-  source = "git::https://github.com/astronomer/terraform.git//gcp"
-
-  bastion_admins = [
-    "user:testuser@gmail.com",
-    "user:testemail@gmail.com",
-  ]
-
-  bastion_users = [
-    "user:testuser@gmail.com",
-    "user:testemail@gmail.com",
-  ]
-
-  cluster_name                     = "cloud-dev-cluster"
-  gke_secondary_ip_ranges_pods     = "10.32.0.0/14"
-  gke_secondary_ip_ranges_services = "10.98.0.0/20"
-}
-```
-
-Use both `google` and `google-beta` providers as few resources use `google-beta` provider too:
-```hcl
-provider google {
-  region  = "${var.region}"
-  project = "${var.project}"
-}
-
-provider google-beta {
-  region  = "${var.region}"
-  project = "${var.project}"
-}
-```
+![Astronomer GCP Architecture](images/Astronomer-GCP-white-background.png)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
@@ -80,3 +49,116 @@ provider google-beta {
 | postgres\_user | Postgres Username |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## Usage
+
+```hcl
+module "gcp-astro" {
+  source = "git::https://github.com/astronomer/terraform.git//gcp"
+
+  bastion_admins = [
+    "user:testuser@gmail.com",
+    "user:testemail@gmail.com",
+  ]
+
+  bastion_users = [
+    "user:testuser@gmail.com",
+    "user:testemail@gmail.com",
+  ]
+
+  cluster_name                     = "cloud-dev-cluster"
+  gke_secondary_ip_ranges_pods     = "10.32.0.0/14"
+  gke_secondary_ip_ranges_services = "10.98.0.0/20"
+}
+```
+
+Use both `google` and `google-beta` providers as few resources use `google-beta` provider too:
+```hcl
+provider google {
+  region  = "${var.region}"
+  project = "${var.project}"
+}
+
+provider google-beta {
+  region  = "${var.region}"
+  project = "${var.project}"
+}
+```
+
+## Steps to use the module
+
+1. Set Google application default credentials:
+    ```bash
+    gcloud auth application-default login
+    ```
+
+1. Get the latest terraform module:
+
+    ```bash
+    terraform get -update
+    ```
+    This will download the module to `.terraform` directory in the current folder.
+
+1. Initialise terraform:
+    
+    ```bash
+    terraform init
+    ```
+	
+1. Check what the infrastructure changes would be made:
+
+    ```bash
+    terraform plan
+    ```
+	
+1. Run the terraform files:
+
+    ```bash
+    terraform apply
+    ```
+
+### Access Kubernetes Cluster
+
+Replace `${GCP_PROJECT}` in all the commands below with your GCP Project ID.
+
+1. SSH into Bastion using IAP:
+
+    ```bash
+    gcloud beta compute ssh bastion --project ${GCP_PROJECT} --tunnel-through-iap
+    ```
+  
+1. Generate Kubeconfig entry to connect to k8s cluster:
+
+    ```bash
+    gcloud beta container clusters get-credentials cloud-dev-cluster --region us-east4 --project ${GCP_PROJECT} --internal-ip
+    ```
+    
+    Make sure that `--internal-ip` is passed to the command.
+    
+1. Test `kubectl` command:
+
+    ```bash
+    kubectl get po --all-namespaces
+    ```
+
+1. In order to access the k8s cluster as an admin:
+    
+    * Run the following command
+     
+      ```bash
+      gcloud auth login
+      ```
+    
+    * To authenticate with the cluster: 
+      
+      ```bash
+      gcloud beta container clusters get-credentials cloud-dev-cluster --region us-east4 --project ${GCP_PROJECT} --internal-ip
+      ```
+      
+    * Test it using the following command:
+    
+      ```bash
+      kubectl create ns astronomer
+      ```
+
+    To run Admin commands on the k8s cluster, the user needs to be listed in `bastion_admins` terraform variable as `bastion_admins` get [**Container Admin**](https://cloud.google.com/kubernetes-engine/docs/how-to/iam#kubernetes-engine-roles) permissions (`roles/container.admin`).
