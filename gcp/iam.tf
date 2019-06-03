@@ -3,7 +3,7 @@ resource "google_project_iam_binding" "container_admin" {
   role = "roles/container.admin"
 
   members = [
-    "${var.bastion_admins}",
+    "${formatlist("user:%s",var.bastion_admin_emails)}",
   ]
 }
 
@@ -11,7 +11,7 @@ resource "google_project_iam_binding" "container_viewer" {
   role = "roles/container.viewer"
 
   members = [
-    "${var.bastion_users}",
+    "${formatlist("user:%s",var.bastion_user_emails)}",
     "serviceAccount:${google_service_account.bastion.email}",
   ]
 }
@@ -20,7 +20,7 @@ resource "google_project_iam_binding" "compute_os_login_users" {
   role = "roles/compute.osLogin"
 
   members = [
-    "${var.bastion_users}",
+    "${formatlist("user:%s",var.bastion_user_emails)}",
   ]
 }
 
@@ -28,7 +28,7 @@ resource "google_project_iam_binding" "compute_os_login_admins" {
   role = "roles/compute.osAdminLogin"
 
   members = [
-    "${var.bastion_admins}",
+    "${formatlist("user:%s",var.bastion_admin_emails)}",
   ]
 }
 
@@ -36,7 +36,10 @@ resource "google_service_account_iam_binding" "bastion_svc_acc_users" {
   service_account_id = "${google_service_account.bastion.name}"
   role               = "roles/iam.serviceAccountUser"
 
-  members = ["${var.bastion_users}", "${var.bastion_admins}"]
+  members = [
+    "${formatlist("user:%s",var.bastion_user_emails)}",
+    "${formatlist("user:%s",var.bastion_admin_emails)}",
+  ]
 }
 
 // Enables Audit Logs of Users SSH session into Bastion via IAP in StackDriver

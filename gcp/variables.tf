@@ -1,3 +1,22 @@
+variable deployment_id {
+  description = "A short, lowercase-letters-only identifier for this deployment"
+}
+
+variable "bastion_terraform_version" {
+  default = "0.11.13"
+  type    = "string"
+}
+
+variable "acme_server" {
+  # default = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  default = "https://acme-v02.api.letsencrypt.org/directory"
+  type    = "string"
+}
+
+variable google_domain {
+  description = "A domain you own in this google account that you want to use for the deployment"
+}
+
 variable region {
   default     = "us-east4"
   description = "The GCP region to deploy infrastructure into"
@@ -8,23 +27,23 @@ variable zone {
   description = "The GCP zone to deploy infrastructure into"
 }
 
-variable cluster_name {
-  description = "The name of the GKE cluster"
+variable project {
+  description = "The Google Cloud project name to use"
 }
 
 variable machine_type {
-  default     = "n1-standard-8"
+  default     = "n1-standard-4"
   description = "The GCP machine type for GKE worker nodes"
 }
 
-variable min_node_count {
-  default     = 3
-  description = "The minimum amount of worker nodes in GKE cluster"
+variable machine_type_bastion {
+  default     = "f1-micro"
+  description = "The GCP machine type for the bastion"
 }
 
 variable max_node_count {
   default     = 10
-  description = "The maximum amount of worker nodes in GKE cluster"
+  description = "The approximate maximum number of nodes in the GKE worker node pool. The exact max will be 3 * ceil(your_value / 3.0) ."
 }
 
 variable "min_master_version" {
@@ -54,12 +73,12 @@ variable "iap_cidr_ranges" {
   ]
 }
 
-variable "bastion_users" {
+variable "bastion_user_emails" {
   type        = "list"
   description = "List of email addresses of users who be able to SSH into Bastion using Cloud IAP & OS Login"
 }
 
-variable "bastion_admins" {
+variable "bastion_admin_emails" {
   type        = "list"
   description = "List of email addresses of users with Sudo who be able to SSH into Bastion using Cloud IAP & OS Login"
 }
@@ -95,4 +114,8 @@ variable "istio_disabled" {
 
 variable "istio_auth" {
   default = "AUTH_MUTUAL_TLS"
+}
+
+variable "astronomer_namespace" {
+  default = "astronomer"
 }

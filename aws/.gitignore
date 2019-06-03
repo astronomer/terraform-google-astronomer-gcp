@@ -6,3 +6,4 @@ config-map*
 *.zip
 terraform_plan
 *.tfstate*
+peering.log
