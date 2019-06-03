@@ -10,6 +10,7 @@ data "helm_repository" "istio_repo" {
 }
 
 resource "helm_release" "istio_init" {
+  count      = "${var.enable_istio == true ? 1 : 0}"
   name       = "istio-init"
   repository = "${data.helm_repository.istio_repo.name}"
   chart      = "istio-init"
@@ -17,6 +18,7 @@ resource "helm_release" "istio_init" {
 }
 
 resource "helm_release" "istio" {
+  count      = "${var.enable_istio == true ? 1 : 0}"
   depends_on = ["helm_release.istio_init"]
   name       = "istio"
   repository = "${data.helm_repository.istio_repo.name}"

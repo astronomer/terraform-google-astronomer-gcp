@@ -69,7 +69,7 @@ preferences: {}
 users:
 - name: admin
   user:
-    password: ${google_container_cluster.primary.master_auth.0.password}
+    password: "${google_container_cluster.primary.master_auth.0.password}"
     username: admin
 EOF
 
@@ -163,7 +163,7 @@ resource "null_resource" "astronomer_deploy" {
     ZONE="${google_compute_instance.bastion.zone}"
     NAME="${google_compute_instance.bastion.name}"
     gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform init' && \
-    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform apply -var cluster_type=public -var base_domain="astro.${var.google_domain}" -var admin_email="${var.bastion_admin_emails[0]}" -var load_balancer_ip=${google_compute_address.nginx_address.address} --auto-approve'
+    gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform apply -var cluster_type=public -var enable_istio=${var.enable_istio} -var base_domain="astro.${var.google_domain}" -var admin_email="${var.bastion_admin_emails[0]}" -var load_balancer_ip=${google_compute_address.nginx_address.address} --auto-approve'
     EOS
   }
 

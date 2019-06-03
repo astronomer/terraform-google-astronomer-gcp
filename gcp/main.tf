@@ -3,56 +3,6 @@ resource "random_string" "password" {
   special = true
 }
 
-# Node pool
-resource "google_container_node_pool" "np" {
-  name = "${var.deployment_id}-node-pool"
-
-  location = "${var.region}"
-  cluster  = "${google_container_cluster.primary.name}"
-
-  # since we are 'regional' i.e. in 3 zones,
-  # "1" here means "1 in each zone"
-  initial_node_count = "1"
-
-  autoscaling {
-    min_node_count = "0"
-    max_node_count = "${ceil(var.max_node_count / 3.0)}"
-  }
-
-  management {
-    # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-upgrades
-    # Relevant details:
-    # - The process is to upgrade one node at a time
-    # - "Pods on the node are rescheduled onto other nodes. If a Pod can't be rescheduled, that Pod stays in PENDING state until the node is recreated." This is an important detail, because this means that automatically-occuring updates could trigger pods to be in accessible.
-    # - "If the new node fails to register as healthy, auto-upgrade of the entire node pool is disabled." TODO: ensure there is an alaram for this condition
-    # - This is performed during a four-hour maintenence window. I don't know when that is, however.
-    auto_upgrade = true
-
-    # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-repair
-    # Relevant details:
-    # - NotReady for > 10 minutes
-    # - not reporting > 10 minutes
-    # - boot disk out of space > 30 minutes
-    # (you can check a node's healthchecks with 'kubectl get nodes')
-    # 'repair' = drain and recreate node
-    auto_repair = true
-  }
-
-  node_config {
-    machine_type = "${var.machine_type}"
-
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/compute",
-      "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
-      "https://www.googleapis.com/auth/service.management.readonly",
-      "https://www.googleapis.com/auth/servicecontrol",
-      "https://www.googleapis.com/auth/trace.append",
-    ]
-  }
-}
-
 # GKE cluster
 resource "google_container_cluster" "primary" {
   provider = "google-beta"

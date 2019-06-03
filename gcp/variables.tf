@@ -7,6 +7,10 @@ variable "bastion_terraform_version" {
   type    = "string"
 }
 
+variable "enable_istio" {
+  default = true
+}
+
 variable "acme_server" {
   # default = "https://acme-staging-v02.api.letsencrypt.org/directory"
   default = "https://acme-v02.api.letsencrypt.org/directory"
