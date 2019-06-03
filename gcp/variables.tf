@@ -8,7 +8,8 @@ variable "bastion_terraform_version" {
 }
 
 variable "enable_istio" {
-  default = true
+  default = "true"
+  type    = "string"
 }
 
 variable "acme_server" {

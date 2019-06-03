@@ -4,7 +4,8 @@ variable "cluster_type" {
 }
 
 variable "enable_istio" {
-  default = false
+  default = "false"
+  type    = "string"
 }
 
 variable "istio_helm_release_version" {
