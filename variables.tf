@@ -2,24 +2,14 @@ variable deployment_id {
   description = "A short, lowercase-letters-only identifier for this deployment"
 }
 
-variable "bastion_terraform_version" {
-  default = "0.11.13"
-  type    = "string"
-}
-
-variable "enable_istio" {
-  default = "true"
-  type    = "string"
-}
-
 variable "acme_server" {
   # default = "https://acme-staging-v02.api.letsencrypt.org/directory"
   default = "https://acme-v02.api.letsencrypt.org/directory"
   type    = "string"
 }
 
-variable google_domain {
-  description = "A domain you own in this google account that you want to use for the deployment"
+variable dns_managed_zone {
+  description = "The name of the google dns managed zone we should use"
 }
 
 variable region {

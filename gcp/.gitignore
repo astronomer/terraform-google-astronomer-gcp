@@ -1,7 +1,0 @@
-providers.tf
-*.tfvars
-*.tfstate*
-kubeconfig/*
-tls_secrets/*
-db_password/*
-kubeconfig

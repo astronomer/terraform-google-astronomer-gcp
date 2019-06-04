@@ -4,17 +4,24 @@ created with Let's Encrypt
 and Google Cloud DNS
 */
 
+# We expect to start out with a DNS managed zone as an input
+# rather than creating one ourselves. I had an issue making
+# it fully automatic. In addition, this way we can share the
+# zone between developers.
+# https://issuetracker.google.com/issues/133640275
+
+/*
 resource "random_id" "collision_avoidance" {
   byte_length = 4
 }
-
 resource "google_dns_managed_zone" "public_zone" {
   name     = "${var.deployment_id}-zone-${random_id.collision_avoidance.hex}"
   dns_name = "${var.google_domain}."
 }
+*/
 
-provider "acme" {
-  server_url = "${var.acme_server}"
+data "google_dns_managed_zone" "public_zone" {
+  name = "${var.dns_managed_zone}"
 }
 
 resource "tls_private_key" "private_key" {
@@ -28,7 +35,7 @@ resource "acme_registration" "user_registration" {
 
 resource "acme_certificate" "lets_encrypt" {
   account_key_pem = "${acme_registration.user_registration.account_key_pem}"
-  common_name     = "*.astro.${var.google_domain}"
+  common_name     = "*.${local.base_domain}"
 
   # Let's encrypt uses Google's nameservers,
   # so it makes sense for us to check there.
@@ -44,14 +51,14 @@ resource "acme_certificate" "lets_encrypt" {
   }
 }
 
-resource "google_compute_address" "nginx_address" {
-  name = "${var.deployment_id}-nginx-address"
+resource "google_compute_address" "nginx_static_ip" {
+  name = "${var.deployment_id}-nginx-static-ip"
 }
 
 resource "google_dns_record_set" "a_record" {
-  name         = "*.astro.${google_dns_managed_zone.public_zone.dns_name}"
-  managed_zone = "${google_dns_managed_zone.public_zone.name}"
+  name         = "*.${local.base_domain}"
+  managed_zone = "${data.google_dns_managed_zone.public_zone.name}"
   type         = "A"
   ttl          = 300
-  rrdatas      = ["${google_compute_address.nginx_address.address}"]
+  rrdatas      = ["${google_compute_address.nginx_static_ip.address}"]
 }
