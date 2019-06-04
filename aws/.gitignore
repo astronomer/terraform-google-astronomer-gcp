@@ -1,0 +1,9 @@
+helm.astronomer.io/*
+helm.astronomer.io
+kubeconfig
+kubeconfig*
+config-map*
+*.zip
+terraform_plan
+*.tfstate*
+peering.log

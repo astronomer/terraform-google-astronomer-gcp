@@ -1,0 +1,18 @@
+pipeline:
+  terraform_lint_and_validate:
+    image: alpine
+    secrets: [ google_application_credentials ]
+    commands:
+    - apk add --no-cache ca-certificates openssl curl python3 git bash terraform
+    - pip3 install pre-commit
+    - cd gcp
+    - pre-commit install --install-hooks
+    - pre-commit run -a
+
+  notify:
+    image: plugins/slack
+    secrets: [ slack_webhook ]
+    webhook: $${slack_webhook}
+    channel: platform
+    when:
+      status: [ failure, changed ]
