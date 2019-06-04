@@ -7,7 +7,6 @@
 * Private Kubernetes cluster
 * Cloud SQL with Postgres
 * Bastion host for secure cluster administration
-* this is a test
 
 ## Architecture
 
