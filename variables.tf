@@ -102,7 +102,3 @@ variable "bastion_image_family" {
     project = "ubuntu-os-cloud"
   }
 }
-
-variable "astronomer_namespace" {
-  default = "astronomer"
-}
