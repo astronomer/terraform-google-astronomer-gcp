@@ -135,7 +135,6 @@ resource "null_resource" "astronomer_prepare" {
     gcloud beta compute scp ${path.module}/kubeconfig $NAME:/opt/astronomer/kubeconfig --zone $ZONE && \
     gcloud beta compute scp --recurse ${path.module}/tls_secrets $NAME:/opt --zone $ZONE && \
     gcloud beta compute scp --recurse ${path.module}/db_password $NAME:/opt --zone $ZONE && \
-    gcloud beta compute scp --recurse ${path.module}/../astronomer $NAME:/opt --zone $ZONE && \
     gcloud beta compute scp /tmp/providers.tf.bastion $NAME:/opt/astronomer/providers.tf --zone $ZONE && \
     gcloud beta compute scp ${path.module}/files/prepare_k8.sh $NAME:/opt/astronomer/prepare_k8.sh --zone $ZONE && \
     gcloud beta compute scp ${path.module}/files/rbac-config.yaml $NAME:/opt/astronomer/rbac-config.yaml --zone $ZONE && \
@@ -156,6 +155,7 @@ resource "null_resource" "astronomer_deploy" {
     command = <<EOS
     ZONE="${google_compute_instance.bastion.zone}"
     NAME="${google_compute_instance.bastion.name}"
+    gcloud beta compute scp --recurse ${path.module}/../astronomer $NAME:/opt --zone $ZONE && \
     gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform init' && \
     gcloud beta compute ssh --zone $ZONE $NAME -- 'cd /opt/astronomer && sudo terraform apply -var cluster_type=public -var enable_istio=${var.enable_istio} -var base_domain="astro.${var.google_domain}" -var admin_email="${var.bastion_admin_emails[0]}" -var load_balancer_ip=${google_compute_address.nginx_address.address} --auto-approve'
     EOS

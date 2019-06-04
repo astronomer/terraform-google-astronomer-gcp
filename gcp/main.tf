@@ -92,10 +92,4 @@ resource "google_container_cluster" "primary" {
   network_policy = {
     enabled = true
   }
-  addons_config {
-    istio_config {
-      disabled = "${var.istio_disabled}"
-      auth     = "${var.istio_auth}"
-    }
-  }
 }

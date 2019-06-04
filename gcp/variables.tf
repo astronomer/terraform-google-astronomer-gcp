@@ -113,14 +113,6 @@ variable "bastion_image_family" {
   }
 }
 
-variable "istio_disabled" {
-  default = true
-}
-
-variable "istio_auth" {
-  default = "AUTH_MUTUAL_TLS"
-}
-
 variable "astronomer_namespace" {
   default = "astronomer"
 }

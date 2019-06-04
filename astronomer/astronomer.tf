@@ -50,9 +50,8 @@ resource "kubernetes_secret" "astronomer_tls" {
 resource "null_resource" "helm_repo" {
   provisioner "local-exec" {
     command = <<EOF
-    if ! [ -d "${path.module}/helm.astronomer.io" ];
-    then git clone ${var.git_clone_from};
-    fi
+    rm -rf '${path.module}/helm.astronomer.io' && \
+    git clone ${var.git_clone_from} && \
     cd "${path.module}/helm.astronomer.io" && \
     git checkout ${var.astronomer_version}
     EOF
@@ -72,7 +71,7 @@ resource "helm_release" "astronomer" {
   ]
 
   name      = "astronomer"
-  chart     = "./helm.astronomer.io"
+  chart     = "${path.module}/helm.astronomer.io"
   namespace = "${var.astronomer_namespace}"
   wait      = true
 
@@ -81,6 +80,7 @@ resource "helm_release" "astronomer" {
 global:
   baseDomain: ${var.base_domain}
   tlsSecret: astronomer-tls
+  istioEnabled: ${var.enable_istio == "true" ? true: false}
 nginx:
   loadBalancerIP: ${var.load_balancer_ip == "" ? "~": var.load_balancer_ip}
   privateLoadBalancer: ${var.cluster_type == "private" ? true: false}

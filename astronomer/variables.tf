@@ -14,7 +14,8 @@ variable "istio_helm_release_version" {
 }
 
 variable "git_clone_from" {
-  default = "https://github.com/astronomer/helm.astronomer.io.git"
+  # default = "https://github.com/astronomer/helm.astronomer.io.git"
+  default = "https://github.com/sjmiller609/helm.astronomer.io.git"
   type    = "string"
 }
 
