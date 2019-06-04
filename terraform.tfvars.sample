@@ -1,0 +1,7 @@
+project  = "astronomer-cloud-dev-236021"
+bastion_admin_emails = ["steven@astronomer.io"]
+bastion_user_emails = ["steven@astronomer.io"]
+gke_secondary_ip_ranges_pods     = "10.32.0.0/14"
+gke_secondary_ip_ranges_services = "10.98.0.0/20"
+deployment_id = "steven"
+dns_managed_zone = "steven-zone"
