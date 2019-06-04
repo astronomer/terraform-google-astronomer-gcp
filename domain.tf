@@ -56,7 +56,7 @@ resource "google_compute_address" "nginx_static_ip" {
 }
 
 resource "google_dns_record_set" "a_record" {
-  name         = "*.${local.base_domain}"
+  name         = "*.${local.base_domain}."
   managed_zone = "${data.google_dns_managed_zone.public_zone.name}"
   type         = "A"
   ttl          = 300
