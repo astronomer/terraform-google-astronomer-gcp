@@ -37,10 +37,6 @@ resource "acme_certificate" "lets_encrypt" {
   account_key_pem = "${acme_registration.user_registration.account_key_pem}"
   common_name     = "*.${local.base_domain}"
 
-  # Let's encrypt uses Google's nameservers,
-  # so it makes sense for us to check there.
-  recursive_nameservers = ["8.8.8.8:53", "8.8.4.4:53"]
-
   dns_challenge {
     provider = "gcloud"
 
