@@ -13,3 +13,5 @@ providers.tf
 *.tfstate*
 kubeconfig/*
 tls_secrets/*
+kubeconfig
+kubeconfig*
