@@ -52,10 +52,12 @@ variable node_version {
 }
 
 variable "gke_secondary_ip_ranges_pods" {
+  default     = "10.32.0.0/14"
   description = "GKE Secondary IP Ranges for Pods"
 }
 
 variable "gke_secondary_ip_ranges_services" {
+  default     = "10.98.0.0/20"
   description = "GKE Secondary IP Ranges for Services"
 }
 
