@@ -11,6 +11,10 @@ output "db_connection_string" {
   sensitive = true
 }
 
+output "base_domain" {
+  value = "${local.base_domain}"
+}
+
 output "tls_key" {
   value = "${acme_certificate.lets_encrypt.private_key_pem}"
   sensitive = true
