@@ -31,4 +31,10 @@ resource "google_compute_instance" "bastion" {
   }
 
   allow_stopping_for_update = true
+
+  metadata_startup_script = <<EOF
+#!/bin/bash
+apt-get -y update;
+apt-get -y tinyproxy;
+EOF
 }

@@ -1,9 +1,9 @@
 output "bastion_socks5_proxy_command" {
-  value = "gcloud beta compute ssh --zone ${google_compute_instance.bastion.zone} ${google_compute_instance.bastion.name} --tunnel-through-iap --ssh-flag='-D ${var.proxy_port} -C -N'"
+  value = "gcloud beta compute ssh --zone ${google_compute_instance.bastion.zone} ${google_compute_instance.bastion.name} --tunnel-through-iap --ssh-flag='-L ${var.proxy_port}:127.0.0.1:8888 -C -N'"
 }
 
 output "kubernetes_api_sample_command" {
-  value = "If you have started the api proxy using the bastion SOCKS5 proxy command, this should work:\nhttps_proxy=socks5://127.0.0.1:1234 kubectl get pods"
+  value = "If you have started the api proxy using the bastion SOCKS5 proxy command, this should work:\nhttps_proxy=http://127.0.0.1:1234 kubectl get pods"
 }
 
 output "db_connection_string" {
