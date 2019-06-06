@@ -109,3 +109,8 @@ variable "proxy_port" {
   type        = "string"
   default     = "1234"
 }
+
+variable "gce_service_account_file" {
+  default     = "~/.config/gcloud/credentials.db"
+  type        = "string"
+}
