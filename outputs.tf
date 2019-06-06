@@ -1,5 +1,5 @@
 output "bastion_socks5_proxy_command" {
-  value = "gcloud beta compute ssh --zone ${google_compute_instance.bastion.zone} ${google_compute_instance.bastion.name} --tunnel-through-iap --ssh-flag='-D 1234 -C -N'"
+  value = "gcloud beta compute ssh --zone ${google_compute_instance.bastion.zone} ${google_compute_instance.bastion.name} --tunnel-through-iap --ssh-flag='-D ${var.proxy_port} -C -N'"
 }
 
 output "kubernetes_api_sample_command" {
