@@ -43,7 +43,6 @@ resource "acme_certificate" "lets_encrypt" {
     config {
       GCE_PROJECT             = "${var.project}"
       GCE_PROPAGATION_TIMEOUT = "300"
-      GCE_SERVICE_ACCOUNT_FILE = "${pathexpand(var.gce_service_account_file)}"
     }
   }
 }
