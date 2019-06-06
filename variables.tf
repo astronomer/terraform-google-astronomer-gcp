@@ -104,8 +104,3 @@ variable "bastion_image_family" {
     project = "ubuntu-os-cloud"
   }
 }
-
-variable "proxy_port" {
-  type        = "string"
-  default     = "1234"
-}
