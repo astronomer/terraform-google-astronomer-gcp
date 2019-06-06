@@ -17,6 +17,11 @@ resource "google_container_cluster" "primary" {
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
   remove_default_node_pool = true
 
+  daily_maintenance_window {
+    # GMT - this is midnight EST
+    start_time = "04:00"
+  }
+
   initial_node_count = 1
 
   # "If you specify a region (such as us-west1), the cluster will be a regional cluster"
