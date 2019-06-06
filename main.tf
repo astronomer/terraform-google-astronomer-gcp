@@ -17,9 +17,10 @@ resource "google_container_cluster" "primary" {
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
   remove_default_node_pool = true
 
-  daily_maintenance_window {
-    # GMT - this is midnight EST
-    start_time = "04:00"
+  maintenance_policy {
+    daily_maintenance_window {
+      start_time = "04:00"
+    }
   }
 
   initial_node_count = 1
