@@ -20,6 +20,11 @@ resource "google_sql_database_instance" "instance" {
       private_network = "${google_compute_network.core.self_link}"
     }
   }
+
+  timeouts {
+    create = "30m"
+    delete = "30m"
+  }
 }
 
 resource "random_string" "postgres_airflow_password" {
