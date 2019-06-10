@@ -21,7 +21,7 @@ resource "google_dns_managed_zone" "public_zone" {
 */
 
 data "google_dns_managed_zone" "public_zone" {
-  name = "${var.dns_managed_zone}"
+  name = var.dns_managed_zone
 }
 
 resource "tls_private_key" "private_key" {
@@ -29,19 +29,19 @@ resource "tls_private_key" "private_key" {
 }
 
 resource "acme_registration" "user_registration" {
-  account_key_pem = "${tls_private_key.private_key.private_key_pem}"
-  email_address   = "${var.bastion_admin_emails[0]}"
+  account_key_pem = tls_private_key.private_key.private_key_pem
+  email_address   = var.admin_emails[0]
 }
 
 resource "acme_certificate" "lets_encrypt" {
-  account_key_pem = "${acme_registration.user_registration.account_key_pem}"
+  account_key_pem = acme_registration.user_registration.account_key_pem
   common_name     = "*.${local.base_domain}"
 
   dns_challenge {
     provider = "gcloud"
 
-    config {
-      GCE_PROJECT             = "${var.project}"
+    config = {
+      GCE_PROJECT             = var.project
       GCE_PROPAGATION_TIMEOUT = "300"
     }
   }
@@ -53,8 +53,9 @@ resource "google_compute_address" "nginx_static_ip" {
 
 resource "google_dns_record_set" "a_record" {
   name         = "*.${local.base_domain}."
-  managed_zone = "${data.google_dns_managed_zone.public_zone.name}"
+  managed_zone = data.google_dns_managed_zone.public_zone.name
   type         = "A"
   ttl          = 300
-  rrdatas      = ["${google_compute_address.nginx_static_ip.address}"]
+  rrdatas      = [google_compute_address.nginx_static_ip.address]
 }
+

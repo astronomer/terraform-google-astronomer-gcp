@@ -7,21 +7,21 @@ output "kubernetes_api_sample_command" {
 }
 
 output "db_connection_string" {
-  value = "postgres://${google_sql_user.airflow.name}:${local.postgres_airflow_password}@${google_sql_database_instance.instance.private_ip_address}:5432"
+  value     = "postgres://${google_sql_user.airflow.name}:${local.postgres_airflow_password}@${google_sql_database_instance.instance.private_ip_address}:5432"
   sensitive = true
 }
 
 output "base_domain" {
-  value = "${local.base_domain}"
+  value = local.base_domain
 }
 
 output "tls_key" {
-  value = "${acme_certificate.lets_encrypt.private_key_pem}"
+  value     = acme_certificate.lets_encrypt.private_key_pem
   sensitive = true
 }
 
 output "tls_cert" {
-  value = "${acme_certificate.lets_encrypt.certificate_pem}"
+  value     = acme_certificate.lets_encrypt.certificate_pem
   sensitive = true
 }
 
@@ -31,7 +31,7 @@ apiVersion: v1
 clusters:
 - cluster:
     server: https://${google_container_cluster.primary.endpoint}
-    certificate-authority-data: ${google_container_cluster.primary.master_auth.0.cluster_ca_certificate}
+    certificate-authority-data: ${google_container_cluster.primary.master_auth[0].cluster_ca_certificate}
   name: cluster
 contexts:
 - context:
@@ -42,15 +42,18 @@ current-context: "context"
 kind: Config
 preferences: {}
 users:
-- name: "${google_container_cluster.primary.master_auth.0.username}"
+- name: "${google_container_cluster.primary.master_auth[0].username}"
   user:
-    password: "${google_container_cluster.primary.master_auth.0.password}"
-    username: "${google_container_cluster.primary.master_auth.0.username}"
+    password: "${google_container_cluster.primary.master_auth[0].password}"
+    username: "${google_container_cluster.primary.master_auth[0].username}"
 EOF
+
+
   sensitive = true
 }
 
 output "container_registry_bucket_name" {
-  value       = "${google_storage_bucket.container_registry.name}"
+  value = google_storage_bucket.container_registry.name
   description = "Cloud Storage Bucket Name to be used for Container Registry"
 }
+

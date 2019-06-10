@@ -5,7 +5,7 @@ resource "random_string" "password" {
 
 # GKE cluster
 resource "google_container_cluster" "primary" {
-  provider = "google-beta"
+  provider = google-beta
   name     = "${var.deployment_id}-cluster"
 
   # "
@@ -28,19 +28,19 @@ resource "google_container_cluster" "primary" {
   # "If you specify a region (such as us-west1), the cluster will be a regional cluster"
   # quoted from:
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
-  location = "${var.region}"
+  location = var.region
 
-  min_master_version = "${var.min_master_version}"
-  node_version       = "${var.node_version}"
-  network            = "${local.core_network_id}"
-  subnetwork         = "${local.gke_subnetwork_id}"
+  min_master_version = var.min_master_version
+  node_version       = var.node_version
+  network            = local.core_network_id
+  subnetwork         = local.gke_subnetwork_id
 
   enable_legacy_abac = false
 
   ip_allocation_policy {
     use_ip_aliases                = true
-    cluster_secondary_range_name  = "${google_compute_subnetwork.gke.secondary_ip_range.0.range_name}"
-    services_secondary_range_name = "${google_compute_subnetwork.gke.secondary_ip_range.1.range_name}"
+    cluster_secondary_range_name  = google_compute_subnetwork.gke.secondary_ip_range[0].range_name
+    services_secondary_range_name = google_compute_subnetwork.gke.secondary_ip_range[1].range_name
   }
 
   private_cluster_config {
@@ -51,8 +51,8 @@ resource "google_container_cluster" "primary" {
 
   master_authorized_networks_config {
     cidr_blocks {
-      display_name = "${google_compute_subnetwork.bastion.name}"
-      cidr_block   = "${google_compute_subnetwork.bastion.ip_cidr_range}"
+      display_name = google_compute_subnetwork.bastion.name
+      cidr_block   = google_compute_subnetwork.bastion.ip_cidr_range
     }
   }
 
@@ -89,13 +89,14 @@ resource "google_container_cluster" "primary" {
 
   master_auth {
     username = "admin"
-    password = "${random_string.password.result}"
+    password = random_string.password.result
 
     client_certificate_config {
       issue_client_certificate = false
     }
   }
-  network_policy = {
+  network_policy {
     enabled = true
   }
 }
+

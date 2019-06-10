@@ -1,42 +1,42 @@
-variable deployment_id {
+variable "deployment_id" {
   description = "A short, lowercase-letters-only identifier for this deployment"
 }
 
 variable "acme_server" {
   # default = "https://acme-staging-v02.api.letsencrypt.org/directory"
   default = "https://acme-v02.api.letsencrypt.org/directory"
-  type    = "string"
+  type    = string
 }
 
-variable dns_managed_zone {
+variable "dns_managed_zone" {
   description = "The name of the google dns managed zone we should use"
 }
 
-variable region {
+variable "region" {
   default     = "us-east4"
   description = "The GCP region to deploy infrastructure into"
 }
 
-variable zone {
+variable "zone" {
   default     = "us-east4-a"
   description = "The GCP zone to deploy infrastructure into"
 }
 
-variable project {
+variable "project" {
   description = "The Google Cloud project name to use"
 }
 
-variable machine_type {
+variable "machine_type" {
   default     = "n1-standard-4"
   description = "The GCP machine type for GKE worker nodes"
 }
 
-variable machine_type_bastion {
+variable "machine_type_bastion" {
   default     = "g1-small"
   description = "The GCP machine type for the bastion"
 }
 
-variable max_node_count {
+variable "max_node_count" {
   default     = 10
   description = "The approximate maximum number of nodes in the GKE worker node pool. The exact max will be 3 * ceil(your_value / 3.0) ."
 }
@@ -46,7 +46,7 @@ variable "min_master_version" {
   description = "The minimum version of the master."
 }
 
-variable node_version {
+variable "node_version" {
   default     = "1.13.6-gke.5"
   description = "The version of Kubernetes in GKE cluster"
 }
@@ -62,7 +62,7 @@ variable "gke_secondary_ip_ranges_services" {
 }
 
 variable "iap_cidr_ranges" {
-  type        = "list"
+  type        = list(string)
   description = "Cloud IAP CIDR Range as described on https://cloud.google.com/iap/docs/using-tcp-forwarding"
 
   default = [
@@ -70,14 +70,9 @@ variable "iap_cidr_ranges" {
   ]
 }
 
-variable "bastion_user_emails" {
-  type        = "list"
-  description = "List of email addresses of users who be able to SSH into Bastion using Cloud IAP & OS Login"
-}
-
-variable "bastion_admin_emails" {
-  type        = "list"
-  description = "List of email addresses of users with Sudo who be able to SSH into Bastion using Cloud IAP & OS Login"
+variable "admin_emails" {
+  type        = list(string)
+  description = "List of email addresses of users who are allowed to start the proxy, and are admins of the cluster"
 }
 
 variable "postgres_airflow_password" {
@@ -96,7 +91,7 @@ variable "cloud_sql_availability_type" {
 }
 
 variable "bastion_image_family" {
-  type        = "map"
+  type        = map(string)
   description = "The Name & Project of the Image Family with which Bastion will be created."
 
   default = {
@@ -104,3 +99,4 @@ variable "bastion_image_family" {
     project = "ubuntu-os-cloud"
   }
 }
+
