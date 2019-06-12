@@ -1,4 +1,26 @@
 locals {
+  kubeconfig = <<EOF
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://${google_container_cluster.primary.endpoint}
+    certificate-authority-data: ${google_container_cluster.primary.master_auth[0].cluster_ca_certificate}
+  name: cluster
+contexts:
+- context:
+    cluster: cluster
+    user: admin
+  name: context
+current-context: "context"
+kind: Config
+preferences: {}
+users:
+- name: "${google_container_cluster.primary.master_auth[0].username}"
+  user:
+    password: "${google_container_cluster.primary.master_auth[0].password}"
+    username: "${google_container_cluster.primary.master_auth[0].username}"
+
+  EOF
   bastion_name              = "${var.deployment_id}-bastion"
   postgres_airflow_password = var.postgres_airflow_password == "" ? random_string.postgres_airflow_password[0].result : var.postgres_airflow_password
   core_network_id = format(

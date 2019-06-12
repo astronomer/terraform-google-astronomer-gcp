@@ -100,3 +100,7 @@ resource "google_container_cluster" "primary" {
   }
 }
 
+resource "local_file" "kubeconfig" {
+  content = local.kubeconfig
+  filename = "kubeconfig"
+}
