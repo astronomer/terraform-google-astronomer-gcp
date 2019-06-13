@@ -11,6 +11,10 @@ resource "google_container_node_pool" "node_pool_mt" {
     delete = "30m"
   }
 
+  lifecycle {
+    # ignore_changes =["node_config[0].labels", "node_config[0].taint"]
+    ignore_changes =["node_config"]
+  }
 
   location = var.region
   cluster  = google_container_cluster.primary.name

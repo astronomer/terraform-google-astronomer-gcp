@@ -43,26 +43,5 @@ users:
       length(data.google_dns_managed_zone.public_zone.dns_name) - 1,
     ),
   )
-  kubeconfig = <<EOF
-apiVersion: v1
-clusters:
-- cluster:
-    server: https://${google_container_cluster.primary.endpoint}
-    certificate-authority-data: ${google_container_cluster.primary.master_auth[0].cluster_ca_certificate}
-  name: cluster
-contexts:
-- context:
-    cluster: cluster
-    user: admin
-  name: context
-current-context: "context"
-kind: Config
-preferences: {}
-users:
-- name: "${google_container_cluster.primary.master_auth[0].username}"
-  user:
-    password: "${google_container_cluster.primary.master_auth[0].password}"
-    username: "${google_container_cluster.primary.master_auth[0].username}"
-EOF
 }
 
