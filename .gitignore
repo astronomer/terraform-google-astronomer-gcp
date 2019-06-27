@@ -15,3 +15,5 @@ kubeconfig/*
 tls_secrets/*
 kubeconfig
 kubeconfig*
+
+.idea

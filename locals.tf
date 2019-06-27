@@ -1,3 +1,7 @@
+data "google_container_engine_versions" "gke" {
+  location = var.region
+}
+
 locals {
   kubeconfig = <<EOF
 apiVersion: v1
@@ -21,7 +25,7 @@ users:
     username: "${google_container_cluster.primary.master_auth[0].username}"
 
   EOF
-  bastion_name              = "${var.deployment_id}-bastion"
+  bastion_name = "${var.deployment_id}-bastion"
   postgres_airflow_password = var.postgres_airflow_password == "" ? random_string.postgres_airflow_password[0].result : var.postgres_airflow_password
   core_network_id = format(
     "projects/%s/global/networks/%s",
@@ -43,5 +47,7 @@ users:
       length(data.google_dns_managed_zone.public_zone.dns_name) - 1,
     ),
   )
+  min_master_version = var.min_master_version == "" ? data.google_container_engine_versions.gke.latest_master_version : var.min_master_version
+  node_version = var.node_version == "" ? data.google_container_engine_versions.gke.latest_node_version : var.node_version
 }
 
