@@ -42,13 +42,13 @@ variable "max_node_count" {
 }
 
 variable "min_master_version" {
-  default     = "1.13.6-gke.5"
-  description = "The minimum version of the master."
+  default     = ""
+  description = "The minimum version of the master. Default is the latest available from the API."
 }
 
 variable "node_version" {
-  default     = "1.13.6-gke.5"
-  description = "The version of Kubernetes in GKE cluster"
+  default     = ""
+  description = "The version of Kubernetes in GKE cluster. Default is the latest available from the API."
 }
 
 variable "gke_secondary_ip_ranges_pods" {
