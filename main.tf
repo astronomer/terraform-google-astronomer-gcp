@@ -30,8 +30,8 @@ resource "google_container_cluster" "primary" {
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
   location = var.region
 
-  min_master_version = var.min_master_version
-  node_version       = var.node_version
+  min_master_version = local.min_master_version
+  node_version       = local.node_version
   network            = local.core_network_id
   subnetwork         = local.gke_subnetwork_id
 
