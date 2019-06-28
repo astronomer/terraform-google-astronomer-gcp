@@ -33,13 +33,13 @@ resource "tls_cert_request" "req" {
   dns_names       = ["*.${local.base_domain}"]
 
   subject {
-    common_name     = "*.${local.base_domain}"
-    organization    = "Astronomer"
+    common_name  = "*.${local.base_domain}"
+    organization = "Astronomer"
   }
 }
 
 resource "acme_certificate" "lets_encrypt" {
-  account_key_pem = acme_registration.user_registration.account_key_pem
+  account_key_pem         = acme_registration.user_registration.account_key_pem
   certificate_request_pem = tls_cert_request.req.cert_request_pem
 
   dns_challenge {

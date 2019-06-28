@@ -10,7 +10,7 @@ resource "google_compute_firewall" "bastion_iap_ingress" {
     ports    = ["22"]
   }
 
-  source_ranges = var.iap_cidr_ranges
+  source_ranges           = var.iap_cidr_ranges
   target_service_accounts = [google_service_account.bastion.email]
 }
 

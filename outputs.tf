@@ -21,7 +21,7 @@ output "tls_key" {
 }
 
 output "tls_cert" {
-  value     = <<EOF
+  value = <<EOF
 ${acme_certificate.lets_encrypt.certificate_pem}
 ${acme_certificate.lets_encrypt.issuer_pem}
 EOF

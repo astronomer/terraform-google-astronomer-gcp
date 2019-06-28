@@ -13,7 +13,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   lifecycle {
     # ignore_changes =["node_config[0].labels", "node_config[0].taint"]
-    ignore_changes =["node_config"]
+    ignore_changes = ["node_config"]
   }
 
   location = var.region
