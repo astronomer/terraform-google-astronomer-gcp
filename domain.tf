@@ -10,16 +10,6 @@ and Google Cloud DNS
 # zone between developers.
 # https://issuetracker.google.com/issues/133640275
 
-/*
-resource "random_id" "collision_avoidance" {
-  byte_length = 4
-}
-resource "google_dns_managed_zone" "public_zone" {
-  name     = "${var.deployment_id}-zone-${random_id.collision_avoidance.hex}"
-  dns_name = "${var.google_domain}."
-}
-*/
-
 data "google_dns_managed_zone" "public_zone" {
   name = var.dns_managed_zone
 }
@@ -33,9 +23,24 @@ resource "acme_registration" "user_registration" {
   email_address   = var.admin_emails[0]
 }
 
+resource "tls_private_key" "cert_private_key" {
+  algorithm = "RSA"
+}
+
+resource "tls_cert_request" "req" {
+  key_algorithm   = "RSA"
+  private_key_pem = tls_private_key.cert_private_key.private_key_pem
+  dns_names       = ["*.${local.base_domain}"]
+
+  subject {
+    common_name     = "*.${local.base_domain}"
+    organization    = "Astronomer"
+  }
+}
+
 resource "acme_certificate" "lets_encrypt" {
   account_key_pem = acme_registration.user_registration.account_key_pem
-  common_name     = "*.${local.base_domain}"
+  certificate_request_pem = tls_cert_request.req.cert_request_pem
 
   dns_challenge {
     provider = "gcloud"
