@@ -47,7 +47,7 @@ variable "min_master_version" {
 }
 
 variable "node_version" {
-  default     = "1.13.6-gke.5"
+  default     = "1.13.6-gke.13"
   description = "The version of Kubernetes in GKE cluster"
 }
 

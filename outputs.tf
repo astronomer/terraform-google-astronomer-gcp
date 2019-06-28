@@ -16,12 +16,15 @@ output "base_domain" {
 }
 
 output "tls_key" {
-  value     = acme_certificate.lets_encrypt.private_key_pem
+  value     = tls_private_key.cert_private_key.private_key_pem
   sensitive = true
 }
 
 output "tls_cert" {
-  value     = acme_certificate.lets_encrypt.certificate_pem
+  value     = <<EOF
+${acme_certificate.lets_encrypt.certificate_pem}
+${acme_certificate.lets_encrypt.issuer_pem}
+EOF
   sensitive = true
 }
 
