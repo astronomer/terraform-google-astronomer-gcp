@@ -1,12 +1,14 @@
 # permissions to 
-resource "google_project_iam_binding" "container_admin" {
-  role = "roles/container.admin"
-  members = formatlist("user:%s", var.admin_emails)
+resource "google_project_iam_member" "container_admin" {
+  count  = length(var.admin_emails)
+  role   = "roles/container.admin"
+  member = format("user:%s", var.admin_emails[count.index])
 }
 
-resource "google_project_iam_binding" "compute_os_login_users" {
-  role = "roles/compute.osLogin"
-  members = formatlist("user:%s", var.admin_emails)
+resource "google_project_iam_member" "compute_os_login_users" {
+  count  = length(var.admin_emails)
+  role   = "roles/compute.osLogin"
+  member = format("user:%s", var.admin_emails[count.index])
 }
 
 // Enables Audit Logs of Users SSH session into Bastion via IAP in StackDriver
