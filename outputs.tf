@@ -42,3 +42,7 @@ output "container_registry_bucket_name" {
   description = "Cloud Storage Bucket Name to be used for Container Registry"
 }
 
+output "gcp_default_service_account_key" {
+  value = "${base64decode(google_service_account_key.default_key.private_key)}"
+  sensitive = true
+}
