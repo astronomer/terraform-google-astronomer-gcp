@@ -21,7 +21,7 @@ output "tls_key" {
 }
 
 output "tls_cert" {
-  value     = <<EOF
+  value = <<EOF
 ${acme_certificate.lets_encrypt.certificate_pem}
 ${acme_certificate.lets_encrypt.issuer_pem}
 EOF
@@ -42,3 +42,7 @@ output "container_registry_bucket_name" {
   description = "Cloud Storage Bucket Name to be used for Container Registry"
 }
 
+output "gcp_default_service_account_key" {
+  value = "${base64decode(google_service_account_key.default_key.private_key)}"
+  sensitive = true
+}
