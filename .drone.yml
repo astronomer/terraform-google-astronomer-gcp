@@ -1,0 +1,60 @@
+kind: pipeline
+name: terraform-aws-astronomer-aws
+
+steps:
+
+- name: lint
+  image: hashicorp/terraform:light
+  commands:
+    - cp providers.tf.example providers.tf
+    - terraform init
+    - terraform fmt -check=true
+    - terraform validate -var "deployment_id=validate" -var "dns_managed_zone=validate-fake.com" -var "email=fake@mailinator.com"
+    - |
+      for example in $(find examples -maxdepth 1 -mindepth 1 -type d); do
+      cp providers.tf $example
+      cd $example
+      echo $example
+      terraform init
+      terraform fmt -check=true
+      terraform validate -var "deployment_id=citest"
+      cd -
+      done
+    - terraform -v
+  when:
+    event:
+      - pull_request
+      - push
+
+- name: from_scratch
+  image: sjmiller609/helm-kubectl-terraform:latest
+  depends_on:
+    - lint
+  environment:
+    GOOGLE_CREDENTIAL_FILE_CONTENT:
+      from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
+  commands:
+    - EXAMPLE=from_scratch pipeline/run_terraform.sh
+  when:
+    event:
+      - push
+    branch:
+      - master
+
+- name: from_scratch_cleanup
+  depends_on:
+    - from_scratch
+  image: sjmiller609/helm-kubectl-terraform:latest
+  environment:
+    GOOGLE_CREDENTIAL_FILE_CONTENT:
+      from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
+  commands:
+    - DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
+  when:
+    event:
+      - push
+    status:
+      - failure
+      - success
+    branch:
+      - master

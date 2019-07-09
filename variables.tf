@@ -2,28 +2,8 @@ variable "deployment_id" {
   description = "A short, lowercase-letters-only identifier for this deployment"
 }
 
-variable "acme_server" {
-  # default = "https://acme-staging-v02.api.letsencrypt.org/directory"
-  default = "https://acme-v02.api.letsencrypt.org/directory"
-  type    = string
-}
-
 variable "dns_managed_zone" {
   description = "The name of the google dns managed zone we should use"
-}
-
-variable "region" {
-  default     = "us-east4"
-  description = "The GCP region to deploy infrastructure into"
-}
-
-variable "zone" {
-  default     = "us-east4-a"
-  description = "The GCP zone to deploy infrastructure into"
-}
-
-variable "project" {
-  description = "The Google Cloud project name to use"
 }
 
 variable "machine_type" {
@@ -70,9 +50,9 @@ variable "iap_cidr_ranges" {
   ]
 }
 
-variable "admin_emails" {
-  type        = list(string)
-  description = "List of email addresses of users who are allowed to start the proxy, and are admins of the cluster"
+variable "email" {
+  type        = string
+  description = "An email address to use for Let's Encrypt"
 }
 
 variable "postgres_airflow_password" {
