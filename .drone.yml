@@ -84,8 +84,8 @@ steps:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
   commands:
-    - echo 'sleeping 30 minutes'
-    - sleep 1800
+    - echo 'sleeping 10 minutes'
+    - sleep 600
     - DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
   when:
     event:
@@ -95,24 +95,6 @@ steps:
     status:
       - failure
 
-- name: wait_reconciling_then_try_cleanup_again2
-  image: sjmiller609/helm-kubectl-terraform:latest
-  depends_on:
-    - wait_reconciling_then_try_cleanup_again
-  environment:
-    GOOGLE_CREDENTIAL_FILE_CONTENT:
-      from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
-  commands:
-    - echo 'sleeping 5 minutes'
-    - sleep 300
-    - DESTROY=1 EXAMPLE=from_scratch REGIONAL=1 pipeline/run_terraform.sh
-  when:
-    event:
-      - push
-    branch:
-      - master
-    status:
-      - failure
 - name: from_scratch_regional
   image: sjmiller609/helm-kubectl-terraform:latest
   depends_on:
@@ -127,7 +109,6 @@ steps:
       - push
     branch:
       - master
-
 
 - name: from_scratch_cleanup_regional
   image: sjmiller609/helm-kubectl-terraform:latest
@@ -158,8 +139,8 @@ steps:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
   commands:
-    - echo 'sleeping 30 minutes'
-    - sleep 1800
+    - echo 'sleeping 10 minutes'
+    - sleep 600
     - DESTROY=1 EXAMPLE=from_scratch REGIONAL=1 pipeline/run_terraform.sh
   when:
     event:
@@ -177,8 +158,8 @@ steps:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
   commands:
-    - echo 'sleeping 5 minutes'
-    - sleep 300
+    - echo 'sleeping 2 minutes'
+    - sleep 120
     - DESTROY=1 EXAMPLE=from_scratch REGIONAL=1 pipeline/run_terraform.sh
   when:
     event:

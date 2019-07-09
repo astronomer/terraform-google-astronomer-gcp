@@ -3,6 +3,9 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   provider = google-beta
 
+  # can't be deleted at the same time.
+  depends_on = [google_container_node_pool.node_pool_platform]
+
   name = "${var.deployment_id}-node-pool-multi-tenant"
 
   # this one can take a long time to delete or create
