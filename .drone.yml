@@ -1,0 +1,96 @@
+kind: pipeline
+name: terraform-google-astronomer-gcp
+
+steps:
+
+- name: lint
+  image: hashicorp/terraform:light
+  commands:
+    - cp providers.tf.example providers.tf
+    - terraform init
+    - terraform fmt -check=true
+    - |
+      echo '{
+      "type": "service_account",
+      "project_id": "[PROJECT-ID]",
+      "private_key_id": "[KEY-ID]",
+      "private_key": "-----BEGIN PRIVATE KEY-----\n[PRIVATE-KEY]\n-----END PRIVATE KEY-----\n",
+      "client_email": "[SERVICE-ACCOUNT-EMAIL]",
+      "client_id": "[CLIENT-ID]",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "token_uri": "https://accounts.google.com/o/oauth2/token",
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/[SERVICE-ACCOUNT-EMAIL]"
+      }' > ~/account.json
+    - terraform validate -var "deployment_id=validate" -var "dns_managed_zone=validate-fake.com" -var "email=fake@mailinator.com"
+    - |
+      for example in $(find examples -maxdepth 1 -mindepth 1 -type d); do
+      cp providers.tf $example
+      cd $example
+      echo $example
+      terraform init
+      terraform fmt -check=true
+      terraform validate -var "deployment_id=citest"
+      cd -
+      done
+    - terraform -v
+  when:
+    event:
+      - pull_request
+      - push
+
+- name: from_scratch
+  image: sjmiller609/helm-kubectl-terraform:latest
+  depends_on:
+    - lint
+  environment:
+    GOOGLE_CREDENTIAL_FILE_CONTENT:
+      from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
+  commands:
+    - EXAMPLE=from_scratch pipeline/run_terraform.sh
+  when:
+    event:
+      - push
+    branch:
+      - master
+
+
+- name: from_scratch_cleanup
+  image: sjmiller609/helm-kubectl-terraform:latest
+  depends_on:
+    - from_scratch
+  environment:
+    GOOGLE_CREDENTIAL_FILE_CONTENT:
+      from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
+  commands:
+    - DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
+  when:
+    event:
+      - push
+    status:
+      - failure
+      - success
+    branch:
+      - master
+
+# temporary workaround to the cluster going into a
+# 'reconciling' state for a long time after initial
+# deployment, causing the cleanup to fail
+- name: wait_reconciling_then_try_cleanup_again
+  image: sjmiller609/helm-kubectl-terraform:latest
+  depends_on:
+    - from_scratch_cleanup
+  environment:
+    GOOGLE_CREDENTIAL_FILE_CONTENT:
+      from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
+  commands:
+    - echo 'sleeping 10 minutes'
+    - sleep 600
+    - DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
+  when:
+    event:
+      - push
+    branch:
+      - master
+    status:
+      - failure

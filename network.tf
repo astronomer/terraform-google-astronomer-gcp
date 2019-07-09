@@ -10,7 +10,7 @@ resource "google_compute_subnetwork" "gke" {
   name          = "${var.deployment_id}-gke-subnet"
   network       = google_compute_network.core.self_link
   ip_cidr_range = "10.0.0.0/16"
-  region        = var.region
+  region        = local.region
 
   private_ip_google_access = true
 
@@ -40,13 +40,13 @@ resource "google_compute_router" "router" {
 resource "google_compute_address" "address" {
   count  = 1
   name   = "${var.deployment_id}-nat-external-address-${count.index}"
-  region = var.region
+  region = local.region
 }
 
 # Cloud NAT
 resource "google_compute_router_nat" "nat" {
   name                               = "${var.deployment_id}-gke-bastion"
-  region                             = var.region
+  region                             = local.region
   router                             = google_compute_router.router.name
   nat_ip_allocate_option             = "MANUAL_ONLY"
   nat_ips                            = google_compute_address.address.*.self_link
@@ -87,7 +87,7 @@ resource "google_compute_subnetwork" "bastion" {
   name          = "${var.deployment_id}-bastion-subnet"
   network       = google_compute_network.core.self_link
   ip_cidr_range = "10.1.0.0/29"
-  region        = var.region
+  region        = local.region
 
   private_ip_google_access = true
 }

@@ -28,12 +28,12 @@ resource "google_container_cluster" "primary" {
   # "If you specify a region (such as us-west1), the cluster will be a regional cluster"
   # quoted from:
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
-  location = var.region
+  location = var.zonal_cluster ? local.zone : local.region
 
-  min_master_version = local.min_master_version
-  node_version       = local.node_version
-  network            = local.core_network_id
-  subnetwork         = local.gke_subnetwork_id
+  # min_master_version = local.min_master_version
+  # node_version       = local.node_version
+  network    = local.core_network_id
+  subnetwork = local.gke_subnetwork_id
 
   enable_legacy_abac = false
 
@@ -56,11 +56,11 @@ resource "google_container_cluster" "primary" {
     }
   }
 
-  node_locations = [
-    "${var.region}-a",
-    "${var.region}-b",
-    "${var.region}-c",
-  ]
+  /*
+  node_locations = var.zonal_cluster ? [local.zone] : ["${local.region}-a",
+    "${local.region}-b",
+  "${local.region}-c"]
+  */
 
   /*
   # TODO: use certificate auth

@@ -1,8 +1,13 @@
+data "google_compute_zones" "available" {}
+
 data "google_container_engine_versions" "gke" {
-  location = var.region
+  location = local.region
 }
 
 locals {
+  project    = data.google_compute_zones.available.project
+  region     = data.google_compute_zones.available.region
+  zone       = data.google_compute_zones.available.names[0]
   kubeconfig = <<EOF
 apiVersion: v1
 clusters:
@@ -47,7 +52,7 @@ users:
       length(data.google_dns_managed_zone.public_zone.dns_name) - 1,
     ),
   )
-  min_master_version = var.min_master_version == "" ? data.google_container_engine_versions.gke.latest_master_version : var.min_master_version
-  node_version = var.node_version == "" ? data.google_container_engine_versions.gke.latest_node_version : var.node_version
+  # min_master_version = var.min_master_version == "" ? data.google_container_engine_versions.gke.latest_master_version : var.min_master_version
+  # node_version = var.node_version == "" ? data.google_container_engine_versions.gke.latest_node_version : var.node_version
 }
 

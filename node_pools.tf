@@ -3,6 +3,9 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   provider = google-beta
 
+  # can't be deleted at the same time.
+  depends_on = [google_container_node_pool.node_pool_platform]
+
   name = "${var.deployment_id}-node-pool-multi-tenant"
 
   # this one can take a long time to delete or create
@@ -16,7 +19,7 @@ resource "google_container_node_pool" "node_pool_mt" {
     ignore_changes = ["node_config"]
   }
 
-  location = var.region
+  location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
 
   # since we are 'regional' i.e. in 3 zones,
@@ -25,7 +28,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   autoscaling {
     min_node_count = "1"
-    max_node_count = ceil(var.max_node_count / 3)
+    max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
   }
 
   management {
@@ -69,7 +72,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   name = "${var.deployment_id}-node-pool-platform"
 
-  location = var.region
+  location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
 
   # since we are 'regional' i.e. in 3 zones,
@@ -77,8 +80,8 @@ resource "google_container_node_pool" "node_pool_platform" {
   initial_node_count = "1"
 
   autoscaling {
-    min_node_count = "0"
-    max_node_count = ceil(var.max_node_count / 3)
+    min_node_count = "1"
+    max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
   }
 
   management {

@@ -1,0 +1,15 @@
+provider "google" {
+  region  = "us-east4"
+  zone    = "us-east4-a"
+  project = "astronomer-cloud-dev-236021"
+}
+
+provider "google-beta" {
+  region  = "us-east4"
+  zone    = "us-east4-a"
+  project = "astronomer-cloud-dev-236021"
+}
+
+provider "acme" {
+  server_url = "https://acme-staging-v02.api.letsencrypt.org/directory"
+}
