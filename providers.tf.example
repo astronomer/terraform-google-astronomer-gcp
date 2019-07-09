@@ -1,15 +1,13 @@
 provider "google" {
-  credentials = "${file("~/account.json")}"
-  region      = "us-east4"
-  zone        = "us-east4-a"
-  project     = "astronomer-cloud-dev-236021"
+  region  = "us-east4"
+  zone    = "us-east4-a"
+  project = "astronomer-cloud-dev-236021"
 }
 
 provider "google-beta" {
-  credentials = "${file("~/account.json")}"
-  region      = "us-east4"
-  zone        = "us-east4-a"
-  project     = "astronomer-cloud-dev-236021"
+  region  = "us-east4"
+  zone    = "us-east4-a"
+  project = "astronomer-cloud-dev-236021"
 }
 
 provider "acme" {
