@@ -21,6 +21,7 @@ variable "max_node_count" {
   description = "The approximate maximum number of nodes in the GKE worker node pool. The exact max will be 3 * ceil(your_value / 3.0) ."
 }
 
+/*
 variable "min_master_version" {
   default     = ""
   description = "The minimum version of the master. Default is the latest available from the API."
@@ -30,6 +31,7 @@ variable "node_version" {
   default     = ""
   description = "The version of Kubernetes in GKE cluster. Default is the latest available from the API."
 }
+*/
 
 variable "gke_secondary_ip_ranges_pods" {
   default     = "10.32.0.0/14"

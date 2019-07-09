@@ -30,10 +30,10 @@ resource "google_container_cluster" "primary" {
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
   location = local.region
 
-  min_master_version = local.min_master_version
-  node_version       = local.node_version
-  network            = local.core_network_id
-  subnetwork         = local.gke_subnetwork_id
+  # min_master_version = local.min_master_version
+  # node_version       = local.node_version
+  network    = local.core_network_id
+  subnetwork = local.gke_subnetwork_id
 
   enable_legacy_abac = false
 
