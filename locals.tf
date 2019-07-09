@@ -1,8 +1,17 @@
+data "google_compute_regions" "available" {}
+
+data "google_compute_zones" "available" {}
+
+data "google_project" "project" {}
+
 data "google_container_engine_versions" "gke" {
-  location = var.region
+  location = local.region
 }
 
 locals {
+  project    = data.google_project.project.project_id
+  region     = data.google_compute_regions.available.names[0]
+  zone       = data.google_compute_zones.available.names[0]
   kubeconfig = <<EOF
 apiVersion: v1
 clusters:

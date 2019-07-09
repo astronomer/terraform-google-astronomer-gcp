@@ -46,7 +46,7 @@ resource "acme_certificate" "lets_encrypt" {
     provider = "gcloud"
 
     config = {
-      GCE_PROJECT             = var.project
+      GCE_PROJECT             = local.project
       GCE_PROPAGATION_TIMEOUT = "300"
     }
   }

@@ -16,7 +16,7 @@ resource "google_container_node_pool" "node_pool_mt" {
     ignore_changes = ["node_config"]
   }
 
-  location = var.region
+  location = local.region
   cluster  = google_container_cluster.primary.name
 
   # since we are 'regional' i.e. in 3 zones,
@@ -69,7 +69,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   name = "${var.deployment_id}-node-pool-platform"
 
-  location = var.region
+  location = local.region
   cluster  = google_container_cluster.primary.name
 
   # since we are 'regional' i.e. in 3 zones,

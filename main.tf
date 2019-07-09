@@ -28,7 +28,7 @@ resource "google_container_cluster" "primary" {
   # "If you specify a region (such as us-west1), the cluster will be a regional cluster"
   # quoted from:
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
-  location = var.region
+  location = local.region
 
   min_master_version = local.min_master_version
   node_version       = local.node_version
@@ -57,9 +57,9 @@ resource "google_container_cluster" "primary" {
   }
 
   node_locations = [
-    "${var.region}-a",
-    "${var.region}-b",
-    "${var.region}-c",
+    "${local.region}-a",
+    "${local.region}-b",
+    "${local.region}-c",
   ]
 
   /*

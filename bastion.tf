@@ -8,7 +8,7 @@ data "google_compute_image" "ubuntu_lts_latest_image" {
 resource "google_compute_instance" "bastion" {
   name         = local.bastion_name
   machine_type = var.machine_type_bastion
-  zone         = var.zone
+  zone         = local.zone
 
   boot_disk {
     initialize_params {
