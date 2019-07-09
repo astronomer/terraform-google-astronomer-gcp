@@ -20,7 +20,7 @@ resource "tls_private_key" "private_key" {
 
 resource "acme_registration" "user_registration" {
   account_key_pem = tls_private_key.private_key.private_key_pem
-  email_address   = var.admin_emails[0]
+  email_address   = var.email
 }
 
 resource "tls_private_key" "cert_private_key" {
