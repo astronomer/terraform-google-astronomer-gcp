@@ -25,7 +25,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   autoscaling {
     min_node_count = "1"
-    max_node_count = ceil(var.max_node_count / 3)
+    max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
   }
 
   management {
@@ -77,8 +77,8 @@ resource "google_container_node_pool" "node_pool_platform" {
   initial_node_count = "1"
 
   autoscaling {
-    min_node_count = "0"
-    max_node_count = ceil(var.max_node_count / 3)
+    min_node_count = "1"
+    max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
   }
 
   management {
