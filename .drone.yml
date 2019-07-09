@@ -1,5 +1,5 @@
 kind: pipeline
-name: terraform-aws-astronomer-aws
+name: terraform-google-astronomer-gcp
 
 steps:
 
