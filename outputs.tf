@@ -41,3 +41,9 @@ output "container_registry_bucket_name" {
   value = google_storage_bucket.container_registry.name
   description = "Cloud Storage Bucket Name to be used for Container Registry"
 }
+
+# https://github.com/hashicorp/terraform/issues/1178
+resource "null_resource" "dependency_setter" {}
+output "depended_on" {
+  value = "${null_resource.dependency_setter.id}-${timestamp()}"
+}

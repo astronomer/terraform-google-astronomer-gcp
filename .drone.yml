@@ -54,7 +54,6 @@ steps:
     branch:
       - master
 
-
 - name: from_scratch_cleanup
   image: sjmiller609/helm-kubectl-terraform:latest
   depends_on:
@@ -76,7 +75,7 @@ steps:
 # temporary workaround to the cluster going into a
 # 'reconciling' state for a long time after initial
 # deployment, causing the cleanup to fail
-- name: wait_reconciling_then_try_cleanup_again
+- name: wait_then_try_cleanup_again
   image: sjmiller609/helm-kubectl-terraform:latest
   depends_on:
     - from_scratch_cleanup
