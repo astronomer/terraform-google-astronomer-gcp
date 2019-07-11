@@ -87,3 +87,7 @@ variable "zonal_cluster" {
   type        = bool
   description = "A zonal cluster is less reliable than a regional cluster, but it is less expensive. The default is false which makes it a regional cluster."
 }
+
+variable "management_endpoint" {
+  default = "private"
+}
