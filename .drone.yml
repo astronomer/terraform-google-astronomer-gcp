@@ -41,8 +41,6 @@ steps:
 
 - name: from_scratch
   image: sjmiller609/helm-kubectl-terraform:latest
-  depends_on:
-    - lint
   environment:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
@@ -56,8 +54,6 @@ steps:
 
 - name: from_scratch_cleanup
   image: sjmiller609/helm-kubectl-terraform:latest
-  depends_on:
-    - from_scratch
   environment:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
@@ -77,8 +73,6 @@ steps:
 # deployment, causing the cleanup to fail
 - name: wait_then_try_cleanup_again
   image: sjmiller609/helm-kubectl-terraform:latest
-  depends_on:
-    - from_scratch_cleanup
   environment:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
@@ -93,3 +87,72 @@ steps:
       - master
     status:
       - failure
+
+- name: git_tag
+  image: docker:git
+  environment:
+    DEPLOY_KEY:
+      from_secret: DEPLOY_KEY
+  commands:
+    - eval `ssh-agent`
+    - echo "$DEPLOY_KEY" | ssh-add -
+    - TAG=0.0.${DRONE_BUILD_NUMBER}
+    - git tag $TAG
+    - mkdir -p $HOME/.ssh
+    - ssh-keyscan -t rsa github.com >> $HOME/.ssh/known_hosts
+    - git push $DRONE_GIT_SSH_URL $DRONE_BRANCH --tags
+  when:
+    event:
+      - push
+    status:
+      - success
+    branch:
+      - master
+    repo:
+      - astronomer/terraform-google-astronomer-gcp
+
+- name: slack
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: WEBHOOK_URL
+    channel: infrastructure
+    username: terraform-ci
+    template: >
+      {{repo.name}}
+      {{build.link}}
+      {{#success build.status}}
+        succeeded
+      {{else}}
+        failed
+      {{/success}}
+  when:
+    event:
+      - push
+    status:
+      - success
+      - failure
+    branch:
+      - master
+    repo:
+      - astronomer/terraform-google-astronomer-gcp
+
+- name: slack_tag
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: WEBHOOK_URL
+    channel: infrastructure
+    username: terraform-ci
+    template: >
+      {{repo.name}}
+      version {{build.tag}} released
+  when:
+    event:
+      - tag
+    status:
+      - success
+    branch:
+      - master
+    repo:
+      - astronomer/terraform-google-astronomer-gcp
