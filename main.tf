@@ -3,6 +3,10 @@ resource "random_string" "password" {
   special = true
 }
 
+data "http" "local_ip" {
+  url = "http://ipv4.icanhazip.com/s"
+}
+
 # GKE cluster
 resource "google_container_cluster" "primary" {
   provider = google-beta
@@ -51,8 +55,9 @@ resource "google_container_cluster" "primary" {
 
   master_authorized_networks_config {
     cidr_blocks {
-      display_name = google_compute_subnetwork.bastion.name
-      cidr_block   = google_compute_subnetwork.bastion.ip_cidr_range
+      # display_name = google_compute_subnetwork.bastion.name
+      # either whitelist the caller's IP or only allow access from bastion
+      cidr_block = var.management_endpoint == "public" ? "${trimspace(data.http.local_ip.body)}/32" : google_compute_subnetwork.bastion.ip_cidr_range
     }
   }
 
