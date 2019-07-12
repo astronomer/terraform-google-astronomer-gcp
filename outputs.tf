@@ -47,3 +47,8 @@ resource "null_resource" "dependency_setter" {}
 output "depended_on" {
   value = "${null_resource.dependency_setter.id}-${timestamp()}"
 }
+
+output "gcp_default_service_account_key" {
+  value = "${base64decode(google_service_account_key.default_key.private_key)}"
+  sensitive = true
+}
