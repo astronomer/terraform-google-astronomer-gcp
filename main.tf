@@ -7,6 +7,10 @@ data "http" "local_ip" {
   url = "http://ipv4.icanhazip.com/s"
 }
 
+data "google_container_engine_versions" "versions" {
+  location = var.zonal_cluster ? local.zone : local.region
+}
+
 # GKE cluster
 resource "google_container_cluster" "primary" {
   provider = google-beta
@@ -23,7 +27,14 @@ resource "google_container_cluster" "primary" {
 
   maintenance_policy {
     daily_maintenance_window {
-      start_time = "04:00"
+      # 9am EST
+      # For maintenance windows in general,
+      # people usually choose a time of least-use.
+      # The nature of Airflow is such that the jobs
+      # are likely to run in those same windows, so
+      # it's best to just choose a time where support
+      # will likely be available.
+      start_time = "13:00"
     }
   }
 
@@ -34,8 +45,8 @@ resource "google_container_cluster" "primary" {
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
   location = var.zonal_cluster ? local.zone : local.region
 
-  # min_master_version = local.min_master_version
-  # node_version       = local.node_version
+  min_master_version = data.google_container_engine_versions.versions.latest_master_version
+
   network    = local.core_network_id
   subnetwork = local.gke_subnetwork_id
 
@@ -103,6 +114,7 @@ resource "google_container_cluster" "primary" {
   network_policy {
     enabled = true
   }
+
 }
 
 resource "random_id" "kubeconfig_suffix" {

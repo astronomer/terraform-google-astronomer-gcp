@@ -6,6 +6,9 @@ data "google_compute_image" "ubuntu_lts_latest_image" {
 
 # Bastion host
 resource "google_compute_instance" "bastion" {
+
+  count = var.management_endpoint == "public" ? 0 : 1
+
   name         = local.bastion_name
   machine_type = var.machine_type_bastion
   zone         = local.zone
@@ -23,11 +26,6 @@ resource "google_compute_instance" "bastion" {
   metadata = {
     block-project-ssh-keys = "true"
     enable-oslogin         = "true"
-  }
-
-  service_account {
-    email  = "${google_service_account.bastion.email}"
-    scopes = []
   }
 
   allow_stopping_for_update = true

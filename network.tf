@@ -3,6 +3,7 @@
 resource "google_compute_network" "core" {
   name                    = "${var.deployment_id}-core-network"
   auto_create_subnetworks = false
+
 }
 
 #Subnetwork
@@ -23,6 +24,7 @@ resource "google_compute_subnetwork" "gke" {
     range_name    = "${var.deployment_id}-gke-services"
     ip_cidr_range = var.gke_secondary_ip_ranges_services
   }
+
 }
 
 # Router
@@ -34,6 +36,7 @@ resource "google_compute_router" "router" {
   bgp {
     asn = 64514
   }
+
 }
 
 # IP address
@@ -61,25 +64,26 @@ resource "google_compute_router_nat" "nat" {
     name                    = google_compute_subnetwork.bastion.self_link
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
+
 }
 
 # https://cloud.google.com/vpc/docs/configure-private-services-access#creating-connection
 resource "google_compute_global_address" "private_ip_address" {
-  provider = google-beta
-
+  provider      = google-beta
   name          = "${var.deployment_id}-private-ip-address"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
   network       = google_compute_network.core.self_link
+
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {
-  provider = google-beta
-
+  provider                = google-beta
   network                 = google_compute_network.core.self_link
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+
 }
 
 // - Bastion Subnetwork --------------------------------------------------

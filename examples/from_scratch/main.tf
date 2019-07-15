@@ -11,4 +11,5 @@ module "astronomer_gcp" {
   email               = "steven@astronomer.io"
   zonal_cluster       = var.zonal
   management_endpoint = "public"
+  force_destroy       = "DESTROY"
 }
