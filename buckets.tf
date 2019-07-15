@@ -10,5 +10,6 @@ resource "google_storage_bucket" "container_registry" {
   labels = {
     "managed-by" = "terraform"
   }
+
 }
 
