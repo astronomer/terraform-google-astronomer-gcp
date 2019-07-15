@@ -23,6 +23,7 @@ resource "google_sql_database_instance" "instance" {
     create = "30m"
     delete = "30m"
   }
+
 }
 
 resource "random_string" "postgres_airflow_password" {

@@ -3,10 +3,11 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   provider = google-beta
 
-  # can't be deleted at the same time.
+  # theses can't be created or deleted at the same time.
   depends_on = [google_container_node_pool.node_pool_platform]
+  version    = data.google_container_engine_versions.versions.latest_master_version
 
-  name = "${var.deployment_id}-node-pool-multi-tenant"
+  name = "${var.deployment_id}-node-pool-multi-tenant-${formatdate("MM-DD-mm", timestamp())}"
 
   # this one can take a long time to delete or create
   timeouts {
@@ -15,19 +16,19 @@ resource "google_container_node_pool" "node_pool_mt" {
   }
 
   lifecycle {
-    # ignore_changes =["node_config[0].labels", "node_config[0].taint"]
-    ignore_changes = ["node_config"]
+    create_before_destroy = true
+    ignore_changes        = [name]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
 
-  # since we are 'regional' i.e. in 3 zones,
+  # if we are 'regional' i.e. in 3 zones,
   # "1" here means "1 in each zone"
-  initial_node_count = "1"
+  initial_node_count = var.zonal_cluster ? "3" : "1"
 
   autoscaling {
-    min_node_count = "1"
+    min_node_count = var.zonal_cluster ? "3" : "1"
     max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
   }
 
@@ -43,12 +44,6 @@ resource "google_container_node_pool" "node_pool_mt" {
 
     machine_type = var.machine_type
 
-    labels = {
-      # One of the pools should have the label indicating that it's
-      # multi-tenant, and the other should not.
-      "astronomer.io/multi-tenant" = "true"
-    }
-
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
@@ -60,7 +55,7 @@ resource "google_container_node_pool" "node_pool_mt" {
     ]
 
     # this is required for sandbox_config to work
-    image_type = "cos_containerd"
+    image_type = "COS_CONTAINERD"
 
     sandbox_config {
       sandbox_type = "gvisor"
@@ -70,17 +65,18 @@ resource "google_container_node_pool" "node_pool_mt" {
 
 resource "google_container_node_pool" "node_pool_platform" {
 
-  name = "${var.deployment_id}-node-pool-platform"
+  name    = "${var.deployment_id}-node-pool-platform-${formatdate("MM-DD-mm", timestamp())}"
+  version = data.google_container_engine_versions.versions.latest_master_version
 
   location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
 
-  # since we are 'regional' i.e. in 3 zones,
+  # if we are 'regional' i.e. in 3 zones,
   # "1" here means "1 in each zone"
-  initial_node_count = "1"
+  initial_node_count = var.zonal_cluster ? "3" : "1"
 
   autoscaling {
-    min_node_count = "1"
+    min_node_count = var.zonal_cluster ? "3" : "1"
     max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
   }
 
@@ -108,5 +104,10 @@ resource "google_container_node_pool" "node_pool_platform" {
       "https://www.googleapis.com/auth/servicecontrol",
       "https://www.googleapis.com/auth/trace.append",
     ]
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [name]
   }
 }

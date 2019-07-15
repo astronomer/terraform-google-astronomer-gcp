@@ -1,9 +1,5 @@
 output "bastion_proxy_command" {
-  value = "gcloud beta compute ssh --zone ${google_compute_instance.bastion.zone} ${google_compute_instance.bastion.name} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'"
-}
-
-output "kubernetes_api_sample_command" {
-  value = "If you have started the api proxy using the bastion SOCKS5 proxy command, this should work:\nhttps_proxy=http://127.0.0.1:1234 kubectl get pods"
+  value = "gcloud beta compute ssh --zone ${google_compute_instance.bastion[0].zone} ${google_compute_instance.bastion[0].name} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'"
 }
 
 output "db_connection_string" {
@@ -43,7 +39,19 @@ output "container_registry_bucket_name" {
 }
 
 # https://github.com/hashicorp/terraform/issues/1178
-resource "null_resource" "dependency_setter" {}
+resource "null_resource" "dependency_setter" {
+  depends_on = [google_container_cluster.primary,
+    google_container_node_pool.node_pool_mt,
+  google_container_node_pool.node_pool_platform]
+
+  provisioner "local-exec" {
+    # wait 10 minutes after the first
+    # deployment to allow GKE auto-updates
+    # to converge
+    command = "sleep 600"
+  }
+}
+
 output "depended_on" {
   value = "${null_resource.dependency_setter.id}-${timestamp()}"
 }
@@ -51,4 +59,8 @@ output "depended_on" {
 output "gcp_default_service_account_key" {
   value = "${base64decode(google_service_account_key.default_key.private_key)}"
   sensitive = true
+}
+
+output "load_balancer_ip" {
+  value = google_compute_address.nginx_static_ip.address
 }
