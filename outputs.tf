@@ -45,10 +45,10 @@ resource "null_resource" "dependency_setter" {
   google_container_node_pool.node_pool_platform]
 
   provisioner "local-exec" {
-    # wait 5 minutes after the first
+    # wait 10 minutes after the first
     # deployment to allow GKE auto-updates
     # to converge
-    command = "sleep 300"
+    command = "sleep 600"
   }
 }
 

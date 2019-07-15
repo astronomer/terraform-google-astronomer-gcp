@@ -91,9 +91,3 @@ variable "zonal_cluster" {
 variable "management_endpoint" {
   default = "private"
 }
-
-variable "force_destroy" {
-  default     = ""
-  description = "set to 'DESTROY' to enable destroying operationally critical resources"
-  type        = string
-}
