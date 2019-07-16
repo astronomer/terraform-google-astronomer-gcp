@@ -91,3 +91,9 @@ variable "zonal_cluster" {
 variable "management_endpoint" {
   default = "private"
 }
+
+variable "wait_for" {
+  type        = string
+  default     = "600"
+  description = "How long to wait after GKE cluster is up in order for the cluster to stabilize"
+}
