@@ -48,7 +48,7 @@ resource "null_resource" "dependency_setter" {
     # wait 10 minutes after the first
     # deployment to allow GKE auto-updates
     # to converge
-    command = "sleep 600"
+    command = "sleep ${var.wait_for}"
   }
 }
 
