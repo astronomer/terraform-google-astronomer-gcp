@@ -7,7 +7,7 @@ resource "google_container_node_pool" "node_pool_mt" {
   depends_on = [google_container_node_pool.node_pool_platform]
   version    = data.google_container_engine_versions.versions.latest_master_version
 
-  name = "${var.deployment_id}-node-pool-multi-tenant-${formatdate("MM-DD-mm", timestamp())}"
+  name = "${var.deployment_id}-mt-${formatdate("MM-DD-mm", timestamp())}"
 
   # this one can take a long time to delete or create
   timeouts {
@@ -65,7 +65,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
 resource "google_container_node_pool" "node_pool_platform" {
 
-  name    = "${var.deployment_id}-node-pool-platform-${formatdate("MM-DD-mm", timestamp())}"
+  name    = "${var.deployment_id}-platform-${formatdate("MM-DD-mm", timestamp())}"
   version = data.google_container_engine_versions.versions.latest_master_version
 
   location = var.zonal_cluster ? local.zone : local.region
