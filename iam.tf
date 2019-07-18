@@ -5,12 +5,9 @@ resource "google_service_account_key" "default_key" {
   public_key_type    = "TYPE_X509_PEM_FILE"
 }
 
-resource "google_project_iam_binding" "container_viewer" {
-  role = "roles/container.viewer"
-
-  members = [
-    "serviceAccount:${google_service_account.bastion.email}",
-  ]
+resource "google_project_iam_member" "container_viewer" {
+  role   = "roles/container.viewer"
+  member = "serviceAccount:${google_service_account.bastion.email}"
 }
 
 // Enables Audit Logs of Users SSH session into Bastion via IAP in StackDriver
