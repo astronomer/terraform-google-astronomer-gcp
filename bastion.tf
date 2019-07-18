@@ -28,6 +28,11 @@ resource "google_compute_instance" "bastion" {
     enable-oslogin         = "true"
   }
 
+  service_account {
+    email  = google_service_account.bastion.email
+    scopes = []
+  }
+
   allow_stopping_for_update = true
 
   metadata_startup_script = <<EOF
