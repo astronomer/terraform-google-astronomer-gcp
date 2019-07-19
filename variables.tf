@@ -97,3 +97,9 @@ variable "wait_for" {
   default     = "600"
   description = "How long to wait after GKE cluster is up in order for the cluster to stabilize"
 }
+
+variable "enable_gvisor" {
+  type        = bool
+  default     = false
+  description = "Should this module configure the multi-tenant node pool for the gvisor runtime?"
+}

@@ -20,7 +20,7 @@ resource "google_compute_instance" "bastion" {
   }
 
   network_interface {
-    subnetwork = google_compute_subnetwork.bastion.self_link
+    subnetwork = google_compute_subnetwork.bastion[0].self_link
   }
 
   metadata = {
