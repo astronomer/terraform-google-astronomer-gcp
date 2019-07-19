@@ -1,4 +1,5 @@
 resource "google_compute_firewall" "bastion_iap_ingress" {
+  count       = var.management_endpoint == "public" ? 0 : 1
   name        = "${var.deployment_id}-bastion-iap-ingress"
   network     = google_compute_network.core.self_link
   description = "Allows SSH traffic (port 22) from the GCP's IAP CIDR range to Bastion"
@@ -11,10 +12,11 @@ resource "google_compute_firewall" "bastion_iap_ingress" {
   }
 
   source_ranges           = var.iap_cidr_ranges
-  target_service_accounts = [google_service_account.bastion.email]
+  target_service_accounts = [google_service_account.bastion[0].email]
 }
 
 resource "google_compute_firewall" "bastion_deny_all_ingress" {
+  count       = var.management_endpoint == "public" ? 0 : 1
   name        = "${var.deployment_id}-bastion-deny-all-ingress"
   network     = google_compute_network.core.self_link
   description = "Denies all ingress traffic on bastion"
@@ -25,6 +27,6 @@ resource "google_compute_firewall" "bastion_deny_all_ingress" {
     protocol = "all"
   }
 
-  target_service_accounts = [google_service_account.bastion.email]
+  target_service_accounts = [google_service_account.bastion[0].email]
 }
 

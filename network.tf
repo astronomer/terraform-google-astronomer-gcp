@@ -78,10 +78,10 @@ resource "google_compute_router_nat" "nat" {
 
 # https://cloud.google.com/vpc/docs/configure-private-services-access#creating-connection
 # Required for connecting the bastion subnetwork to the
-# EKS private API network
+# EKS private API network and for connecting the EKS
+# network to the SQL database network
 resource "google_compute_global_address" "private_ip_address" {
   provider      = google-beta
-  count         = var.management_endpoint == "public" ? 0 : 1
   name          = "${var.deployment_id}-private-ip-address"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
@@ -95,10 +95,9 @@ resource "google_compute_global_address" "private_ip_address" {
 # network to the SQL database network
 resource "google_service_networking_connection" "private_vpc_connection" {
   provider                = google-beta
-  count                   = var.management_endpoint == "public" ? 0 : 1
   network                 = google_compute_network.core.self_link
   service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.private_ip_address[0].name]
+  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
 
 }
 

@@ -6,8 +6,9 @@ resource "google_service_account_key" "default_key" {
 }
 
 resource "google_project_iam_member" "container_viewer" {
+  count  = var.management_endpoint == "public" ? 0 : 1
   role   = "roles/container.viewer"
-  member = "serviceAccount:${google_service_account.bastion.email}"
+  member = "serviceAccount:${google_service_account.bastion[0].email}"
 }
 
 // Enables Audit Logs of Users SSH session into Bastion via IAP in StackDriver

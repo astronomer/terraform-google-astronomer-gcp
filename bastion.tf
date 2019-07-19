@@ -29,7 +29,7 @@ resource "google_compute_instance" "bastion" {
   }
 
   service_account {
-    email  = google_service_account.bastion.email
+    email  = google_service_account.bastion[0].email
     scopes = []
   }
 
