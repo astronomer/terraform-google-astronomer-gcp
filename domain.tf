@@ -41,6 +41,7 @@ resource "tls_cert_request" "req" {
 resource "acme_certificate" "lets_encrypt" {
   account_key_pem         = acme_registration.user_registration.account_key_pem
   certificate_request_pem = tls_cert_request.req.cert_request_pem
+  recursive_nameservers   = data.google_dns_managed_zone.public_zone.name_servers
 
   dns_challenge {
     provider = "gcloud"

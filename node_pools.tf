@@ -7,7 +7,7 @@ resource "google_container_node_pool" "node_pool_mt" {
   depends_on = [google_container_node_pool.node_pool_platform]
   version    = data.google_container_engine_versions.versions.latest_master_version
 
-  name = "${var.deployment_id}-mt-${formatdate("MM-DD-mm", timestamp())}"
+  name = "${var.deployment_id}-mt-${formatdate("MM-DD-hh-mm", timestamp())}"
 
   # this one can take a long time to delete or create
   timeouts {
@@ -54,18 +54,23 @@ resource "google_container_node_pool" "node_pool_mt" {
       "https://www.googleapis.com/auth/trace.append",
     ]
 
-    # this is required for sandbox_config to work
-    image_type = "COS_CONTAINERD"
+    # COS_CONTAINERD is required for sandbox_config to work
+    image_type = var.enable_gvisor ? "COS_CONTAINERD" : "COS"
 
-    sandbox_config {
-      sandbox_type = "gvisor"
+    # Only include sandbox config if we are using gvisor
+    dynamic "sandbox_config" {
+      for_each = var.enable_gvisor ? ["placeholder"] : []
+      content {
+        sandbox_type = "gvisor"
+      }
     }
+
   }
 }
 
 resource "google_container_node_pool" "node_pool_platform" {
 
-  name    = "${var.deployment_id}-platform-${formatdate("MM-DD-mm", timestamp())}"
+  name    = "${var.deployment_id}-platform-${formatdate("MM-DD-hh-mm", timestamp())}"
   version = data.google_container_engine_versions.versions.latest_master_version
 
   location = var.zonal_cluster ? local.zone : local.region
@@ -89,6 +94,10 @@ resource "google_container_node_pool" "node_pool_platform" {
   }
 
   node_config {
+
+    # Container-Optimized OS
+    image_type = "COS"
+
     machine_type = var.machine_type
 
     labels = {

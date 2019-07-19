@@ -8,7 +8,8 @@ data "http" "local_ip" {
 }
 
 data "google_container_engine_versions" "versions" {
-  location = var.zonal_cluster ? local.zone : local.region
+  location       = var.zonal_cluster ? local.zone : local.region
+  version_prefix = "1.13."
 }
 
 # GKE cluster
@@ -38,6 +39,7 @@ resource "google_container_cluster" "primary" {
     }
   }
 
+  # This only applies to the default node pool, which we will delete
   initial_node_count = 1
 
   # "If you specify a region (such as us-west1), the cluster will be a regional cluster"
@@ -68,7 +70,7 @@ resource "google_container_cluster" "primary" {
     cidr_blocks {
       # display_name = google_compute_subnetwork.bastion.name
       # either whitelist the caller's IP or only allow access from bastion
-      cidr_block = var.management_endpoint == "public" ? "${trimspace(data.http.local_ip.body)}/32" : google_compute_subnetwork.bastion.ip_cidr_range
+      cidr_block = var.management_endpoint == "public" ? "${trimspace(data.http.local_ip.body)}/32" : google_compute_subnetwork.bastion[0].ip_cidr_range
     }
   }
 
