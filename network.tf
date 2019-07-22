@@ -57,8 +57,7 @@ resource "google_compute_router_nat" "nat" {
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
 
   lifecycle {
-    create_before_destroy = true
-    ignore_changes        = [name]
+    ignore_changes = [name]
   }
 
   subnetwork {

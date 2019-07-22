@@ -116,7 +116,7 @@ steps:
   settings:
     webhook:
       from_secret: WEBHOOK_URL
-    channel: infrastructure
+    channel: ci-debug
     username: terraform-ci
     template: >
       {{repo.name}}
@@ -142,7 +142,7 @@ steps:
   settings:
     webhook:
       from_secret: WEBHOOK_URL
-    channel: infrastructure
+    channel: ci-debug
     username: terraform-ci
     template: >
       {{repo.name}}
