@@ -67,13 +67,12 @@ resource "google_compute_router_nat" "nat" {
   }
 
   dynamic subnetwork {
-    for_each = var.enable_gvisor ? ["placeholder"] : []
+    for_each = var.management_endpoint == "public" ? [] : ["placeholder"]
     content {
       name                    = google_compute_subnetwork.bastion[0].self_link
       source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
     }
   }
-
 }
 
 # https://cloud.google.com/vpc/docs/configure-private-services-access#creating-connection
