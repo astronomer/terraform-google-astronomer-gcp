@@ -58,7 +58,7 @@ output "depended_on" {
 }
 
 output "gcp_default_service_account_key" {
-  value = "${base64decode(google_service_account_key.default_key.private_key)}"
+  value = base64decode(google_service_account_key.default_key.private_key)
   sensitive = true
 }
 
