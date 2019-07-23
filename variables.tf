@@ -103,3 +103,8 @@ variable "enable_gvisor" {
   default     = false
   description = "Should this module configure the multi-tenant node pool for the gvisor runtime?"
 }
+
+variable "do_not_create_a_record" {
+  type    = bool
+  default = false
+}
