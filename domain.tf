@@ -49,6 +49,7 @@ resource "acme_certificate" "lets_encrypt" {
     config = {
       GCE_PROJECT             = local.project
       GCE_PROPAGATION_TIMEOUT = "300"
+      GCE_POLLING_INTERVAL    = "15"
     }
   }
 }
