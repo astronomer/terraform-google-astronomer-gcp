@@ -1,14 +1,12 @@
-data "google_compute_default_service_account" "default" {}
-
 resource "google_service_account_key" "default_key" {
-  service_account_id = "${data.google_compute_default_service_account.default.name}"
+  service_account_id = google_service_account.k8s_registry.account_id
   public_key_type    = "TYPE_X509_PEM_FILE"
 }
 
-resource "google_project_iam_member" "container_viewer" {
-  count  = var.management_endpoint == "public" ? 0 : 1
-  role   = "roles/container.viewer"
-  member = "serviceAccount:${google_service_account.bastion[0].email}"
+resource "google_storage_bucket_iam_member" "registry_user" {
+  bucket = google_storage_bucket.container_registry.name
+  member = "serviceAccount:${google_service_account.k8s_registry.email}"
+  role   = "roles/storage.legacyBucketOwner"
 }
 
 // Enables Audit Logs of Users SSH session into Bastion via IAP in StackDriver

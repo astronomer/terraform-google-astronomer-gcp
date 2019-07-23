@@ -5,3 +5,7 @@ resource "google_service_account" "bastion" {
   display_name = "${var.deployment_id}-bastion"
 }
 
+resource "google_service_account" "k8s_registry" {
+  account_id   = "${var.deployment_id}-svc-registry"
+  display_name = "${var.deployment_id}-svc-registry"
+}
