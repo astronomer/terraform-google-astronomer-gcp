@@ -19,6 +19,8 @@ resource "tls_private_key" "private_key" {
 }
 
 resource "acme_registration" "user_registration" {
+  count = var.lets_encrypt ? 1 : 0
+
   account_key_pem = tls_private_key.private_key.private_key_pem
   email_address   = var.email
 }
@@ -39,7 +41,9 @@ resource "tls_cert_request" "req" {
 }
 
 resource "acme_certificate" "lets_encrypt" {
-  account_key_pem         = acme_registration.user_registration.account_key_pem
+  count = var.lets_encrypt ? 1 : 0
+
+  account_key_pem         = acme_registration.user_registration[0].account_key_pem
   certificate_request_pem = tls_cert_request.req.cert_request_pem
   recursive_nameservers   = data.google_dns_managed_zone.public_zone.name_servers
 

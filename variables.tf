@@ -108,3 +108,8 @@ variable "do_not_create_a_record" {
   type    = bool
   default = false
 }
+
+variable "lets_encrypt" {
+  type    = bool
+  default = true
+}

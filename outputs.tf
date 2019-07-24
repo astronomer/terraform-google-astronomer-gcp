@@ -18,8 +18,8 @@ output "tls_key" {
 
 output "tls_cert" {
   value = <<EOF
-${acme_certificate.lets_encrypt.certificate_pem}
-${acme_certificate.lets_encrypt.issuer_pem}
+${acme_certificate.lets_encrypt[0].certificate_pem}
+${acme_certificate.lets_encrypt[0].issuer_pem}
 EOF
   sensitive = true
 }
