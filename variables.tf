@@ -3,6 +3,8 @@ variable "deployment_id" {
 }
 
 variable "dns_managed_zone" {
+  default     = ""
+  type        = string
   description = "The name of the google dns managed zone we should use"
 }
 

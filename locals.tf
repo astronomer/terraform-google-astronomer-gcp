@@ -47,9 +47,9 @@ users:
     "%s.%s",
     var.deployment_id,
     substr(
-      data.google_dns_managed_zone.public_zone.dns_name,
+      data.google_dns_managed_zone.public_zone[0].dns_name,
       0,
-      length(data.google_dns_managed_zone.public_zone.dns_name) - 1,
+      length(data.google_dns_managed_zone.public_zone[0].dns_name) - 1,
     ),
   )
   # min_master_version = var.min_master_version == "" ? data.google_container_engine_versions.gke.latest_master_version : var.min_master_version

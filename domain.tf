@@ -11,7 +11,8 @@ and Google Cloud DNS
 # https://issuetracker.google.com/issues/133640275
 
 data "google_dns_managed_zone" "public_zone" {
-  name = var.dns_managed_zone
+  count = var.dns_managed_zone != "" ? 1 : 0
+  name  = var.dns_managed_zone
 }
 
 resource "tls_private_key" "private_key" {
@@ -45,7 +46,7 @@ resource "acme_certificate" "lets_encrypt" {
 
   account_key_pem         = acme_registration.user_registration[0].account_key_pem
   certificate_request_pem = tls_cert_request.req.cert_request_pem
-  recursive_nameservers   = data.google_dns_managed_zone.public_zone.name_servers
+  recursive_nameservers   = data.google_dns_managed_zone.public_zone[0].name_servers
 
   dns_challenge {
     provider = "gcloud"
@@ -65,7 +66,7 @@ resource "google_compute_address" "nginx_static_ip" {
 resource "google_dns_record_set" "a_record" {
   count        = var.do_not_create_a_record ? 0 : 1
   name         = "*.${local.base_domain}."
-  managed_zone = data.google_dns_managed_zone.public_zone.name
+  managed_zone = data.google_dns_managed_zone.public_zone[0].name
   type         = "A"
   ttl          = 300
   rrdatas      = [google_compute_address.nginx_static_ip.address]
