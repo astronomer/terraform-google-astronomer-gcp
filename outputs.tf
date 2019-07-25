@@ -43,6 +43,7 @@ resource "null_resource" "dependency_setter" {
   depends_on = [google_container_cluster.primary,
     google_container_node_pool.node_pool_mt,
     google_container_node_pool.node_pool_platform,
+    google_sql_database_instance.instance,
   acme_certificate.lets_encrypt]
 
   provisioner "local-exec" {
