@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+set -xe
 
 # Install Terraform so we can do 'terraform fmt'
 TERRAFORM_VERSION=0.12.4
@@ -15,10 +17,13 @@ echo "$DEPLOY_KEY" | ssh-add -
 mkdir -p $HOME/.ssh
 ssh-keyscan -t rsa github.com >> $HOME/.ssh/known_hosts
 git clone git@github.com:astronomer/terraform-google-astronomer-cloud.git
-cd google-environments
-sed -i "s/version\s=\s\"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"$DRONE_TAG\"/g" stage/cloud/main.tf
+cd terraform-google-astronomer-cloud
+ls
 sed -i "0,/version\s*=\s*\"[0-9]*\.[0-9]*\.[0-9]*\"/ s//version = \"$DRONE_TAG\"/" main.tf
 terraform fmt
 git add main.tf
+git status
+git config --global user.email "steven@astronomer.io"
+git config --global user.name "Drone CI"
 git commit -m "Drone CI: Update GCP infra module to $DRONE_TAG"
 git push origin master
