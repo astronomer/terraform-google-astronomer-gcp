@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Install Terraform so we can do 'terraform fmt'
 TERRAFORM_VERSION=0.12.4

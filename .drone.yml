@@ -39,34 +39,34 @@ steps:
       - pull_request
       - push
 
-- name: from_scratch
-  image: sjmiller609/helm-kubectl-terraform:latest
-  environment:
-    GOOGLE_CREDENTIAL_FILE_CONTENT:
-      from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
-  commands:
-    - EXAMPLE=from_scratch pipeline/run_terraform.sh
-  when:
-    event:
-      - push
-    branch:
-      - master
-
-- name: from_scratch_cleanup
-  image: sjmiller609/helm-kubectl-terraform:latest
-  environment:
-    GOOGLE_CREDENTIAL_FILE_CONTENT:
-      from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
-  commands:
-    - DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
-  when:
-    event:
-      - push
-    status:
-      - failure
-      - success
-    branch:
-      - master
+# - name: from_scratch
+#   image: sjmiller609/helm-kubectl-terraform:latest
+#   environment:
+#     GOOGLE_CREDENTIAL_FILE_CONTENT:
+#       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
+#   commands:
+#     - EXAMPLE=from_scratch pipeline/run_terraform.sh
+#   when:
+#     event:
+#       - push
+#     branch:
+#       - master
+# 
+# - name: from_scratch_cleanup
+#   image: sjmiller609/helm-kubectl-terraform:latest
+#   environment:
+#     GOOGLE_CREDENTIAL_FILE_CONTENT:
+#       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
+#   commands:
+#     - DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
+#   when:
+#     event:
+#       - push
+#     status:
+#       - failure
+#       - success
+#     branch:
+#       - master
 
 # temporary workaround to the cluster going into a
 # 'reconciling' state for a long time after initial
@@ -111,49 +111,49 @@ steps:
     repo:
       - astronomer/terraform-google-astronomer-gcp
 
-- name: slack
-  image: plugins/slack
-  settings:
-    webhook:
-      from_secret: WEBHOOK_URL
-    channel: ci-debug
-    username: terraform-ci
-    template: >
-      {{repo.name}}
-      {{build.link}}
-      {{#success build.status}}
-        succeeded
-      {{else}}
-        failed
-      {{/success}}
-  when:
-    event:
-      - push
-    status:
-      - success
-      - failure
-    branch:
-      - master
-    repo:
-      - astronomer/terraform-google-astronomer-gcp
+# - name: slack
+#   image: plugins/slack
+#   settings:
+#     webhook:
+#       from_secret: WEBHOOK_URL
+#     channel: ci-debug
+#     username: terraform-ci
+#     template: >
+#       {{repo.name}}
+#       {{build.link}}
+#       {{#success build.status}}
+#         succeeded
+#       {{else}}
+#         failed
+#       {{/success}}
+#   when:
+#     event:
+#       - push
+#     status:
+#       - success
+#       - failure
+#     branch:
+#       - master
+#     repo:
+#       - astronomer/terraform-google-astronomer-gcp
 
-- name: slack_tag
-  image: plugins/slack
-  settings:
-    webhook:
-      from_secret: WEBHOOK_URL
-    channel: ci-debug
-    username: terraform-ci
-    template: >
-      {{repo.name}}
-      version {{build.tag}} released
-  when:
-    event:
-      - tag
-    status:
-      - success
-    repo:
-      - astronomer/terraform-google-astronomer-gcp
+# - name: slack_tag
+#   image: plugins/slack
+#   settings:
+#     webhook:
+#       from_secret: WEBHOOK_URL
+#     channel: ci-debug
+#     username: terraform-ci
+#     template: >
+#       {{repo.name}}
+#       version {{build.tag}} released
+#   when:
+#     event:
+#       - tag
+#     status:
+#       - success
+#     repo:
+#       - astronomer/terraform-google-astronomer-gcp
 
 - name: update_cloud_module
   image: docker:git
@@ -161,13 +161,13 @@ steps:
     DEPLOY_KEY:
       from_secret: DEPLOY_KEY_CLOUD_MODULE
   commands:
+    - ls
+    - ls pipeline
     - pipeline/update_cloud_module.sh
   when:
     event:
       - tag
     status:
       - success
-    branch:
-      - master
     repo:
       - astronomer/terraform-google-astronomer-gcp
