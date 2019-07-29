@@ -2,6 +2,24 @@ resource "random_id" "db_name_suffix" {
   byte_length = 4
 }
 
+resource "google_service_account" "cloud_sql_admin" {
+  account_id   = "${var.deployment_id}-cloud-sql-admin"
+  display_name = "Cloud SQL Admin for ${var.deployment_id}"
+}
+
+resource "google_project_iam_binding" "project" {
+  project = local.project
+  role    = "roles/cloudsql.admin"
+
+  members = [
+    "serviceAccount:${google_service_account.cloud_sql_admin.email}",
+  ]
+}
+
+resource "google_service_account_key" "cloud_sql_admin" {
+  service_account_id = google_service_account.cloud_sql_admin.name
+}
+
 resource "google_sql_database_instance" "instance" {
   name             = "${var.deployment_id}-astro-db-${random_id.db_name_suffix.hex}"
   region           = local.region
@@ -41,4 +59,3 @@ resource "google_sql_user" "airflow" {
   instance = google_sql_database_instance.instance.name
   password = local.postgres_airflow_password
 }
-

@@ -58,6 +58,11 @@ output "depended_on" {
   value = "${null_resource.dependency_setter.id}-${timestamp()}"
 }
 
+output "gcp_cloud_sql_admin_key" {
+  value = base64decode(google_service_account_key.cloud_sql_admin.private_key)
+  sensitive = true
+}
+
 output "gcp_default_service_account_key" {
   value = base64decode(google_service_account_key.default_key.private_key)
   sensitive = true
