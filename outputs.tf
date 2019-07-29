@@ -7,6 +7,23 @@ output "db_connection_string" {
   sensitive = true
 }
 
+output "db_connection_user" {
+  value = google_sql_user.airflow.name
+}
+
+output "db_connection_password" {
+  value     = local.postgres_airflow_password
+  sensitive = true
+}
+
+output "db_instance_private_ip" {
+  value = google_sql_database_instance.instance.private_ip_address
+}
+
+output "db_instance_name" {
+  value = google_sql_database_instance.instance.name
+}
+
 output "base_domain" {
   value = local.base_domain
 }
@@ -58,6 +75,11 @@ output "depended_on" {
   value = "${null_resource.dependency_setter.id}-${timestamp()}"
 }
 
+output "gcp_cloud_sql_admin_key" {
+  value = base64decode(google_service_account_key.cloud_sql_admin.private_key)
+  sensitive = true
+}
+
 output "gcp_default_service_account_key" {
   value = base64decode(google_service_account_key.default_key.private_key)
   sensitive = true
@@ -65,4 +87,12 @@ output "gcp_default_service_account_key" {
 
 output "load_balancer_ip" {
   value = google_compute_address.nginx_static_ip.address
+}
+
+output "gcp_region" {
+  value = local.region
+}
+
+output "gcp_project" {
+  value = local.project
 }
