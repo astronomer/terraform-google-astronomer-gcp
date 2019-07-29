@@ -17,6 +17,10 @@ resource "google_sql_database_instance" "instance" {
       ipv4_enabled    = "false"
       private_network = google_compute_network.core.self_link
     }
+
+    backup_configuration {
+      enabled = true
+    }
   }
 
   timeouts {
