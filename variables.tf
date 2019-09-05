@@ -10,7 +10,12 @@ variable "dns_managed_zone" {
 
 variable "machine_type" {
   default     = "n1-standard-4"
-  description = "The GCP machine type for GKE worker nodes"
+  description = "The GCP machine type for GKE worker nodes running multi-tenant workloads"
+}
+
+variable "machine_type_platform" {
+  default     = "n1-standard-4"
+  description = "The GCP machine type for GKE worker nodes running platform components"
 }
 
 variable "machine_type_bastion" {
