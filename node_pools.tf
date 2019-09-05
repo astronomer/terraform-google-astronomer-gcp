@@ -98,7 +98,7 @@ resource "google_container_node_pool" "node_pool_platform" {
     # Container-Optimized OS
     image_type = "COS"
 
-    machine_type = var.machine_type
+    machine_type = var.machine_type_platform
 
     labels = {
       "astronomer.io/multi-tenant" = "false"
