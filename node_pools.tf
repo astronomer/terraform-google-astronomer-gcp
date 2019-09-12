@@ -42,6 +42,10 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   node_config {
 
+    labels = {
+      "astronomer.io/multi-tenant" = "true"
+    }
+
     machine_type = var.machine_type
 
     oauth_scopes = [
