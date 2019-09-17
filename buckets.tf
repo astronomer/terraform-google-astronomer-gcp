@@ -13,3 +13,13 @@ resource "google_storage_bucket" "container_registry" {
 
 }
 
+resource "google_storage_bucket" "velero_k8s_backup" {
+  name          = "${var.deployment_id}-velero-backups"
+  location      = local.region
+  storage_class = "REGIONAL"
+  force_destroy = "true"
+
+  labels = {
+    "managed-by" = "terraform"
+  }
+}
