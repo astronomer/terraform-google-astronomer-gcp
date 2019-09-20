@@ -31,7 +31,7 @@ resource "google_service_account_key" "velero" {
 }
 
 resource "google_project_iam_custom_role" "velero_server" {
-  role_id = "velero.server"
+  role_id = "velero.server.${var.deployment_id}"
   title   = "Velero Server"
 
   permissions = [
