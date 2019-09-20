@@ -123,12 +123,12 @@ variable "lets_encrypt" {
 
 variable "mt_node_pool_taints" {
   description = "Taints to apply to the Multi-Tenant Node Pool "
-  type = "list"
-  default = []
+  type        = "list"
+  default     = []
 }
 
 variable "platform_node_pool_taints" {
   description = "Taints to apply to the Platform Node Pool "
-  type = "list"
-  default = []
+  type        = "list"
+  default     = []
 }

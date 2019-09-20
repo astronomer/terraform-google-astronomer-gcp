@@ -62,8 +62,8 @@ resource "google_container_node_pool" "node_pool_mt" {
       for_each = var.mt_node_pool_taints
       content {
         effect = taint.value.effect
-        key = taint.value.key
-        value = taint.value.value
+        key    = taint.value.key
+        value  = taint.value.value
       }
     }
 
@@ -131,8 +131,8 @@ resource "google_container_node_pool" "node_pool_platform" {
       for_each = var.platform_node_pool_taints
       content {
         effect = taint.value.effect
-        key = taint.value.key
-        value = taint.value.value
+        key    = taint.value.key
+        value  = taint.value.value
       }
     }
   }
