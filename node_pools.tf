@@ -83,6 +83,8 @@ resource "google_container_node_pool" "node_pool_mt" {
 
 resource "google_container_node_pool" "node_pool_platform" {
 
+  provider = google-beta
+
   name    = "${var.deployment_id}-platform-${formatdate("MM-DD-hh-mm", timestamp())}"
   version = data.google_container_engine_versions.versions.latest_master_version
 
