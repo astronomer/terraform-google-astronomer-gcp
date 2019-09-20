@@ -120,3 +120,15 @@ variable "lets_encrypt" {
   type    = bool
   default = true
 }
+
+variable "mt_node_pool_taints" {
+  description = "Taints to apply to the Multi-Tenant Node Pool "
+  type = "list"
+  default = []
+}
+
+variable "platform_node_pool_taints" {
+  description = "Taints to apply to the Platform Node Pool "
+  type = "list"
+  default = []
+}

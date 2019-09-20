@@ -58,6 +58,15 @@ resource "google_container_node_pool" "node_pool_mt" {
       "https://www.googleapis.com/auth/trace.append",
     ]
 
+    dynamic "taint" {
+      for_each = var.mt_node_pool_taints
+      content {
+        effect = taint.value.effect
+        key = taint.value.key
+        value = taint.value.value
+      }
+    }
+
     # COS_CONTAINERD is required for sandbox_config to work
     image_type = var.enable_gvisor ? "COS_CONTAINERD" : "COS"
 
@@ -118,13 +127,13 @@ resource "google_container_node_pool" "node_pool_platform" {
       "https://www.googleapis.com/auth/trace.append",
     ]
 
-    # Only allow platform pods to created on this NodePool by using the below taint
-    # Unless pods has the matching key,value for the taint the pods would not be
-    # scheduled
-    taint {
-      effect = "NoSchedule"
-      key    = "platform"
-      value  = "true"
+    dynamic "taint" {
+      for_each = var.platform_node_pool_taints
+      content {
+        effect = taint.value.effect
+        key = taint.value.key
+        value = taint.value.value
+      }
     }
   }
 
