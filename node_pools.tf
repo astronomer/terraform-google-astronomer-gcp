@@ -117,6 +117,15 @@ resource "google_container_node_pool" "node_pool_platform" {
       "https://www.googleapis.com/auth/servicecontrol",
       "https://www.googleapis.com/auth/trace.append",
     ]
+
+    # Only allow platform pods to created on this NodePool by using the below taint
+    # Unless pods has the matching key,value for the taint the pods would not be
+    # scheduled
+    taint {
+      effect = "NoSchedule"
+      key    = "platform"
+      value  = "true"
+    }
   }
 
   lifecycle {
