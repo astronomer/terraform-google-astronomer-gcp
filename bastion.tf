@@ -42,4 +42,3 @@ apt-get install -y tinyproxy;
 EOF
 
 }
-

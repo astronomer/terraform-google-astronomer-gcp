@@ -55,4 +55,3 @@ users:
   # min_master_version = var.min_master_version == "" ? data.google_container_engine_versions.gke.latest_master_version : var.min_master_version
   # node_version = var.node_version == "" ? data.google_container_engine_versions.gke.latest_node_version : var.node_version
 }
-
