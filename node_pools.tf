@@ -114,11 +114,12 @@ resource "google_container_node_pool" "node_pool_platform" {
   #
   # name    = "${var.deployment_id}-platform-${formatdate("MM-DD-hh-mm", timestamp())}"
 
-  timeouts {
-    create = "30m"
-    update = "30m"
-    delete = "30m"
-  }
+  # not working because 'inconsistent final plan'
+  # timeouts {
+  #   create = "30m"
+  #   update = "30m"
+  #   delete = "30m"
+  # }
 
   version = data.google_container_cluster.primary.master_version
 
