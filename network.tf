@@ -109,4 +109,3 @@ resource "google_compute_subnetwork" "bastion" {
 
   private_ip_google_access = true
 }
-

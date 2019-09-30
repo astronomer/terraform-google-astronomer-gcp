@@ -71,4 +71,3 @@ resource "google_dns_record_set" "a_record" {
   ttl          = 300
   rrdatas      = [google_compute_address.nginx_static_ip.address]
 }
-

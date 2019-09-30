@@ -29,4 +29,3 @@ resource "google_compute_firewall" "bastion_deny_all_ingress" {
 
   target_service_accounts = [google_service_account.bastion[0].email]
 }
-
