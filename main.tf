@@ -9,7 +9,7 @@ data "http" "local_ip" {
 
 data "google_container_engine_versions" "versions" {
   location       = var.zonal_cluster ? local.zone : local.region
-  version_prefix = "1.13."
+  version_prefix = "1.14."
 }
 
 # GKE cluster
