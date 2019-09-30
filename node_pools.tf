@@ -1,20 +1,31 @@
+# The data source is necessary to get the current
+# master kube version instead of the previous version
+data "google_container_cluster" "primary" {
+  depends_on = [google_container_cluster.primary]
+  name       = google_container_cluster.primary.name
+  location   = google_container_cluster.primary.location
+}
+
 # Node pool
 resource "google_container_node_pool" "node_pool_mt" {
 
   provider = google-beta
 
-  # theses can't be created or deleted at the same time.
+  # these can't be created or deleted at the same time.
   depends_on = [google_container_node_pool.node_pool_platform]
-  version    = google_container_cluster.primary.master_version
+  version    = data.google_container_cluster.primary.master_version
 
   # We want the multi-tenant node pool to be completely replaced
   # instead of rolling deployment. The timestamp in the name will
-  # force this behavior.
-  name = "${var.deployment_id}-mt-${formatdate("MM-DD-hh-mm", timestamp())}"
+  # dodge the naming collision with create_before_destroy = true, and
+  # the master_version will ensure that the node pool is created then
+  # destroyed if there is an update.
+  name = "${var.deployment_id}-mt-${replace(data.google_container_cluster.primary.master_version, ".", "-")}-${formatdate("MM-DD", timestamp())}"
 
   # this one can take a long time to delete or create
   timeouts {
     create = "30m"
+    update = "30m"
     delete = "30m"
   }
 
@@ -33,7 +44,7 @@ resource "google_container_node_pool" "node_pool_mt" {
   initial_node_count = var.zonal_cluster ? "3" : "1"
 
   autoscaling {
-    min_node_count = var.zonal_cluster ? "3" : "1"
+    min_node_count = "0"
     max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
   }
 
@@ -106,7 +117,13 @@ resource "google_container_node_pool" "node_pool_platform" {
   #
   # name    = "${var.deployment_id}-platform-${formatdate("MM-DD-hh-mm", timestamp())}"
 
-  version = google_container_cluster.primary.master_version
+  timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
+
+  version = data.google_container_cluster.primary.master_version
 
   location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
@@ -116,7 +133,7 @@ resource "google_container_node_pool" "node_pool_platform" {
   initial_node_count = var.zonal_cluster ? "3" : "1"
 
   autoscaling {
-    min_node_count = var.zonal_cluster ? "3" : "1"
+    min_node_count = "0"
     max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
   }
 
