@@ -16,11 +16,10 @@ resource "google_container_node_pool" "node_pool_mt" {
   version    = data.google_container_cluster.primary.master_version
 
   # We want the multi-tenant node pool to be completely replaced
-  # instead of rolling deployment. The timestamp in the name will
-  # dodge the naming collision with create_before_destroy = true, and
-  # the master_version will ensure that the node pool is created then
+  # instead of rolling deployment.
+  # The master_version will ensure that the node pool is created then
   # destroyed if there is an update.
-  name = "${var.deployment_id}-mt-${replace(data.google_container_cluster.primary.master_version, ".", "-")}-${formatdate("MM-DD", timestamp())}"
+  name = "${var.deployment_id}-mt-${replace(data.google_container_cluster.primary.master_version, ".", "-")}"
 
   # this one can take a long time to delete or create
   timeouts {
@@ -31,9 +30,6 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   lifecycle {
     create_before_destroy = true
-    # Ignoring changes on the name so that the create then destroy
-    # upgrade only occurs when something needs to happen
-    ignore_changes = [name]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
@@ -119,7 +115,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   timeouts {
     create = "30m"
-    update = "30m"
+    update = "45m"
     delete = "30m"
   }
 
