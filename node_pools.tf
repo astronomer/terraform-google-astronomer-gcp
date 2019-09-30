@@ -19,7 +19,7 @@ resource "google_container_node_pool" "node_pool_mt" {
   # instead of rolling deployment.
   # The master_version will ensure that the node pool is created then
   # destroyed if there is an update.
-  name = "${var.deployment_id}-mt-${replace(data.google_container_cluster.primary.master_version, ".", "-")}"
+  name = "${var.deployment_id}-mt-${formatdate("MM-DD-hh-mm", timestamp())}"
 
   # this one can take a long time to delete or create
   timeouts {
@@ -30,6 +30,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes        = [name]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
