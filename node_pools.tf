@@ -5,8 +5,11 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   # theses can't be created or deleted at the same time.
   depends_on = [google_container_node_pool.node_pool_platform]
-  version    = data.google_container_engine_versions.versions.latest_master_version
+  version    = google_container_cluster.primary.master_version
 
+  # We want the multi-tenant node pool to be completely replaced
+  # instead of rolling deployment. The timestamp in the name will
+  # force this behavior.
   name = "${var.deployment_id}-mt-${formatdate("MM-DD-hh-mm", timestamp())}"
 
   # this one can take a long time to delete or create
@@ -17,7 +20,9 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = [name]
+    # Ignoring changes on the name so that the create then destroy
+    # upgrade only occurs when something needs to happen
+    ignore_changes = [name]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
@@ -34,7 +39,11 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   management {
     # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-upgrades
-    auto_upgrade = true
+    # With this set to false, then an update will only occur when terraform runs
+    # because we set the node pool kubelet version to the version of the master,
+    # which will trigger an update, and the name including a timestamp will
+    # force a create then destroy event.
+    auto_upgrade = false
 
     # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-repair
     auto_repair = true
@@ -85,8 +94,19 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   provider = google-beta
 
-  name    = "${var.deployment_id}-platform-${formatdate("MM-DD-hh-mm", timestamp())}"
-  version = data.google_container_engine_versions.versions.latest_master_version
+  # By not setting the name, this allows the provider to choose a random name.
+  # This is good because we can create_before_destroy (if name is hardcoded,
+  # then it is a name collision), and we can also avoid re-provisioning the
+  # whole node pool when something needs to update, which would happen if we
+  # include a timestamp or similar in the name. If we provided a random string
+  # using one of the terraform 'random_' resources, then it would also cause
+  # name collisions because terraform would not change the random value. If
+  # we force the random value to always update, then that has the same behavior
+  # as including a timestamp.
+  #
+  # name    = "${var.deployment_id}-platform-${formatdate("MM-DD-hh-mm", timestamp())}"
+
+  version = google_container_cluster.primary.master_version
 
   location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
@@ -141,6 +161,5 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = [name]
   }
 }
