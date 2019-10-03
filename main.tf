@@ -114,7 +114,8 @@ resource "google_container_cluster" "primary" {
     }
   }
   network_policy {
-    enabled = true
+    enabled  = true
+    provider = "CALICO"
   }
 
 }
