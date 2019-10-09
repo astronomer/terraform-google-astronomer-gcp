@@ -7,10 +7,10 @@ data "http" "local_ip" {
   url = "http://ipv4.icanhazip.com/s"
 }
 
-data "google_container_engine_versions" "versions" {
-  location       = var.zonal_cluster ? local.zone : local.region
-  version_prefix = "1.14."
-}
+# data "google_container_engine_versions" "versions" {
+#   location       = var.zonal_cluster ? local.zone : local.region
+#   version_prefix = "1.14."
+# }
 
 # GKE cluster
 resource "google_container_cluster" "primary" {
@@ -47,7 +47,7 @@ resource "google_container_cluster" "primary" {
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
   location = var.zonal_cluster ? local.zone : local.region
 
-  min_master_version = data.google_container_engine_versions.versions.latest_master_version
+  min_master_version = var.kube_version_gke
 
   network    = local.core_network_id
   subnetwork = local.gke_subnetwork_id

@@ -8,6 +8,11 @@ variable "dns_managed_zone" {
   description = "The name of the google dns managed zone we should use"
 }
 
+variable "kube_version_gke" {
+  default     = "1.14.6-gke.2"
+  description = "The kubernetes version to use in GKE"
+}
+
 variable "machine_type" {
   default     = "n1-standard-4"
   description = "The GCP machine type for GKE worker nodes running multi-tenant workloads"

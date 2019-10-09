@@ -13,7 +13,8 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   # these can't be created or deleted at the same time.
   depends_on = [google_container_node_pool.node_pool_platform]
-  version    = data.google_container_cluster.primary.master_version
+  # version    = data.google_container_cluster.primary.master_version
+  version = var.kube_version_gke
 
   # We want the multi-tenant node pool to be completely replaced
   # instead of rolling deployment.
@@ -121,7 +122,8 @@ resource "google_container_node_pool" "node_pool_platform" {
   #   delete = "30m"
   # }
 
-  version = data.google_container_cluster.primary.master_version
+  # version = data.google_container_cluster.primary.master_version
+  version = var.kube_version_gke
 
   location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
