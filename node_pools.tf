@@ -122,7 +122,8 @@ resource "google_container_node_pool" "node_pool_platform" {
   #   delete = "30m"
   # }
 
-  version = data.google_container_cluster.primary.master_version
+  # Use auto-upgrade for versioning of this node pool
+  # version = data.google_container_cluster.primary.master_version
   # version = var.kube_version_gke
 
   location = var.zonal_cluster ? local.zone : local.region
