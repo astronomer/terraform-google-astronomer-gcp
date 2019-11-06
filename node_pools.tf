@@ -122,8 +122,8 @@ resource "google_container_node_pool" "node_pool_platform" {
   #   delete = "30m"
   # }
 
-  # version = data.google_container_cluster.primary.master_version
-  version = var.kube_version_gke
+  version = data.google_container_cluster.primary.master_version
+  # version = var.kube_version_gke
 
   location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
@@ -134,7 +134,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
+    max_node_count = var.zonal_cluster ? 12 : 4
   }
 
   management {
