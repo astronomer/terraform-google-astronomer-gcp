@@ -4,6 +4,14 @@ data "google_container_engine_versions" "gke" {
   location = local.region
 }
 
+data "google_compute_instance_group" "sample_instance_group" {
+  self_link = replace(google_container_node_pool.node_pool_platform.instance_group_urls[0], "instanceGroupManagers", "instanceGroups")
+}
+
+data "google_compute_instance" "sample_instance" {
+  self_link = tolist(data.google_compute_instance_group.sample_instance_group.instances)[0]
+}
+
 locals {
   project                   = data.google_compute_zones.available.project
   region                    = data.google_compute_zones.available.region
@@ -55,5 +63,5 @@ users:
   # min_master_version = var.min_master_version == "" ? data.google_container_engine_versions.gke.latest_master_version : var.min_master_version
   # node_version = var.node_version == "" ? data.google_container_engine_versions.gke.latest_node_version : var.node_version
 
-  network_tags = compact([var.enable_knative ? "knative-webook" : ""])
+  gke_nodepool_network_tags = data.google_compute_instance.sample_instance.tags
 }

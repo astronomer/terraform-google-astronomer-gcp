@@ -44,5 +44,5 @@ resource "google_compute_firewall" "gke_knative_serving_webhook_allow" {
   }
 
   source_ranges = [google_container_cluster.primary.private_cluster_config.0.master_ipv4_cidr_block]
-  target_tags   = local.network_tags
+  target_tags   = local.gke_nodepool_network_tags
 }
