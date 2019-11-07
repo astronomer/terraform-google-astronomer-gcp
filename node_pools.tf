@@ -64,6 +64,8 @@ resource "google_container_node_pool" "node_pool_mt" {
       "astronomer.io/multi-tenant" = "true"
     }
 
+    tags = local.network_tags
+
     machine_type = var.machine_type
 
     oauth_scopes = [
@@ -156,6 +158,8 @@ resource "google_container_node_pool" "node_pool_platform" {
     labels = {
       "astronomer.io/multi-tenant" = "false"
     }
+
+    tags = local.network_tags
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
