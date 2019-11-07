@@ -34,7 +34,7 @@ resource "google_compute_firewall" "gke_knative_serving_webhook_allow" {
   count       = var.enable_knative ? 1 : 0
   name        = "${var.deployment_id}-knative-webhook-allow-ingress"
   network     = google_compute_network.core.self_link
-  description = "Allow GKE master to communicate ti knative webhook"
+  description = "Allow GKE master to communicate with node pools on 8443 for the knative webhook"
   priority    = 1000
   direction   = "INGRESS"
 
