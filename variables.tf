@@ -137,3 +137,8 @@ variable "platform_node_pool_taints" {
   type        = "list"
   default     = []
 }
+
+variable "enable_knative" {
+  type    = bool
+  default = false
+}

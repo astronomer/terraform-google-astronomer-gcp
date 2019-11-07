@@ -1,5 +1,5 @@
 output "bastion_proxy_command" {
-  value = "gcloud beta compute ssh --zone ${google_compute_instance.bastion[0].zone} ${google_compute_instance.bastion[0].name} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'"
+  value = length(google_compute_instance.bastion) > 0 ? "gcloud beta compute ssh --zone ${google_compute_instance.bastion[0].zone} ${google_compute_instance.bastion[0].name} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'" : "Not applicable - no bastion"
 }
 
 output "db_connection_string" {
