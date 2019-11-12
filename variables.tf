@@ -138,7 +138,19 @@ variable "platform_node_pool_taints" {
   default     = []
 }
 
+variable "dp_node_pool_taints" {
+  description = "Taints to apply to the Dynamic-Pods Node Pool "
+  type        = "list"
+  default     = []
+}
+
 variable "enable_knative" {
   type    = bool
   default = false
+}
+
+variable "create_dynamic_pods_nodepool" {
+  type        = bool
+  default     = false
+  description = "If true, creates a NodePool for the pods spun up using KubernetesPodsOperator or KubernetesExecutor"
 }
