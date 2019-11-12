@@ -132,12 +132,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
   }
 
   management {
-    # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-upgrades
-    # With this set to false, then an update will only occur when terraform runs
-    # because we set the node pool kubelet version to the version of the master,
-    # which will trigger an update, and the name including a timestamp will
-    # force a create then destroy event.
-    auto_upgrade = false
+    auto_upgrade = true
 
     # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-repair
     auto_repair = true
