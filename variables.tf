@@ -138,6 +138,12 @@ variable "platform_node_pool_taints" {
   default     = []
 }
 
+variable "dp_node_pool_taints" {
+  description = "Taints to apply to the Dynamic-Pods Node Pool "
+  type        = "list"
+  default     = []
+}
+
 variable "enable_knative" {
   type    = bool
   default = false
