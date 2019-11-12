@@ -105,15 +105,8 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
   provider = google-beta
 
   # these can't be created or deleted at the same time.
-  depends_on = [google_container_node_pool.node_pool_platform]
+  depends_on = [google_container_node_pool.node_pool_mt]
   # version    = data.google_container_cluster.primary.master_version
-  version = var.kube_version_gke
-
-  # We want the dynamic-pods node pool to be completely replaced
-  # instead of rolling deployment.
-  # The master_version will ensure that the node pool is created then
-  # destroyed if there is an update.
-  name = "${var.deployment_id}-dp-${formatdate("MM-DD-hh-mm", timestamp())}"
 
   # this one can take a long time to delete or create
   timeouts {
@@ -124,7 +117,6 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = [name]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
