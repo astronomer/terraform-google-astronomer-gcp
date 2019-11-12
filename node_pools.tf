@@ -100,6 +100,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 }
 
 resource "google_container_node_pool" "node_pool_dynamic_pods" {
+  count = var.create_dynamic_pods_nodepool ? 1 : 0
 
   provider = google-beta
 
