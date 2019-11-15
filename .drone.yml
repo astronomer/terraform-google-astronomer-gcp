@@ -49,8 +49,6 @@ steps:
   when:
     event:
       - push
-    branch:
-      - master
 
 - name: from_scratch_cleanup
   image: sjmiller609/helm-kubectl-terraform:latest
@@ -65,8 +63,6 @@ steps:
     status:
       - failure
       - success
-    branch:
-      - master
 
 # temporary workaround to the cluster going into a
 # 'reconciling' state for a long time after initial
@@ -83,8 +79,6 @@ steps:
   when:
     event:
       - push
-    branch:
-      - master
     status:
       - failure
 
