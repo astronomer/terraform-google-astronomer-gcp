@@ -142,6 +142,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
     labels = {
       "astronomer.io/multi-tenant" = "true"
+      "astronomer.io/dynamic-pods" = "true"
     }
 
     machine_type = var.machine_type
