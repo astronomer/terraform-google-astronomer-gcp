@@ -124,7 +124,7 @@ resource "google_container_cluster" "primary" {
       enable_network_egress_metering = false
 
       bigquery_destination {
-        dataset_id = google_bigquery_dataset.gke_metered_billing.dataset_id
+        dataset_id = google_bigquery_dataset.gke_metered_billing[0].dataset_id
       }
     }
   }
@@ -141,6 +141,6 @@ resource "local_file" "kubeconfig" {
 
 resource "google_bigquery_dataset" "gke_metered_billing" {
   count      = var.enable_gke_metered_billing ? 1 : 0
-  dataset_id = "${var.deployment_id}_cluster_resource_usage"
+  dataset_id = "${var.deployment_id}_gke_usage_metering_dataset"
   location   = "US"
 }
