@@ -121,7 +121,7 @@ resource "google_container_cluster" "primary" {
   dynamic "resource_usage_export_config" {
     for_each = var.enable_gke_metered_billing ? ["placeholder"] : []
     content {
-      enable_network_egress_metering = false
+      enable_network_egress_metering = true
 
       bigquery_destination {
         dataset_id = google_bigquery_dataset.gke_metered_billing[0].dataset_id
