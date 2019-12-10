@@ -140,7 +140,8 @@ resource "local_file" "kubeconfig" {
 }
 
 resource "google_bigquery_dataset" "gke_metered_billing" {
-  count      = var.enable_gke_metered_billing ? 1 : 0
-  dataset_id = "${var.deployment_id}_gke_usage_metering_dataset"
-  location   = "US"
+  count                      = var.enable_gke_metered_billing ? 1 : 0
+  dataset_id                 = "${var.deployment_id}_gke_usage_metering_dataset"
+  location                   = "US"
+  delete_contents_on_destroy = true
 }
