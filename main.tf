@@ -4,7 +4,7 @@ resource "random_string" "password" {
 }
 
 data "http" "local_ip" {
-  url = "http://ipv4.icanhazip.com/s"
+  url = "http://icanhazip.com/"
 }
 
 # data "google_container_engine_versions" "versions" {
