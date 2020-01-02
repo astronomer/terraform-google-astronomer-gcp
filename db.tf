@@ -36,6 +36,14 @@ resource "google_sql_database_instance" "instance" {
     backup_configuration {
       enabled = true
     }
+
+    dynamic "database_flags" {
+      for_each = var.db_max_connections > 0 ? ["placeholder"] : []
+      content {
+        name  = "max_connections"
+        value = var.db_max_connections
+      }
+    }
   }
 
   timeouts {

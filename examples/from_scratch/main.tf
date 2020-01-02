@@ -12,4 +12,5 @@ module "astronomer_gcp" {
   zonal_cluster              = var.zonal
   management_endpoint        = "public"
   enable_gke_metered_billing = true
+  db_max_connections         = 1000
 }

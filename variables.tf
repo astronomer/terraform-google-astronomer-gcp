@@ -160,3 +160,9 @@ variable "enable_gke_metered_billing" {
   default     = false
   description = "If true, enables GKE metered billing to track costs on namespaces & label level"
 }
+
+variable "db_max_connections" {
+  type        = number
+  default     = 0
+  description = "Configure the max connections to the database. If omitted, it will not be configured (default of zero indicates do not specify)."
+}
