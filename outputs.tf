@@ -34,7 +34,7 @@ output "tls_key" {
 }
 
 output "tls_cert" {
-  value     = <<EOF
+  value     = var.dns_managed_zone == "" ? "" : <<EOF
 ${acme_certificate.lets_encrypt[0].certificate_pem}
 ${acme_certificate.lets_encrypt[0].issuer_pem}
 EOF

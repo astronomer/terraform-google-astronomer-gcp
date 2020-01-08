@@ -51,7 +51,8 @@ users:
     google_compute_subnetwork.gke.region,
     google_compute_subnetwork.gke.name,
   )
-  base_domain = format(
+
+  base_domain = var.dns_managed_zone != "" ? format(
     "%s.%s",
     var.deployment_id,
     substr(
@@ -59,7 +60,8 @@ users:
       0,
       length(data.google_dns_managed_zone.public_zone[0].dns_name) - 1,
     ),
-  )
+  ) : ""
+
   # min_master_version = var.min_master_version == "" ? data.google_container_engine_versions.gke.latest_master_version : var.min_master_version
   # node_version = var.node_version == "" ? data.google_container_engine_versions.gke.latest_node_version : var.node_version
 
