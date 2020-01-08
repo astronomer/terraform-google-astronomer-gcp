@@ -215,7 +215,7 @@ resource "google_container_node_pool" "node_pool_platform" {
   initial_node_count = var.zonal_cluster ? "3" : "1"
 
   autoscaling {
-    min_node_count = "0"
+    min_node_count = "1"
     max_node_count = var.zonal_cluster ? 12 : 4
   }
 
