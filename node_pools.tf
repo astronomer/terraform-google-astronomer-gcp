@@ -65,6 +65,7 @@ resource "google_container_node_pool" "node_pool_mt" {
     }
 
     machine_type = var.machine_type
+    disk_size_gb = var.disk_size_multi_tenant
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
@@ -146,6 +147,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
     }
 
     machine_type = var.machine_type
+    disk_size_gb = var.disk_size_dynamic
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
@@ -233,6 +235,7 @@ resource "google_container_node_pool" "node_pool_platform" {
     image_type = "COS"
 
     machine_type = var.machine_type_platform
+    disk_size_gb = var.disk_size_platform
 
     labels = {
       "astronomer.io/multi-tenant" = "false"

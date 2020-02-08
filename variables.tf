@@ -8,6 +8,24 @@ variable "dns_managed_zone" {
   description = "The name of the google dns managed zone we should use"
 }
 
+variable "disk_size_multi_tenant" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the multi-tenant node pool, which runs Airflow deployments"
+}
+
+variable "disk_size_platform" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the platform node pool, which runs Astronomer components"
+}
+
+variable "disk_size_dynamic" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the dynamic, multi-tenant node pool, which runs Airflow deployments' ephemeral pods such as KubeExecutor pods and Kubernetes Pod Operator pods"
+}
+
 variable "kube_version_gke" {
   default     = "1.14"
   description = "The kubernetes version to use in GKE"
