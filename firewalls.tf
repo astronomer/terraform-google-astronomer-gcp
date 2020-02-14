@@ -30,17 +30,16 @@ resource "google_compute_firewall" "bastion_deny_all_ingress" {
   target_service_accounts = [google_service_account.bastion[0].email]
 }
 
-resource "google_compute_firewall" "gke_knative_serving_webhook_allow" {
-  count       = var.enable_knative ? 1 : 0
-  name        = "${var.deployment_id}-knative-webhook-allow-ingress"
+resource "google_compute_firewall" "gke_webhook_allow" {
+  name        = "${var.deployment_id}-apiservice-webhook-allow-ingress-from-gke-masters"
   network     = google_compute_network.core.self_link
-  description = "Allow GKE master to communicate with node pools on 8443 for the knative webhook"
+  description = "Allow GKE control plane to communicate with node pools on the ports required to enable custom api services"
   priority    = 1000
   direction   = "INGRESS"
 
   allow {
     protocol = "tcp"
-    ports    = ["8443"]
+    ports    = var.webhook_ports
   }
 
   source_ranges = [google_container_cluster.primary.private_cluster_config.0.master_ipv4_cidr_block]
