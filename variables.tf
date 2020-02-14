@@ -162,9 +162,10 @@ variable "dp_node_pool_taints" {
   default     = []
 }
 
-variable "enable_knative" {
-  type    = bool
-  default = false
+variable "webhook_ports" {
+  type        = list(string)
+  default     = []
+  description = "When custom API services are added to the cluster, the corresponding ports must be opened on the network's firewall, allowing GKE's control plane to access the api service backend running in the node pool. The ports should be provided as a list of strings."
 }
 
 variable "create_dynamic_pods_nodepool" {
