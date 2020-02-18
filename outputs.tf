@@ -1,27 +1,27 @@
 output "bastion_proxy_command" {
-  value = length(google_compute_instance.bastion) > 0 ? "gcloud beta compute ssh --zone ${google_compute_instance.bastion[0].zone} ${google_compute_instance.bastion[0].name} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'" : "Not applicable - no bastion"
+  value = length(google_compute_instance.bastion) > 0 ? "gcloud beta compute ssh --zone ${element(concat(google_compute_instance.bastion.*.zone, list("")), 0)} ${element(concat(google_compute_instance.bastion.*.name, list("")), 0)} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'" : "Not applicable - no bastion"
 }
 
 output "db_connection_string" {
-  value     = "postgres://${google_sql_user.airflow.name}:${local.postgres_airflow_password}@${google_sql_database_instance.instance.private_ip_address}:5432"
+  value     = var.deploy_db ? "postgres://${element(concat(google_sql_user.airflow.*.name, list("")), 0)}:${local.postgres_airflow_password}@${element(concat(google_sql_database_instance.instance.*.private_ip_address, list("")), 0)}:5432" : "N/A: DB is not deployed with the terraform-google-astronomer-gcp module. Set deploy_db = true"
   sensitive = true
 }
 
 output "db_connection_user" {
-  value = google_sql_user.airflow.name
+  value = var.deploy_db ? element(concat(google_sql_user.airflow.*.name, list("")), 0) : "N/A"
 }
 
 output "db_connection_password" {
-  value     = local.postgres_airflow_password
+  value     = var.deploy_db ? local.postgres_airflow_password : "N/A"
   sensitive = true
 }
 
 output "db_instance_private_ip" {
-  value = google_sql_database_instance.instance.private_ip_address
+  value = var.deploy_db ? element(concat(google_sql_database_instance.instance.*.private_ip_address, list("")), 0) : "N/A"
 }
 
 output "db_instance_name" {
-  value = google_sql_database_instance.instance.name
+  value = var.deploy_db ? element(concat(google_sql_database_instance.instance.*.name, list("")), 0) : "N/A"
 }
 
 output "base_domain" {

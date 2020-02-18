@@ -18,6 +18,8 @@ resource "google_service_account_key" "cloud_sql_admin" {
 }
 
 resource "google_sql_database_instance" "instance" {
+  count = var.deploy_db ? 1 : 0
+
   name             = "${var.deployment_id}-astro-db-${random_id.db_name_suffix.hex}"
   region           = local.region
   database_version = "POSTGRES_9_6"
@@ -60,7 +62,8 @@ resource "random_string" "postgres_airflow_password" {
 }
 
 resource "google_sql_user" "airflow" {
+  count    = var.deploy_db ? 1 : 0
   name     = "airflow"
-  instance = google_sql_database_instance.instance.name
+  instance = google_sql_database_instance.instance[0].name
   password = local.postgres_airflow_password
 }

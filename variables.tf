@@ -180,6 +180,12 @@ variable "enable_gke_metered_billing" {
   description = "If true, enables GKE metered billing to track costs on namespaces & label level"
 }
 
+variable "deploy_db" {
+  type        = bool
+  default     = true
+  description = "Do you want a database deployed in this project?"
+}
+
 variable "db_max_connections" {
   type        = number
   default     = 0
