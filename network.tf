@@ -55,6 +55,7 @@ resource "google_compute_router_nat" "nat" {
   nat_ip_allocate_option             = "MANUAL_ONLY"
   nat_ips                            = google_compute_address.address.*.self_link
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
+  tcp_established_idle_timeout_sec   = 7200
 
   lifecycle {
     ignore_changes = [name]
