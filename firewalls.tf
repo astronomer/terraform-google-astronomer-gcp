@@ -45,3 +45,19 @@ resource "google_compute_firewall" "gke_webhook_allow" {
   source_ranges = [google_container_cluster.primary.private_cluster_config.0.master_ipv4_cidr_block]
   target_tags   = local.gke_nodepool_network_tags
 }
+
+resource "google_compute_firewall" "gke_iap_ssh_to_nodes" {
+  name        = "${var.deployment_id}-allow-ingress-from-google-iap-to-nodes"
+  network     = google_compute_network.core.self_link
+  description = "Allow GCP IAP to use SSH to connect to GKE nodes"
+  priority    = 2000
+  direction   = "INGRESS"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = var.iap_cidr_ranges
+  target_tags   = local.gke_nodepool_network_tags
+}
