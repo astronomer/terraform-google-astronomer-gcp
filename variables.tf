@@ -41,6 +41,11 @@ variable "machine_type_platform" {
   description = "The GCP machine type for GKE worker nodes running platform components"
 }
 
+variable "green_machine_type_platform" {
+  default     = "n1-standard-4"
+  description = "The GCP machine type for GKE worker nodes running platform components"
+}
+
 variable "machine_type_bastion" {
   default     = "g1-small"
   description = "The GCP machine type for the bastion"
@@ -190,4 +195,10 @@ variable "db_max_connections" {
   type        = number
   default     = 0
   description = "Configure the max connections to the database. If omitted, it will not be configured (default of zero indicates do not specify)."
+}
+
+variable "enable_green_platform_node_pool" {
+  type        = bool
+  default     = false
+  description = "Turn on the green platform node pool"
 }

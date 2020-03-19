@@ -1,9 +1,8 @@
 # The data source is necessary to get the current
 # master kube version instead of the previous version
 data "google_container_cluster" "primary" {
-  depends_on = [google_container_cluster.primary]
-  name       = google_container_cluster.primary.name
-  location   = google_container_cluster.primary.location
+  name     = google_container_cluster.primary.name
+  location = google_container_cluster.primary.location
 }
 
 # Node pool
@@ -11,9 +10,6 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   provider = google-beta
 
-  # these can't be created or deleted at the same time.
-  depends_on = [google_container_node_pool.node_pool_platform]
-  # version    = data.google_container_cluster.primary.master_version
   version = var.kube_version_gke
 
   # We want the multi-tenant node pool to be completely replaced
@@ -105,8 +101,6 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
   provider = google-beta
 
-  # these can't be created or deleted at the same time.
-  depends_on = [google_container_node_pool.node_pool_mt]
   # version    = data.google_container_cluster.primary.master_version
 
   # this one can take a long time to delete or create
@@ -235,6 +229,92 @@ resource "google_container_node_pool" "node_pool_platform" {
     image_type = "COS"
 
     machine_type = var.machine_type_platform
+    disk_size_gb = var.disk_size_platform
+
+    labels = {
+      "astronomer.io/multi-tenant" = "false"
+    }
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/compute",
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+      "https://www.googleapis.com/auth/service.management.readonly",
+      "https://www.googleapis.com/auth/servicecontrol",
+      "https://www.googleapis.com/auth/trace.append",
+    ]
+
+    dynamic "taint" {
+      for_each = var.platform_node_pool_taints
+      content {
+        effect = taint.value.effect
+        key    = taint.value.key
+        value  = taint.value.value
+      }
+    }
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# blue / green so we can bring up one with a TF run then disable the other
+resource "google_container_node_pool" "node_pool_platform_green" {
+  count = var.enable_green_platform_node_pool ? 1 : 0
+
+  provider = google-beta
+
+  # By not setting the name, this allows the provider to choose a random name.
+  # This is good because we can create_before_destroy (if name is hardcoded,
+  # then it is a name collision), and we can also avoid re-provisioning the
+  # whole node pool when something needs to update, which would happen if we
+  # include a timestamp or similar in the name. If we provided a random string
+  # using one of the terraform 'random_' resources, then it would also cause
+  # name collisions because terraform would not change the random value. If
+  # we force the random value to always update, then that has the same behavior
+  # as including a timestamp.
+  #
+  # name    = "${var.deployment_id}-platform-${formatdate("MM-DD-hh-mm", timestamp())}"
+
+  # not working because 'inconsistent final plan'
+  # timeouts {
+  #   create = "30m"
+  #   update = "30m"
+  #   delete = "30m"
+  # }
+
+  # Use auto-upgrade for versioning of this node pool
+  # version = data.google_container_cluster.primary.master_version
+  # version = var.kube_version_gke
+
+  location = var.zonal_cluster ? local.zone : local.region
+  cluster  = google_container_cluster.primary.name
+
+  # if we are 'regional' i.e. in 3 zones,
+  # "1" here means "1 in each zone"
+  initial_node_count = var.zonal_cluster ? "3" : "1"
+
+  autoscaling {
+    min_node_count = "1"
+    max_node_count = var.zonal_cluster ? 12 : 4
+  }
+
+  management {
+    # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-upgrades
+    auto_upgrade = true
+
+    # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-repair
+    auto_repair = true
+  }
+
+  node_config {
+
+    # Container-Optimized OS
+    image_type = "COS"
+
+    machine_type = var.green_machine_type_platform
     disk_size_gb = var.disk_size_platform
 
     labels = {
