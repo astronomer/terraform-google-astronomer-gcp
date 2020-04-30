@@ -290,3 +290,8 @@ variable "enable_gvisor_dynamic" {
   default     = false
   description = "Should this module configure the dynamic node pool for the gvisor runtime?"
 }
+
+variable "machine_type_dynamic" {
+  default     = "n1-standard-4"
+  description = "The GCP machine type for the bastion"
+}
