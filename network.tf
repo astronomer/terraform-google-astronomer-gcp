@@ -51,6 +51,7 @@ resource "google_compute_router_nat" "nat" {
 
   name                               = "${var.deployment_id}-gke-${formatdate("MM-DD-hh-mm", timestamp())}"
   region                             = local.region
+  min_ports_per_vm                   = 128
   router                             = google_compute_router.router.name
   nat_ip_allocate_option             = "MANUAL_ONLY"
   nat_ips                            = google_compute_address.address.*.self_link
