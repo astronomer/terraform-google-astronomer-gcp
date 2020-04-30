@@ -59,7 +59,9 @@ output "container_registry_bucket_name" {
 resource "null_resource" "dependency_setter" {
   depends_on = [google_container_cluster.primary,
     google_container_node_pool.node_pool_mt,
+    google_container_node_pool.node_pool_mt_green,
     google_container_node_pool.node_pool_platform,
+    google_container_node_pool.node_pool_platform_green,
     google_sql_database_instance.instance,
   acme_certificate.lets_encrypt]
 

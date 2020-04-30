@@ -5,7 +5,7 @@ data "google_container_engine_versions" "gke" {
 }
 
 data "google_compute_instance_group" "sample_instance_group" {
-  self_link = replace(google_container_node_pool.node_pool_platform.instance_group_urls[0], "instanceGroupManagers", "instanceGroups")
+  self_link = var.enable_blue_platform_node_pool ? replace(google_container_node_pool.node_pool_platform[1].instance_group_urls[0], "instanceGroupManagers", "instanceGroups") : replace(google_container_node_pool.node_pool_platform_green[1].instance_group_urls[0], "instanceGroupManagers", "instanceGroups")
 }
 
 data "google_compute_instance" "sample_instance" {

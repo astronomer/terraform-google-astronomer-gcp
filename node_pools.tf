@@ -211,7 +211,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.zonal_cluster ? var.max_node_count : ceil(var.max_node_count / 3)
+    max_node_count = var.zonal_cluster ? var.max_node_count_dynamic : ceil(var.max_node_count_dynamic / 3)
   }
 
   management {
@@ -228,7 +228,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
       "astronomer.io/dynamic-pods" = "true"
     }
 
-    machine_type = var.machine_type
+    machine_type = var.machine_type_dynamic
     disk_size_gb = var.disk_size_dynamic
 
     oauth_scopes = [
@@ -242,7 +242,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
     ]
 
     dynamic "taint" {
-      for_each = var.dp_node_pool_taints
+      for_each = var.dynamic_node_pool_taints
       content {
         effect = taint.value.effect
         key    = taint.value.key
