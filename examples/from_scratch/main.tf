@@ -1,7 +1,7 @@
 variable "deployment_id" {}
 
 variable "zonal" {
-  default = true
+  default = false
 }
 
 module "astronomer_gcp" {
