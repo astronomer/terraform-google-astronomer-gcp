@@ -149,17 +149,17 @@ steps:
     repo:
       - astronomer/terraform-google-astronomer-gcp
 
-- name: update_cloud_module
-  image: docker:git
-  environment:
-    DEPLOY_KEY:
-      from_secret: DEPLOY_KEY_CLOUD_MODULE
-  commands:
-    - pipeline/update_cloud_module.sh
-  when:
-    event:
-      - tag
-    status:
-      - success
-    repo:
-      - astronomer/terraform-google-astronomer-gcp
+# - name: update_cloud_module
+#   image: docker:git
+#   environment:
+#     DEPLOY_KEY:
+#       from_secret: DEPLOY_KEY_CLOUD_MODULE
+#   commands:
+#     - pipeline/update_cloud_module.sh
+#   when:
+#     event:
+#       - tag
+#     status:
+#       - success
+#     repo:
+#       - astronomer/terraform-google-astronomer-gcp

@@ -8,65 +8,15 @@ variable "dns_managed_zone" {
   description = "The name of the google dns managed zone we should use"
 }
 
-variable "disk_size_multi_tenant" {
-  default     = 100
-  type        = number
-  description = "Number of GB available on Nodes' local disks for the multi-tenant node pool, which runs Airflow deployments"
-}
-
-variable "disk_size_platform" {
-  default     = 100
-  type        = number
-  description = "Number of GB available on Nodes' local disks for the platform node pool, which runs Astronomer components"
-}
-
-variable "disk_size_dynamic" {
-  default     = 100
-  type        = number
-  description = "Number of GB available on Nodes' local disks for the dynamic, multi-tenant node pool, which runs Airflow deployments' ephemeral pods such as KubeExecutor pods and Kubernetes Pod Operator pods"
-}
-
 variable "kube_version_gke" {
   default     = "1.14"
   description = "The kubernetes version to use in GKE"
-}
-
-variable "machine_type" {
-  default     = "n1-standard-4"
-  description = "The GCP machine type for GKE worker nodes running multi-tenant workloads"
-}
-
-variable "machine_type_platform" {
-  default     = "n1-standard-4"
-  description = "The GCP machine type for GKE worker nodes running platform components"
-}
-
-variable "green_machine_type_platform" {
-  default     = "n1-standard-4"
-  description = "The GCP machine type for GKE worker nodes running platform components"
 }
 
 variable "machine_type_bastion" {
   default     = "g1-small"
   description = "The GCP machine type for the bastion"
 }
-
-variable "max_node_count" {
-  default     = 10
-  description = "The approximate maximum number of nodes in the GKE worker node pool. The exact max will be 3 * ceil(your_value / 3.0) ."
-}
-
-/*
-variable "min_master_version" {
-  default     = ""
-  description = "The minimum version of the master. Default is the latest available from the API."
-}
-
-variable "node_version" {
-  default     = ""
-  description = "The version of Kubernetes in GKE cluster. Default is the latest available from the API."
-}
-*/
 
 variable "gke_secondary_ip_ranges_pods" {
   default     = "10.32.0.0/14"
@@ -133,12 +83,6 @@ variable "wait_for" {
   description = "How long to wait after GKE cluster is up in order for the cluster to stabilize"
 }
 
-variable "enable_gvisor" {
-  type        = bool
-  default     = false
-  description = "Should this module configure the multi-tenant node pool for the gvisor runtime?"
-}
-
 variable "do_not_create_a_record" {
   type    = bool
   default = false
@@ -149,34 +93,10 @@ variable "lets_encrypt" {
   default = true
 }
 
-variable "mt_node_pool_taints" {
-  description = "Taints to apply to the Multi-Tenant Node Pool "
-  type        = "list"
-  default     = []
-}
-
-variable "platform_node_pool_taints" {
-  description = "Taints to apply to the Platform Node Pool "
-  type        = "list"
-  default     = []
-}
-
-variable "dp_node_pool_taints" {
-  description = "Taints to apply to the Dynamic-Pods Node Pool "
-  type        = "list"
-  default     = []
-}
-
 variable "webhook_ports" {
   type        = list(string)
   default     = []
   description = "When custom API services are added to the cluster, the corresponding ports must be opened on the network's firewall, allowing GKE's control plane to access the api service backend running in the node pool. The ports should be provided as a list of strings."
-}
-
-variable "create_dynamic_pods_nodepool" {
-  type        = bool
-  default     = false
-  description = "If true, creates a NodePool for the pods spun up using KubernetesPodsOperator or KubernetesExecutor"
 }
 
 variable "enable_gke_metered_billing" {
@@ -197,8 +117,176 @@ variable "db_max_connections" {
   description = "Configure the max connections to the database. If omitted, it will not be configured (default of zero indicates do not specify)."
 }
 
+
+### Node Pool settings
+# Blue / Green node pools feature is to allow Terraform users
+# careful control of node pool changes
+
+
+## Platform node pool: Blue
+
+variable "enable_blue_platform_node_pool" {
+  type        = bool
+  default     = true
+  description = "Turn on the blue platform node pool"
+}
+
+variable "machine_type_platform_blue" {
+  default     = "n1-standard-4"
+  type        = string
+  description = "The GCP machine type for GKE worker nodes running platform components"
+}
+
+variable "disk_size_platform_blue" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the platform node pool, which runs Astronomer components"
+}
+
+variable "max_node_count_platform_blue" {
+  default     = 10
+  type        = number
+  description = "The approximate maximum number of nodes in the platform node pool. The exact max will be 3 * ceil(your_value / 3.0) in the case of regional cluster, and exactly as configured in the case of zonal cluster."
+}
+
+variable "platform_node_pool_taints_blue" {
+  description = "Taints to apply to the platform node pool "
+  type        = list
+  default     = []
+}
+
+## Platform node pool: Green
+
 variable "enable_green_platform_node_pool" {
   type        = bool
   default     = false
   description = "Turn on the green platform node pool"
+}
+
+variable "machine_type_platform_green" {
+  default     = "n1-standard-4"
+  type        = string
+  description = "The GCP machine type for GKE worker nodes running platform components"
+}
+
+variable "disk_size_platform_green" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the platform node pool, which runs Astronomer components"
+}
+
+variable "max_node_count_platform_green" {
+  default     = 10
+  type        = number
+  description = "The approximate maximum number of nodes in the platfor node pool. The exact max will be 3 * ceil(your_value / 3.0) in the case of regional cluster, and exactly as configured in the case of zonal cluster."
+}
+
+variable "platform_node_pool_taints_green" {
+  description = "Taints to apply to the Platform Node Pool "
+  type        = list
+  default     = []
+}
+
+
+## Multi-tenant node pool: Blue
+
+variable "enable_blue_mt_node_pool" {
+  type        = bool
+  default     = true
+  description = "Turn on the blue multi-tenant node pool"
+}
+
+variable "machine_type_multi_tenant_blue" {
+  default     = "n1-standard-4"
+  description = "The GCP machine type for GKE worker nodes running multi-tenant workloads"
+}
+
+variable "disk_size_multi_tenant_blue" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the multi-tenant node pool, which runs Airflow deployments"
+}
+
+variable "max_node_count_multi_tenant_blue" {
+  default     = 10
+  description = "The approximate maximum number of nodes in the GKE multi-tenant node pool. The exact max will be 3 * ceil(your_value / 3.0) in the case of regional cluster, and exactly as configured in the case of zonal cluster."
+}
+
+variable "mt_node_pool_taints_blue" {
+  description = "Taints to apply to the Multi-Tenant Node Pool "
+  type        = "list"
+  default     = []
+}
+
+variable "enable_gvisor_blue" {
+  type        = bool
+  default     = false
+  description = "Should this module configure the multi-tenant node pool for the gvisor runtime?"
+}
+
+## Multi-tenant node pool: Green
+
+variable "enable_green_mt_node_pool" {
+  type        = bool
+  default     = false
+  description = "Turn on the green multi-tenant node pool"
+}
+
+variable "machine_type_multi_tenant_green" {
+  default     = "n1-standard-4"
+  description = "The GCP machine type for GKE worker nodes running multi-tenant workloads"
+}
+
+variable "disk_size_multi_tenant_green" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the multi-tenant node pool, which runs Airflow components"
+}
+
+variable "max_node_count_multi_tenant_green" {
+  default     = 10
+  description = "The approximate maximum number of nodes in the GKE multi-tenant node pool. The exact max will be 3 * ceil(your_value / 3.0) in the case of regional cluster, and exactly as configured in the case of zonal cluster."
+}
+
+variable "mt_node_pool_taints_green" {
+  description = "Taints to apply to the Multi-Tenant Node Pool"
+  type        = "list"
+  default     = []
+}
+
+variable "enable_gvisor_green" {
+  type        = bool
+  default     = false
+  description = "Should this module configure the multi-tenant node pool for the gvisor runtime?"
+}
+
+## Dynamic node pool: we do not have Blue / Green for this one, just a single node pool
+
+variable "create_dynamic_pods_nodepool" {
+  type        = bool
+  default     = false
+  description = "If true, creates a NodePool for the pods spun up using KubernetesPodsOperator or KubernetesExecutor"
+}
+
+variable "disk_size_dynamic" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the dynamic node pool, which runs Airflow deployments' ephemeral pods such as KubeExecutor pods and Kubernetes Pod Operator pods"
+}
+
+variable "dynamic_node_pool_taints" {
+  description = "Taints to apply to the dynamic node pool "
+  type        = "list"
+  default     = []
+}
+
+variable "max_node_count_dynamic" {
+  default     = 10
+  description = "The approximate maximum number of nodes in the GKE dynamic node pool. The exact max will be 3 * ceil(your_value / 3.0) for a regional cluster, or exactly as configured for zonal cluster."
+}
+
+variable "enable_gvisor_dynamic" {
+  type        = bool
+  default     = false
+  description = "Should this module configure the dynamic node pool for the gvisor runtime?"
 }
