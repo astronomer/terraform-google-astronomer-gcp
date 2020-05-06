@@ -30,7 +30,7 @@ resource "google_container_node_pool" "node_pool_mt_green" {
 
   # if we are 'regional' i.e. in 3 zones,
   # "1" here means "1 in each zone"
-  initial_node_count = var.zonal_cluster ? "3" : "1"
+  initial_node_count = var.green_mt_np_initial_node_count
 
   autoscaling {
     min_node_count = "0"
@@ -100,12 +100,6 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   version = var.kube_version_gke
 
-  # We want the multi-tenant node pool to be completely replaced
-  # instead of rolling deployment.
-  # The master_version will ensure that the node pool is created then
-  # destroyed if there is an update.
-  name = "${var.deployment_id}-mt-${formatdate("MM-DD-hh-mm", timestamp())}"
-
   # this one can take a long time to delete or create
   timeouts {
     create = "30m"
@@ -123,7 +117,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   # if we are 'regional' i.e. in 3 zones,
   # "1" here means "1 in each zone"
-  initial_node_count = var.zonal_cluster ? "3" : "1"
+  initial_node_count = var.blue_mt_np_initial_node_count
 
   autoscaling {
     min_node_count = "0"
@@ -207,7 +201,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
   # if we are 'regional' i.e. in 3 zones,
   # "1" here means "1 in each zone"
-  initial_node_count = var.zonal_cluster ? "3" : "1"
+  initial_node_count = var.dynamic_np_initial_node_count
 
   autoscaling {
     min_node_count = "0"
@@ -275,7 +269,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   # if we are 'regional' i.e. in 3 zones,
   # "1" here means "1 in each zone"
-  initial_node_count = var.zonal_cluster ? "3" : "1"
+  initial_node_count = var.blue_platform_np_initial_node_count
 
   autoscaling {
     min_node_count = "1"
@@ -338,7 +332,7 @@ resource "google_container_node_pool" "node_pool_platform_green" {
 
   # if we are 'regional' i.e. in 3 zones,
   # "1" here means "1 in each zone"
-  initial_node_count = var.zonal_cluster ? "3" : "1"
+  initial_node_count = var.green_platform_np_initial_node_count
 
   autoscaling {
     min_node_count = "1"
