@@ -70,8 +70,9 @@ resource "google_container_cluster" "primary" {
     cidr_blocks {
       # display_name = google_compute_subnetwork.bastion.name
       # either whitelist the caller's IP or only allow access from bastion
-      cidr_block = var.management_endpoint == "public" ? "${trimspace(data.http.local_ip.body)}/32" : google_compute_subnetwork.bastion[0].ip_cidr_range
+      cidr_block = var.management_endpoint == "public" ? var.kube_api_whitelist_cidr == "" ? "${trimspace(data.http.local_ip.body)}/32" : var.kube_api_whitelist_cidr : google_compute_subnetwork.bastion[0].ip_cidr_range
     }
+
   }
 
   pod_security_policy_config {
