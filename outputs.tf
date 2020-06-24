@@ -29,7 +29,7 @@ output "base_domain" {
 }
 
 output "tls_key" {
-  value     = tls_private_key.cert_private_key.private_key_pem
+  value     = var.lets_encrypt ? tls_private_key.cert_private_key.0.private_key_pem : ""
   sensitive = true
 }
 

@@ -16,6 +16,7 @@ locals {
   project                   = data.google_compute_zones.available.project
   region                    = data.google_compute_zones.available.region
   zone                      = data.google_compute_zones.available.names[0]
+  location                  = var.zonal_cluster ? local.zone : local.region
   kubeconfig                = <<EOF
 apiVersion: v1
 clusters:

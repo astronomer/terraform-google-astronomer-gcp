@@ -16,23 +16,29 @@ data "google_dns_managed_zone" "public_zone" {
 }
 
 resource "tls_private_key" "private_key" {
+  count = var.lets_encrypt ? 1 : 0
+
   algorithm = "RSA"
 }
 
 resource "acme_registration" "user_registration" {
   count = var.lets_encrypt ? 1 : 0
 
-  account_key_pem = tls_private_key.private_key.private_key_pem
+  account_key_pem = tls_private_key.private_key.0.private_key_pem
   email_address   = var.email
 }
 
 resource "tls_private_key" "cert_private_key" {
+  count = var.lets_encrypt ? 1 : 0
+
   algorithm = "RSA"
 }
 
 resource "tls_cert_request" "req" {
+  count = var.lets_encrypt ? 1 : 0
+
   key_algorithm   = "RSA"
-  private_key_pem = tls_private_key.cert_private_key.private_key_pem
+  private_key_pem = tls_private_key.cert_private_key.0.private_key_pem
   dns_names       = ["*.${local.base_domain}"]
 
   subject {
@@ -45,7 +51,7 @@ resource "acme_certificate" "lets_encrypt" {
   count = var.lets_encrypt ? 1 : 0
 
   account_key_pem         = acme_registration.user_registration[0].account_key_pem
-  certificate_request_pem = tls_cert_request.req.cert_request_pem
+  certificate_request_pem = tls_cert_request.req.0.cert_request_pem
   recursive_nameservers   = data.google_dns_managed_zone.public_zone[0].name_servers
 
   dns_challenge {

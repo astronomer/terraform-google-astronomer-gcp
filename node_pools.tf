@@ -336,7 +336,7 @@ resource "google_container_node_pool" "node_pool_platform_green" {
 
   autoscaling {
     min_node_count = "1"
-    max_node_count = var.zonal_cluster ? 12 : 4
+    max_node_count = var.zonal_cluster ? var.max_node_count_platform_green : ceil(var.max_node_count_platform_green / 3)
   }
 
   management {

@@ -45,7 +45,7 @@ resource "google_container_cluster" "primary" {
   # "If you specify a region (such as us-west1), the cluster will be a regional cluster"
   # quoted from:
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
-  location = var.zonal_cluster ? local.zone : local.region
+  location = local.location
 
   min_master_version = var.kube_version_gke
 
@@ -72,6 +72,16 @@ resource "google_container_cluster" "primary" {
       # either whitelist the caller's IP or only allow access from bastion
       cidr_block = var.management_endpoint == "public" ? "${trimspace(data.http.local_ip.body)}/32" : google_compute_subnetwork.bastion[0].ip_cidr_range
     }
+  }
+
+  pod_security_policy_config {
+    enabled = var.pod_security_policy_enabled
+  }
+
+  cluster_autoscaling {
+    # Spotinist handles scaling, so GKE scaling should be
+    # disabled when using Spotinist
+    enabled = var.enable_spotinist ? false : true
   }
 
   /*

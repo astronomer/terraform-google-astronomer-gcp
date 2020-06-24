@@ -325,3 +325,21 @@ variable "machine_type_dynamic" {
   default     = "n1-standard-4"
   description = "The GCP machine type for the bastion"
 }
+
+variable "kube_api_whitelist_cidr" {
+  default     = ""
+  type        = string
+  description = "If not provided, will whitelist only the calling IP, otherwise provide this CIDR block. This is ignore if var.management_endpoint is not set to 'public'"
+}
+
+variable "pod_security_policy_enabled" {
+  default     = false
+  type        = bool
+  description = "Turn on pod security policies in the cluster"
+}
+
+variable "enable_spotinist" {
+  default     = false
+  type        = bool
+  description = "Run the nodes using Spotinist"
+}
