@@ -34,7 +34,7 @@ resource "google_container_node_pool" "node_pool_mt_green" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.zonal_cluster ? var.max_node_count_multi_tenant_green : ceil(var.max_node_count_multi_tenant_green / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.max_node_count_multi_tenant_green : ceil(var.max_node_count_multi_tenant_green / 3)
   }
 
   management {
@@ -121,7 +121,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.zonal_cluster ? var.max_node_count_multi_tenant_blue : ceil(var.max_node_count_multi_tenant_blue / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.max_node_count_multi_tenant_blue : ceil(var.max_node_count_multi_tenant_blue / 3)
   }
 
   management {
@@ -205,7 +205,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.zonal_cluster ? var.max_node_count_dynamic : ceil(var.max_node_count_dynamic / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.max_node_count_dynamic : ceil(var.max_node_count_dynamic / 3)
   }
 
   management {
@@ -273,7 +273,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   autoscaling {
     min_node_count = "1"
-    max_node_count = var.zonal_cluster ? var.max_node_count_platform_blue : ceil(var.max_node_count_platform_blue / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.max_node_count_platform_blue : ceil(var.max_node_count_platform_blue / 3)
   }
 
   management {
@@ -336,7 +336,7 @@ resource "google_container_node_pool" "node_pool_platform_green" {
 
   autoscaling {
     min_node_count = "1"
-    max_node_count = var.zonal_cluster ? var.max_node_count_platform_green : ceil(var.max_node_count_platform_green / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.max_node_count_platform_green : ceil(var.max_node_count_platform_green / 3)
   }
 
   management {

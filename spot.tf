@@ -34,28 +34,43 @@ resource "spotinst_ocean_gke_launch_spec_import" "platform_blue" {
   count          = var.enable_spotinist && var.enable_blue_platform_node_pool ? 1 : 0
   ocean_id       = spotinst_ocean_gke_import.ocean.0.id
   node_pool_name = google_container_node_pool.node_pool_platform[count.index].name
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "spotinst_ocean_gke_launch_spec_import" "platform_green" {
   count          = var.enable_spotinist && var.enable_green_platform_node_pool ? 1 : 0
   ocean_id       = spotinst_ocean_gke_import.ocean.0.id
   node_pool_name = google_container_node_pool.node_pool_platform_green[count.index].name
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "spotinst_ocean_gke_launch_spec_import" "mt_blue" {
   count          = var.enable_spotinist && var.enable_blue_mt_node_pool ? 1 : 0
   ocean_id       = spotinst_ocean_gke_import.ocean.0.id
   node_pool_name = google_container_node_pool.node_pool_mt[count.index].name
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "spotinst_ocean_gke_launch_spec_import" "mt_green" {
   count          = var.enable_spotinist && var.enable_green_mt_node_pool ? 1 : 0
   ocean_id       = spotinst_ocean_gke_import.ocean.0.id
   node_pool_name = google_container_node_pool.node_pool_mt_green[count.index].name
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "spotinst_ocean_gke_launch_spec_import" "dynamic_pods" {
   count          = var.enable_spotinist && var.create_dynamic_pods_nodepool ? 1 : 0
   ocean_id       = spotinst_ocean_gke_import.ocean.0.id
   node_pool_name = google_container_node_pool.node_pool_dynamic_pods[count.index].name
+  lifecycle {
+    create_before_destroy = true
+  }
 }
