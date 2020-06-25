@@ -79,12 +79,6 @@ resource "google_container_cluster" "primary" {
     enabled = var.pod_security_policy_enabled
   }
 
-  cluster_autoscaling {
-    # Spotinist handles scaling, so GKE scaling should be
-    # disabled when using Spotinist
-    enabled = var.enable_spotinist ? false : true
-  }
-
   /*
   node_locations = var.zonal_cluster ? [local.zone] : ["${local.region}-a",
     "${local.region}-b",
