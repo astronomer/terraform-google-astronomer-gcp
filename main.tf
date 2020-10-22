@@ -25,6 +25,9 @@ resource "google_container_cluster" "primary" {
   # quote from:
   # https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_pool
   remove_default_node_pool = true
+  release_channel {
+    channel = "${var.gke_release_channel}"
+  }
 
   maintenance_policy {
     daily_maintenance_window {

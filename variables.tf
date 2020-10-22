@@ -13,6 +13,13 @@ variable "kube_version_gke" {
   description = "The kubernetes version to use in GKE"
 }
 
+variable "gke_release_channel" {
+  default     = "REGULAR"
+  type        = string
+  description = "The GKE Release channel to use. Blank for none"
+}
+
+
 variable "machine_type_bastion" {
   default     = "g1-small"
   description = "The GCP machine type for the bastion"
