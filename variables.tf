@@ -239,7 +239,7 @@ variable "max_node_count_multi_tenant_blue" {
 
 variable "mt_node_pool_taints_blue" {
   description = "Taints to apply to the Multi-Tenant Node Pool "
-  type        = "list"
+  type        = list
   default     = []
 }
 
@@ -281,7 +281,7 @@ variable "max_node_count_multi_tenant_green" {
 
 variable "mt_node_pool_taints_green" {
   description = "Taints to apply to the Multi-Tenant Node Pool"
-  type        = "list"
+  type        = list
   default     = []
 }
 
@@ -313,7 +313,7 @@ variable "disk_size_dynamic" {
 
 variable "dynamic_node_pool_taints" {
   description = "Taints to apply to the dynamic node pool "
-  type        = "list"
+  type        = list
   default     = []
 }
 
