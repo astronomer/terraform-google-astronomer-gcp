@@ -5,6 +5,7 @@ data "google_container_cluster" "primary" {
   location = google_container_cluster.primary.location
 }
 
+
 resource "google_container_node_pool" "node_pool_mt_green" {
 
   count = var.enable_green_mt_node_pool ? 1 : 0
@@ -43,7 +44,7 @@ resource "google_container_node_pool" "node_pool_mt_green" {
     # because we set the node pool kubelet version to the version of the master,
     # which will trigger an update, and the name including a timestamp will
     # force a create then destroy event.
-    auto_upgrade = true 
+    auto_upgrade = true
 
     # https://cloud.google.com/kubernetes-engine/docs/how-to/node-auto-repair
     auto_repair = true
@@ -183,7 +184,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
   provider = google-beta
 
-  # version    = data.google_container_cluster.primary.master_version
+  version = var.kube_version_gke
 
   # this one can take a long time to delete or create
   timeouts {
@@ -263,6 +264,7 @@ resource "google_container_node_pool" "node_pool_platform" {
   count = var.enable_blue_platform_node_pool ? 1 : 0
 
   provider = google-beta
+  version  = var.kube_version_gke
 
   location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
@@ -326,7 +328,7 @@ resource "google_container_node_pool" "node_pool_platform_green" {
   count = var.enable_green_platform_node_pool ? 1 : 0
 
   provider = google-beta
-
+  version  = var.kube_version_gke
   location = var.zonal_cluster ? local.zone : local.region
   cluster  = google_container_cluster.primary.name
 
