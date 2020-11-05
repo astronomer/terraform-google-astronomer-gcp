@@ -4,7 +4,7 @@ name: terraform-google-astronomer-gcp
 steps:
 
 - name: lint
-  image: hashicorp/terraform:light
+  image: hashicorp/terraform:light  # no docker hub rate limit
   commands:
     - cp providers.tf.example providers.tf
     - terraform init
@@ -40,7 +40,7 @@ steps:
       - push
 
 - name: from_scratch
-  image: sjmiller609/helm-kubectl-terraform:latest
+  image: quay.io/astronomer/ci-terraform:2020-11
   environment:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
@@ -51,7 +51,7 @@ steps:
       - push
 
 - name: from_scratch_cleanup
-  image: sjmiller609/helm-kubectl-terraform:latest
+  image: quay.io/astronomer/ci-terraform:2020-11
   environment:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
@@ -68,7 +68,7 @@ steps:
 # 'reconciling' state for a long time after initial
 # deployment, causing the cleanup to fail
 - name: wait_then_try_cleanup_again
-  image: sjmiller609/helm-kubectl-terraform:latest
+  image: quay.io/astronomer/ci-terraform:2020-11
   environment:
     GOOGLE_CREDENTIAL_FILE_CONTENT:
       from_secret: GOOGLE_CREDENTIAL_FILE_CONTENT
@@ -83,7 +83,7 @@ steps:
       - failure
 
 - name: git_tag
-  image: docker:git
+  image: docker:git  # no docker hub rate limit
   environment:
     DEPLOY_KEY:
       from_secret: DEPLOY_KEY
@@ -106,7 +106,7 @@ steps:
       - astronomer/terraform-google-astronomer-gcp
 
 - name: slack
-  image: plugins/slack
+  image: plugins/slack  # has docker hub rate limit
   settings:
     webhook:
       from_secret: WEBHOOK_URL
@@ -148,18 +148,3 @@ steps:
       - success
     repo:
       - astronomer/terraform-google-astronomer-gcp
-
-# - name: update_cloud_module
-#   image: docker:git
-#   environment:
-#     DEPLOY_KEY:
-#       from_secret: DEPLOY_KEY_CLOUD_MODULE
-#   commands:
-#     - pipeline/update_cloud_module.sh
-#   when:
-#     event:
-#       - tag
-#     status:
-#       - success
-#     repo:
-#       - astronomer/terraform-google-astronomer-gcp
