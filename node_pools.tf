@@ -5,6 +5,7 @@ data "google_container_cluster" "primary" {
   location = google_container_cluster.primary.location
 }
 
+# blue / green so we can bring up one with a TF run then disable the other
 resource "google_container_node_pool" "node_pool_mt_green" {
 
   count = var.enable_green_mt_node_pool ? 1 : 0
@@ -53,6 +54,7 @@ resource "google_container_node_pool" "node_pool_mt_green" {
 
     labels = {
       "astronomer.io/multi-tenant" = "true"
+      "astronomer.io/node-pool"    = "mt_green"
     }
 
     machine_type = var.machine_type_multi_tenant_green
@@ -92,6 +94,7 @@ resource "google_container_node_pool" "node_pool_mt_green" {
 }
 
 # Node pool
+# This is the node_pool_mt_blue, but the name doesn't reflect this due to tfstate history reasons
 resource "google_container_node_pool" "node_pool_mt" {
 
   count = var.enable_blue_mt_node_pool ? 1 : 0
@@ -140,6 +143,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
     labels = {
       "astronomer.io/multi-tenant" = "true"
+      "astronomer.io/node-pool"    = "mt_blue"
     }
 
     machine_type = var.machine_type_multi_tenant_blue
@@ -220,6 +224,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
     labels = {
       "astronomer.io/multi-tenant" = "true"
       "astronomer.io/dynamic-pods" = "true"
+      "astronomer.io/node-pool"    = "dynamic_pods"
     }
 
     machine_type = var.machine_type_dynamic
@@ -258,6 +263,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
   }
 }
 
+# This is the node_pool_platform_blue, but the name doesn't reflect this due to tfstate history reasons
 resource "google_container_node_pool" "node_pool_platform" {
 
   count = var.enable_blue_platform_node_pool ? 1 : 0
@@ -294,6 +300,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
     labels = {
       "astronomer.io/multi-tenant" = "false"
+      "astronomer.io/node-pool"    = "platform_blue"
     }
 
     oauth_scopes = [
@@ -357,6 +364,7 @@ resource "google_container_node_pool" "node_pool_platform_green" {
 
     labels = {
       "astronomer.io/multi-tenant" = "false"
+      "astronomer.io/node-pool"    = "platform_green"
     }
 
     oauth_scopes = [
