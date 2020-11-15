@@ -40,7 +40,8 @@ users:
 
   EOF
   bastion_name              = "${var.deployment_id}-bastion"
-  postgres_airflow_password = var.postgres_airflow_password == "" ? random_string.postgres_airflow_password[0].result : var.postgres_airflow_password
+  # fix bug during destory that leaves the random_string.postgres_airflow_password empty and errors out
+  postgres_airflow_password = var.postgres_airflow_password == "" ? random_string.postgres_airflow_password != [] ? random_string.postgres_airflow_password[0].result : "" : var.postgres_airflow_password
   core_network_id = format(
     "projects/%s/global/networks/%s",
     google_compute_network.core.project,
