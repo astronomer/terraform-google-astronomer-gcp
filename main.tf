@@ -4,7 +4,7 @@ resource "random_string" "password" {
 }
 
 data "http" "local_ip" {
-  url = "http://icanhazip.com/"
+  url = "https://api.ipify.org/"
 }
 
 # data "google_container_engine_versions" "versions" {
