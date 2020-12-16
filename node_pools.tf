@@ -318,7 +318,7 @@ resource "google_container_node_pool" "dynamic_blue_node_pool" {
     ]
 
     dynamic "taint" {
-      for_each = var.dynamic_node_pool_blue_taints
+      for_each = var.dynamic_blue_node_pool_taints
       content {
         effect = taint.value.effect
         key    = taint.value.key
@@ -340,7 +340,7 @@ resource "google_container_node_pool" "dynamic_blue_node_pool" {
   }
 }
 
-## Blue dynamic pods pool (added 2020-12-16)
+## Green dynamic pods pool (added 2020-12-16)
 
 resource "google_container_node_pool" "dynamic_green_node_pool" {
   count = var.enable_dynamic_green_node_pool ? 1 : 0
@@ -401,7 +401,7 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
     ]
 
     dynamic "taint" {
-      for_each = var.dynamic_node_pool_green_taints
+      for_each = var.dynamic_green_node_pool_taints
       content {
         effect = taint.value.effect
         key    = taint.value.key
