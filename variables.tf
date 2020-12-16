@@ -416,7 +416,6 @@ variable "enable_gvisor_dynamic_green" {
   description = "Should gvisor be enabled for the green dynamic node pool?"
 }
 
-
 ## Extra stuff
 
 variable "kube_api_whitelist_cidr" {
