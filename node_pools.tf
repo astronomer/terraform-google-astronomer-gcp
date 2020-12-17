@@ -5,6 +5,7 @@ data "google_container_cluster" "primary" {
   location = google_container_cluster.primary.location
 }
 
+## Multi-tenant node-pool green
 
 resource "google_container_node_pool" "node_pool_mt_green" {
 
@@ -92,7 +93,8 @@ resource "google_container_node_pool" "node_pool_mt_green" {
   }
 }
 
-# Node pool
+## Multi-tenant node pool blue
+
 resource "google_container_node_pool" "node_pool_mt" {
 
   count = var.enable_blue_mt_node_pool ? 1 : 0
@@ -286,7 +288,7 @@ resource "google_container_node_pool" "dynamic_blue_node_pool" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.dynamic_blue_np_initial_node_count : ceil(var.dynamic_blue_np_initial_node_count / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.dynamic_blue_np_initial_node_count : ceil(var.max_node_count_dynamic_blue / 3)
   }
 
   management {
@@ -369,7 +371,7 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.dynamic_green_np_initial_node_count : ceil(var.dynamic_green_np_initial_node_count / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.dynamic_green_np_initial_node_count : ceil(var.max_node_count_dynamic_green / 3)
   }
 
   management {
@@ -422,6 +424,8 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
 
   }
 }
+
+## Platform node-pool blue
 
 resource "google_container_node_pool" "node_pool_platform" {
 
@@ -487,7 +491,8 @@ resource "google_container_node_pool" "node_pool_platform" {
   }
 }
 
-# blue / green so we can bring up one with a TF run then disable the other
+## Platform node-pool green
+
 resource "google_container_node_pool" "node_pool_platform_green" {
   count = var.enable_green_platform_node_pool ? 1 : 0
 
