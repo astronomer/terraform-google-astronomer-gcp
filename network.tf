@@ -67,7 +67,7 @@ resource "google_compute_router_nat" "nat" {
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
 
-  dynamic subnetwork {
+  dynamic "subnetwork" {
     for_each = var.management_endpoint == "public" ? [] : ["placeholder"]
     content {
       name                    = google_compute_subnetwork.bastion[0].self_link
