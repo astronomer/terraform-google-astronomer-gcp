@@ -13,6 +13,12 @@ variable "kube_version_gke" {
   description = "The kubernetes version to use in GKE"
 }
 
+variable "gke_release_channel" {
+  default     = "REGULAR"
+  type        = string
+  description = "The GKE Release channel to use. Blank for none"
+}
+
 variable "machine_type_bastion" {
   default     = "g1-small"
   description = "The GCP machine type for the bastion"
@@ -157,7 +163,7 @@ variable "max_node_count_platform_blue" {
 
 variable "platform_node_pool_taints_blue" {
   description = "Taints to apply to the platform node pool "
-  type        = list
+  type        = list(map(string))
   default     = []
 }
 
@@ -195,7 +201,7 @@ variable "max_node_count_platform_green" {
 
 variable "platform_node_pool_taints_green" {
   description = "Taints to apply to the Platform Node Pool "
-  type        = list
+  type        = list(map(string))
   default     = []
 }
 
@@ -232,7 +238,7 @@ variable "max_node_count_multi_tenant_blue" {
 
 variable "mt_node_pool_taints_blue" {
   description = "Taints to apply to the Multi-Tenant Node Pool "
-  type        = "list"
+  type        = list(map(string))
   default     = []
 }
 
@@ -274,7 +280,7 @@ variable "max_node_count_multi_tenant_green" {
 
 variable "mt_node_pool_taints_green" {
   description = "Taints to apply to the Multi-Tenant Node Pool"
-  type        = "list"
+  type        = list(map(string))
   default     = []
 }
 
@@ -284,7 +290,7 @@ variable "enable_gvisor_green" {
   description = "Should this module configure the multi-tenant node pool for the gvisor runtime?"
 }
 
-## Dynamic node pool: we do not have Blue / Green for this one, just a single node pool
+## Dynamic node pool (legacy pre-blue-green pool)
 
 variable "create_dynamic_pods_nodepool" {
   type        = bool
@@ -306,7 +312,7 @@ variable "disk_size_dynamic" {
 
 variable "dynamic_node_pool_taints" {
   description = "Taints to apply to the dynamic node pool "
-  type        = "list"
+  type        = list(map(string))
   default     = []
 }
 
@@ -325,6 +331,92 @@ variable "machine_type_dynamic" {
   default     = "n1-standard-4"
   description = "The GCP machine type for the bastion"
 }
+
+## Dynamic node pool blue (added 2020-12-16)
+
+variable "enable_dynamic_blue_node_pool" {
+  type        = bool
+  default     = false
+  description = "Turn on the blue dynamic node pool"
+}
+
+variable "dynamic_blue_np_initial_node_count" {
+  type        = number
+  default     = 1
+  description = "Initial node count for the blue dynamic node pool"
+}
+
+variable "machine_type_dynamic_blue" {
+  default     = "n1-standard-16"
+  description = "The GCP machine type for the blue dynamic node pool"
+}
+
+variable "disk_size_dynamic_blue" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the blue dynamic node pool"
+}
+
+variable "max_node_count_dynamic_blue" {
+  default     = 10
+  description = "The approximate maximum number of nodes in the blue dynamic node pool. The exact max will be 3 * ceil(your_value / 3.0) in the case of regional cluster, and exactly as configured in the case of zonal cluster."
+}
+
+variable "dynamic_blue_node_pool_taints" {
+  description = "Taints to apply to the blue dynamic node pool"
+  type        = list(map(string))
+  default     = []
+}
+
+variable "enable_gvisor_dynamic_blue" {
+  type        = bool
+  default     = false
+  description = "Should gvisor be enabled for the blue dynamic node pool?"
+}
+
+## Dynamic node pool green (added 2020-12-16)
+
+variable "enable_dynamic_green_node_pool" {
+  type        = bool
+  default     = false
+  description = "Turn on the green dynamic node pool"
+}
+
+variable "dynamic_green_np_initial_node_count" {
+  type        = number
+  default     = 1
+  description = "Initial node count for the green dynamic node pool"
+}
+
+variable "machine_type_dynamic_green" {
+  default     = "n1-standard-16"
+  description = "The GCP machine type for the green dynamic node pool"
+}
+
+variable "disk_size_dynamic_green" {
+  default     = 100
+  type        = number
+  description = "Number of GB available on Nodes' local disks for the green dynamic node pool"
+}
+
+variable "max_node_count_dynamic_green" {
+  default     = 10
+  description = "The approximate maximum number of nodes in the green dynamic node pool. The exact max will be 3 * ceil(your_value / 3.0) in the case of regional cluster, and exactly as configured in the case of zonal cluster."
+}
+
+variable "dynamic_green_node_pool_taints" {
+  description = "Taints to apply to the green dynamic node pool"
+  type        = list(map(string))
+  default     = []
+}
+
+variable "enable_gvisor_dynamic_green" {
+  type        = bool
+  default     = false
+  description = "Should gvisor be enabled for the green dynamic node pool?"
+}
+
+## Extra stuff
 
 variable "kube_api_whitelist_cidr" {
   default     = ""
