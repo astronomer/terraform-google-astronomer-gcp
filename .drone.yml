@@ -90,7 +90,7 @@ steps:
   commands:
     - eval `ssh-agent`
     - echo "$DEPLOY_KEY" | ssh-add -
-    - TAG=1.0.${DRONE_BUILD_NUMBER}
+    - TAG=1.1.${DRONE_BUILD_NUMBER}
     - git tag $TAG
     - mkdir -p $HOME/.ssh
     - ssh-keyscan -t rsa github.com >> $HOME/.ssh/known_hosts
