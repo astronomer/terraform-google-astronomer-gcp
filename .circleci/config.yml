@@ -37,7 +37,7 @@ jobs:
       - slack/notify:
           event: fail
           template: basic_fail_1
-          
+
   git_tag:
     docker:
       - image: quay.io/astronomer/ci-terraform:2020-12
@@ -100,8 +100,7 @@ jobs:
                 }
               ]
             }
-      
-      
+
 workflows:
   test:
     jobs:
