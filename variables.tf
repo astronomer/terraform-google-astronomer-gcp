@@ -357,6 +357,12 @@ variable "disk_size_dynamic_blue" {
   description = "Number of GB available on Nodes' local disks for the blue dynamic node pool"
 }
 
+variable "disk_type_dynamic_blue" {
+  default     = "pd-standard"
+  type        = string
+  description = "Type of the disk attached to each node (e.g. 'pd-standard', 'pd-balanced' or 'pd-ssd'). If unspecified, the default disk type is 'pd-standard'"
+}
+
 variable "max_node_count_dynamic_blue" {
   default     = 10
   description = "The approximate maximum number of nodes in the blue dynamic node pool. The exact max will be 3 * ceil(your_value / 3.0) in the case of regional cluster, and exactly as configured in the case of zonal cluster."
@@ -397,6 +403,12 @@ variable "disk_size_dynamic_green" {
   default     = 100
   type        = number
   description = "Number of GB available on Nodes' local disks for the green dynamic node pool"
+}
+
+variable "disk_type_dynamic_green" {
+  default     = "pd-standard"
+  type        = string
+  description = "Type of the disk attached to each node (e.g. 'pd-standard', 'pd-balanced' or 'pd-ssd'). If unspecified, the default disk type is 'pd-standard'"
 }
 
 variable "max_node_count_dynamic_green" {
