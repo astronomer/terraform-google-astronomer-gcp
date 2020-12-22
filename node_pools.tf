@@ -55,6 +55,7 @@ resource "google_container_node_pool" "node_pool_mt_green" {
 
     labels = {
       "astronomer.io/multi-tenant" = "true"
+      "astronomer.io/node-pool"    = "mt_green"
     }
 
     machine_type = var.machine_type_multi_tenant_green
@@ -139,6 +140,7 @@ resource "google_container_node_pool" "node_pool_mt" {
 
     labels = {
       "astronomer.io/multi-tenant" = "true"
+      "astronomer.io/node-pool"    = "mt_blue"
     }
 
     machine_type = var.machine_type_multi_tenant_blue
@@ -221,6 +223,7 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
     labels = {
       "astronomer.io/multi-tenant" = "true"
       "astronomer.io/dynamic-pods" = "true"
+      "astronomer.io/node-pool"    = "dynamic_pods_legacy"
     }
 
     machine_type = var.machine_type_dynamic
@@ -466,6 +469,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
     labels = {
       "astronomer.io/multi-tenant" = "false"
+      "astronomer.io/node-pool"    = "platform_blue"
     }
 
     oauth_scopes = [
@@ -530,6 +534,7 @@ resource "google_container_node_pool" "node_pool_platform_green" {
 
     labels = {
       "astronomer.io/multi-tenant" = "false"
+      "astronomer.io/node-pool"    = "platform_green"
     }
 
     oauth_scopes = [
