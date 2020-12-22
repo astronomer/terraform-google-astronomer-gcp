@@ -308,6 +308,7 @@ resource "google_container_node_pool" "dynamic_blue_node_pool" {
 
     machine_type = var.machine_type_dynamic_blue
     disk_size_gb = var.disk_size_dynamic_blue
+    disk_type    = var.disk_type_dynamic_blue
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
@@ -391,6 +392,7 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
 
     machine_type = var.machine_type_dynamic_green
     disk_size_gb = var.disk_size_dynamic_green
+    disk_type    = var.disk_type_dynamic_green
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
