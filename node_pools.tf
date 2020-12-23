@@ -55,7 +55,8 @@ resource "google_container_node_pool" "node_pool_mt_green" {
 
     labels = {
       "astronomer.io/multi-tenant" = "true"
-      "astronomer.io/node-pool"    = "mt_green"
+      # add in later if you are re-creating this node pool
+      # "astronomer.io/node-pool"    = "mt_green"
     }
 
     machine_type = var.machine_type_multi_tenant_green
@@ -534,7 +535,8 @@ resource "google_container_node_pool" "node_pool_platform_green" {
 
     labels = {
       "astronomer.io/multi-tenant" = "false"
-      "astronomer.io/node-pool"    = "platform_green"
+      # add in later if you are re-creating this node pool
+      # "astronomer.io/node-pool"    = "platform_green"
     }
 
     oauth_scopes = [
