@@ -447,3 +447,8 @@ variable "enable_spotinist" {
   type        = bool
   description = "Run the nodes using Spotinist"
 }
+
+variable "natgateway_external_ip_list" {
+  type        = list
+  description = "list of ips for the egress nat gateway to use (use if you have manually created these outside terraform)"
+}
