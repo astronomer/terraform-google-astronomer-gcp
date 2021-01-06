@@ -449,6 +449,7 @@ variable "enable_spotinist" {
 }
 
 variable "natgateway_external_ip_list" {
+  default     = []
   type        = list
   description = "list of ips for the egress nat gateway to use (use if you have manually created these outside terraform)"
 }
