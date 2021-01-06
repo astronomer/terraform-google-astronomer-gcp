@@ -54,7 +54,7 @@ resource "google_compute_router_nat" "nat" {
   min_ports_per_vm                   = 128
   router                             = google_compute_router.router.name
   nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = var.natgateway_external_ip_list == [] ? google_compute_address.address.*.self_link : var.natgateway_external_ip_list
+  nat_ips                            = length(var.natgateway_external_ip_list) == 0 ? google_compute_address.address.*.self_link : var.natgateway_external_ip_list
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
   tcp_established_idle_timeout_sec   = 7200
 
