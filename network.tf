@@ -54,7 +54,7 @@ resource "google_compute_router_nat" "nat" {
   min_ports_per_vm                   = 128
   router                             = google_compute_router.router.name
   nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = google_compute_address.address.*.self_link
+  nat_ips                            = length(var.natgateway_external_ip_list) == 0 ? google_compute_address.address.*.self_link : var.natgateway_external_ip_list
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
   tcp_established_idle_timeout_sec   = 7200
 
@@ -67,7 +67,7 @@ resource "google_compute_router_nat" "nat" {
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
 
-  dynamic subnetwork {
+  dynamic "subnetwork" {
     for_each = var.management_endpoint == "public" ? [] : ["placeholder"]
     content {
       name                    = google_compute_subnetwork.bastion[0].self_link
