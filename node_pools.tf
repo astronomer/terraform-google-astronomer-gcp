@@ -292,7 +292,7 @@ resource "google_container_node_pool" "dynamic_blue_node_pool" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.dynamic_blue_np_initial_node_count : ceil(var.max_node_count_dynamic_blue / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.max_node_count_dynamic_blue : ceil(var.max_node_count_dynamic_blue / 3)
   }
 
   management {
@@ -376,7 +376,7 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
 
   autoscaling {
     min_node_count = "0"
-    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.dynamic_green_np_initial_node_count : ceil(var.max_node_count_dynamic_green / 3)
+    max_node_count = var.enable_spotinist ? "1" : var.zonal_cluster ? var.max_node_count_dynamic_green : ceil(var.max_node_count_dynamic_green / 3)
   }
 
   management {
