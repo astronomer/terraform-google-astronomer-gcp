@@ -1,5 +1,5 @@
 #!/bin/bash
-
+alias terraform='terraform-0.12.29'
 cp providers.tf.example providers.tf
 terraform init
 terraform fmt -check=true
