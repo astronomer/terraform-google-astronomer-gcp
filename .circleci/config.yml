@@ -118,13 +118,13 @@ workflows:
           requires:
             - terraform_apply
           context: slack
-      - git_tag:
-          context:
-            - github-repo
-            - slack
-          requires:
-            - terraform_destroy
-          filters:
-            branches:
-              only:
-                - master
+      #- git_tag:
+      #    context:
+      #      - github-repo
+      #      - slack
+      #    requires:
+      #      - terraform_destroy
+      #    filters:
+      #      branches:
+      #        only:
+      #          - master
