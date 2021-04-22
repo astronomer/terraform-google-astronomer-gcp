@@ -1,4 +1,4 @@
-#!/bin/bash    
+#!/bin/bash
 
 cp providers.tf.example providers.tf
 terraform init
