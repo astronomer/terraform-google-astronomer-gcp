@@ -9,7 +9,7 @@ variable "dns_managed_zone" {
 }
 
 variable "kube_version_gke" {
-  default     = "1.14"
+  default     = "1.18.16-gke.2100"
   description = "The kubernetes version to use in GKE"
 }
 
@@ -452,4 +452,9 @@ variable "natgateway_external_ip_list" {
   default     = []
   type        = list
   description = "this list is not actually of IPs, but of google URIs for the IP resource. example: https://www.googleapis.com/compute/v1/projects/astronomer-cloud-dev-236021/regions/us-east4/addresses/dev-nat-external-address-0"
+}
+
+variable "spotinist_token" {
+  default = ""
+  type    = string
 }
