@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 
-TERRAFORM="${TERRAFORM:-terraform-0.12.31}"
+TERRAFORM="${TERRAFORM:-terraform-0.12.29}"
 
 "${TERRAFORM}" -v
 
