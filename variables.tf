@@ -455,6 +455,6 @@ variable "natgateway_external_ip_list" {
 }
 
 variable "spotinist_token" {
-  default = ""
+  default = "12345"
   type    = string
 }
