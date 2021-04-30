@@ -1,0 +1,29 @@
+version: 2.1
+orbs:
+  slack: circleci/slack@4.1.3
+jobs:
+  run_pre_commit:
+    docker:
+      - image: quay.io/astronomer/ci-pre-commit:2020-12
+    steps:
+      - checkout
+      - run: pre-commit run --all-files
+  terraform_lint:
+    docker:
+      - image: quay.io/astronomer/ci-terraform:2020-12
+    steps:
+      - checkout
+      - run: pipeline/lint.sh
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
+workflows:
+  test:
+    jobs:
+      - run_pre_commit
+  terraform_pipeline:
+    jobs:
+      - terraform_lint:
+          context:
+            - slack
