@@ -13,6 +13,7 @@ cp providers.tf.example providers.tf
 
 find examples -maxdepth 1 -mindepth 1 -type d | while read -r example ; do
   cp providers.tf "${example}"
+  cp versions.tf "${example}"
   (
     cd "${example}"
     echo "${example}"
