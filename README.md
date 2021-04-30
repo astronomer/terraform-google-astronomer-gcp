@@ -8,9 +8,9 @@ Requires Terraform 0.12+
 
 ## Features
 
-* Private Kubernetes cluster
-* Cloud SQL with Postgres
-* Bastion host for secure cluster administration
+- Private Kubernetes cluster
+- Cloud SQL with Postgres
+- Bastion host for secure cluster administration
 
 ## Architecture
 
