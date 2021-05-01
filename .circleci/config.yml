@@ -10,7 +10,7 @@ jobs:
       - run: pre-commit run --all-files
   terraform_lint:
     docker:
-      - image: quay.io/astronomer/ci-terraform:2021-04-27
+      - image: quay.io/astronomer/ci-terraform:2021-04
     steps:
       - checkout
       - run: pipeline/lint.sh
