@@ -4,7 +4,7 @@ orbs:
 jobs:
   run_pre_commit:
     docker:
-      - image: quay.io/astronomer/ci-pre-commit:2021-04-27
+      - image: quay.io/astronomer/ci-pre-commit:2021-04
     steps:
       - checkout
       - run: pre-commit run --all-files
