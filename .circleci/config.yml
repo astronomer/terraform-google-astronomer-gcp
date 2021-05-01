@@ -40,7 +40,7 @@ jobs:
 
   git_tag:
     docker:
-      - image: quay.io/astronomer/ci-terraform:2021-04-27
+      - image: quay.io/astronomer/ci-terraform:2021-04
     steps:
       - checkout
       - run: git remote set-url origin "https://astro-astronomer:${GITHUB_TOKEN}@github.com/astronomer/${CIRCLE_PROJECT_REPONAME}.git"
