@@ -20,7 +20,7 @@ jobs:
 
   terraform_apply:
     docker:
-      - image: quay.io/astronomer/ci-terraform:2021-04-27
+      - image: quay.io/astronomer/ci-terraform:2021-04
     steps:
       - checkout
       - run: EXAMPLE=from_scratch pipeline/run_terraform.sh
