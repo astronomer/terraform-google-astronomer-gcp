@@ -1,19 +1,14 @@
 #  Local .terraform directories
-**/.terraform/*
-
 # .tfstate files
-*.tfstate
-*.tfstate.*
-
 # .tfvars files
-*.tfvars
-
-providers.tf
-*.tfvars
+**/.terraform/*
+*.tfstate
 *.tfstate*
-kubeconfig/*
-tls_secrets/*
+*.tfstate.*
+*.tfvars
+.idea
 kubeconfig
 kubeconfig*
-
-.idea
+kubeconfig/*
+providers.tf
+tls_secrets/*
