@@ -9,20 +9,20 @@ mkdir /opt/terraform_install && cd /opt/terraform_install && \
   wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
   unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
   mv terraform /usr/local/bin/
-cd $dir
+cd "$dir"
 
 cd /tmp
-eval `ssh-agent`
+eval "$(ssh-agent)"
 echo "$DEPLOY_KEY" | ssh-add -
-mkdir -p $HOME/.ssh
+mkdir -p "$HOME/.ssh"
 
 set -xe
 
-ssh-keyscan -t rsa github.com >> $HOME/.ssh/known_hosts
+ssh-keyscan -t rsa github.com >> "$HOME"/.ssh/known_hosts
 git clone git@github.com:astronomer/terraform-google-astronomer-cloud.git
 cd terraform-google-astronomer-cloud
 ls
-sed -i "0,/version\s*=\s*\"[0-9]*\.[0-9]*\.[0-9]*\"/ s//version = \"$DRONE_TAG\"/" main.tf
+sed -i "0,/version\\s*=\\s*\"[0-9]*\\.[0-9]*\\.[0-9]*\"/ s//version = \"$DRONE_TAG\"/" main.tf
 terraform fmt
 git add main.tf
 git status
