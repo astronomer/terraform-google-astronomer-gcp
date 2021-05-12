@@ -4,7 +4,7 @@ TERRAFORM="${TERRAFORM:-terraform-0.13.7}"
 
 "${TERRAFORM}" -v
 
-echo "$GOOGLE_CREDENTIAL_FILE_CONTENT" > /tmp/account.json
+echo "$GCP_TOKEN" > /tmp/account.json
 
 set -xe
 
