@@ -110,15 +110,18 @@ workflows:
       - terraform_lint:
           context:
             - slack
-      #- terraform_apply:
-      #    requires:
-      #      - terraform_lint
-      #    context:
-      #      - slack
-      #- terraform_destroy:
-      #    requires:
-      #      - terraform_apply
-      #    context: slack
+      - terraform_apply:
+          requires:
+            - terraform_lint
+          context:
+            - slack
+            - gcp-dev
+      - terraform_destroy:
+          requires:
+            - terraform_apply
+          context:
+            - slack
+            - gcp-dev
       #- git_tag:
       #    context:
       #      - github-repo
