@@ -9,7 +9,7 @@ variable "dns_managed_zone" {
 }
 
 variable "kube_version_gke" {
-  default     = "1.18.16-gke.2100"
+  default     = "1.18.17-gke.700"
   description = "The kubernetes version to use in GKE"
 }
 

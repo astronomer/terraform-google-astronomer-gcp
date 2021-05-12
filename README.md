@@ -1,5 +1,6 @@
 # Terraform Module for Astronomer for GCP
 
+[![GitHub release](https://img.shields.io/github/release/astronomer/terraform-google-astronomer-gcp)](https://github.com/astronomer/terraform-google-astronomer-gcp/releases/latest)
 [![Build Status](https://circleci.com/gh/astronomer/terraform-google-astronomer-gcp.svg?style=shield)](https://circleci.com/gh/astronomer/terraform-google-astronomer-gcp)
 
 Requires Terraform 0.13+
