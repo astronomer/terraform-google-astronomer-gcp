@@ -493,6 +493,13 @@ resource "google_container_node_pool" "node_pool_platform" {
     }
   }
 
+  # this one can take a long time to delete or create
+  timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
+
   lifecycle {
     create_before_destroy = true
   }
@@ -557,6 +564,13 @@ resource "google_container_node_pool" "node_pool_platform_green" {
         value  = taint.value.value
       }
     }
+  }
+
+  # this one can take a long time to delete or create
+  timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
   }
 
   lifecycle {
