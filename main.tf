@@ -115,8 +115,8 @@ resource "google_container_cluster" "primary" {
   */
 
   master_auth {
-    username = "admin"
-    password = random_string.password.result
+    username = ""
+    password = ""
 
     client_certificate_config {
       issue_client_certificate = false
