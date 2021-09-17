@@ -117,6 +117,12 @@ variable "deploy_db" {
   description = "Do you want a database deployed in this project?"
 }
 
+variable "db_version" {
+  type        = string
+  default     = "POSTGRES_9_6"
+  description = "define postgres database version"
+}
+
 variable "db_max_connections" {
   type        = number
   default     = 0
