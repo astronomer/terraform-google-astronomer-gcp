@@ -119,6 +119,7 @@ variable "deploy_db" {
 
 variable "db_version" {
   type        = string
+  # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#argument-reference
   default     = "POSTGRES_9_6"
   description = "define postgres database version"
 }
