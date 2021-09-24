@@ -22,9 +22,8 @@ resource "google_sql_database_instance" "instance" {
 
   name             = "${var.deployment_id}-astro-db-${random_id.db_name_suffix.hex}"
   region           = local.region
-  database_version = "POSTGRES_9_6"
-
-  depends_on = [google_service_networking_connection.private_vpc_connection]
+  database_version = var.db_version
+  depends_on       = [google_service_networking_connection.private_vpc_connection]
 
   settings {
     tier              = var.cloud_sql_tier
