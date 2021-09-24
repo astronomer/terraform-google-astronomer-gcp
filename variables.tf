@@ -457,7 +457,7 @@ variable "enable_spotinist" {
 
 variable "natgateway_external_ip_list" {
   default     = []
-  type        = list
+  type        = list(any)
   description = "this list is not actually of IPs, but of google URIs for the IP resource. example: https://www.googleapis.com/compute/v1/projects/astronomer-cloud-dev-236021/regions/us-east4/addresses/dev-nat-external-address-0"
 }
 
