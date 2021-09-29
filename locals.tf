@@ -13,10 +13,15 @@ data "google_compute_instance" "sample_instance" {
 }
 
 locals {
-  project      = data.google_compute_zones.available.project
-  region       = data.google_compute_zones.available.region
-  zone         = data.google_compute_zones.available.names[0]
-  location     = var.zonal_cluster ? local.zone : local.region
+  project                = data.google_compute_zones.available.project
+  region                 = data.google_compute_zones.available.region
+  zone                   = data.google_compute_zones.available.names[0]
+  location               = var.zonal_cluster ? local.zone : local.region
+  cluster_name           = google_container_cluster.primary.name
+  endpoint               = google_container_cluster.primary.endpoint
+  cluster_ca_certificate = google_container_cluster.primary.master_auth[0].cluster_ca_certificate
+  # basic auth kubeconfig method will be removed in future release
+  # we will moving to token based auth method
   kubeconfig   = <<EOF
 apiVersion: v1
 clusters:

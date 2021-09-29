@@ -1,3 +1,19 @@
+output "cluster_name" {
+  description = "cluster name"
+  value       = local.cluster_name
+}
+
+output "endpoint" {
+  sensitive   = true
+  description = "cluster endpoint"
+  value       = local.endpoint
+}
+
+output "ca_certificate" {
+  sensitive = true
+  value     = local.cluster_ca_certificate
+}
+
 output "bastion_proxy_command" {
   value = length(google_compute_instance.bastion) > 0 ? "gcloud beta compute ssh --zone ${element(concat(google_compute_instance.bastion.*.zone, list("")), 0)} ${element(concat(google_compute_instance.bastion.*.name, list("")), 0)} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'" : "Not applicable - no bastion"
 }
