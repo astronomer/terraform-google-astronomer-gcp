@@ -9,7 +9,7 @@ provider "google-beta" {
   region  = "us-east4"
   zone    = "us-east4-a"
   project = "astronomer-cloud-dev-236021"
-  version = "~> 2.20"
+  version = "~> 3.0"
 }
 
 provider "acme" {
