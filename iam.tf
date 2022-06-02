@@ -24,7 +24,25 @@ resource "google_project_iam_audit_config" "iap" {
   }
 
   service = "iap.googleapis.com"
+
+  project = data.google_project.project.id
 }
+
+#resource "google_organization_iam_audit_config" "iap" {
+#  service = "iap.googleapis.com"
+#
+#  audit_log_config {
+#    log_type = "DATA_READ"
+#  }
+#
+#  audit_log_config {
+#    log_type = "DATA_WRITE"
+#  }
+#
+#  audit_log_config {
+#    log_type = "ADMIN_READ"
+#  }
+#}
 
 resource "google_service_account_key" "velero" {
   service_account_id = google_service_account.velero.account_id
@@ -47,8 +65,9 @@ resource "google_project_iam_custom_role" "velero_server" {
 }
 
 resource "google_project_iam_member" "velero_server" {
-  member = "serviceAccount:${google_service_account.velero.email}"
-  role   = google_project_iam_custom_role.velero_server.id
+  member  = "serviceAccount:${google_service_account.velero.email}"
+  role    = google_project_iam_custom_role.velero_server.id
+  project = data.google_project.project.id
 }
 
 resource "google_storage_bucket_iam_member" "velero_server" {

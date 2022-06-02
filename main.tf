@@ -59,7 +59,6 @@ resource "google_container_cluster" "primary" {
   enable_legacy_abac = false
 
   ip_allocation_policy {
-    use_ip_aliases                = true
     cluster_secondary_range_name  = google_compute_subnetwork.gke.secondary_ip_range[0].range_name
     services_secondary_range_name = google_compute_subnetwork.gke.secondary_ip_range[1].range_name
   }
@@ -115,9 +114,6 @@ resource "google_container_cluster" "primary" {
   */
 
   master_auth {
-    username = ""
-    password = ""
-
     client_certificate_config {
       issue_client_certificate = false
     }
