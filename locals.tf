@@ -37,15 +37,11 @@ contexts:
 current-context: "context"
 kind: Config
 preferences: {}
-#users:
-#- name: "${google_container_cluster.primary.master_auth[0].username}"
-#  user:
-#    client-certificate-data: ${google_container_cluster.primary.0.master_auth.0.client_certificate}
-#    client-key-data: ${google_container_cluster.primary.0.master_auth.0.client_key}
-#- name: "${google_container_cluster.primary.master_auth[0].username}"
-#  user:
-#    password: "${google_container_cluster.primary.master_auth[0].password}"
-#    username: "${google_container_cluster.primary.master_auth[0].username}"
+users:
+- name: "${google_container_cluster.primary.master_auth[0].username}"
+  user:
+    password: "${google_container_cluster.primary.master_auth[0].password}"
+    username: "${google_container_cluster.primary.master_auth[0].username}"
 
   EOF
   bastion_name = "${var.deployment_id}-bastion"
