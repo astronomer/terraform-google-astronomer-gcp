@@ -87,7 +87,7 @@ resource "google_compute_global_address" "private_ip_address" {
   address_type  = "INTERNAL"
   prefix_length = 16
   network       = google_compute_network.core.self_link
-  project       = data.google_project.project.id
+  project       = data.google_project.project.project_id
 }
 
 # Required for connecting the bastion subnetwork to the
