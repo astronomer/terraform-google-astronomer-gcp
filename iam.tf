@@ -50,8 +50,9 @@ resource "google_project_iam_custom_role" "velero_server" {
 }
 
 resource "google_project_iam_member" "velero_server" {
-  member = "serviceAccount:${google_service_account.velero.email}"
-  role   = google_project_iam_custom_role.velero_server.id
+  member  = "serviceAccount:${google_service_account.velero.email}"
+  role    = google_project_iam_custom_role.velero_server.id
+  project = data.google_project.project.id
 }
 
 resource "google_storage_bucket_iam_member" "velero_server" {
