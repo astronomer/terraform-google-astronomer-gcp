@@ -63,7 +63,7 @@ output "kubeconfig" {
 }
 
 output "kubeconfig_filename" {
-  value = local_file.kubeconfig.filename
+  value = local_sensitive_file.kubeconfig.filename
 }
 
 output "container_registry_bucket_name" {

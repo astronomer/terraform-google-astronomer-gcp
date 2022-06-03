@@ -141,9 +141,9 @@ resource "random_id" "kubeconfig_suffix" {
   byte_length = 4
 }
 
-resource "local_file" "kubeconfig" {
-  sensitive_content = local.kubeconfig
-  filename          = "./kubeconfig-${random_id.kubeconfig_suffix.hex}"
+resource "local_sensitive_file" "kubeconfig" {
+  content  = local.kubeconfig
+  filename = "./kubeconfig-${random_id.kubeconfig_suffix.hex}"
 }
 
 resource "google_bigquery_dataset" "gke_metered_billing" {
