@@ -24,6 +24,7 @@ resource "google_project_iam_audit_config" "iap" {
   }
 
   service = "iap.googleapis.com"
+  project = data.google_project.project.id
 }
 
 resource "google_service_account_key" "velero" {
@@ -33,6 +34,8 @@ resource "google_service_account_key" "velero" {
 resource "google_project_iam_custom_role" "velero_server" {
   role_id = "velero.server.${var.deployment_id}"
   title   = "Velero Server"
+
+  project = data.google_project.project.id
 
   permissions = [
     "compute.disks.get",
