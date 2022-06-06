@@ -37,7 +37,7 @@ output "db_instance_private_ip" {
 }
 
 output "db_instance_name" {
-  value = var.deploy_db ? element(concat(google_sql_database_instance.instance.*.name, list("")), 0) : "N/A"
+  value = var.deploy_db ? element(concat(google_sql_database_instance.instance.*.name), 0) : "N/A"
 }
 
 output "base_domain" {
