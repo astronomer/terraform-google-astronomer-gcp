@@ -1,3 +1,5 @@
+data "google_project" "project" {}
+
 resource "google_service_account_key" "default_key" {
   service_account_id = google_service_account.k8s_registry.account_id
   public_key_type    = "TYPE_X509_PEM_FILE"
@@ -33,6 +35,8 @@ resource "google_service_account_key" "velero" {
 resource "google_project_iam_custom_role" "velero_server" {
   role_id = "velero.server.${var.deployment_id}"
   title   = "Velero Server"
+
+  project = data.google_project.project.project_id
 
   permissions = [
     "compute.disks.get",
