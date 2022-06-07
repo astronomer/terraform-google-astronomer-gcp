@@ -26,6 +26,7 @@ resource "google_project_iam_audit_config" "iap" {
   }
 
   service = "iap.googleapis.com"
+  project = data.google_project.project.project_id
 }
 
 resource "google_service_account_key" "velero" {
@@ -53,6 +54,7 @@ resource "google_project_iam_custom_role" "velero_server" {
 resource "google_project_iam_member" "velero_server" {
   member = "serviceAccount:${google_service_account.velero.email}"
   role   = google_project_iam_custom_role.velero_server.id
+  project = data.google_project.project.project_id
 }
 
 resource "google_storage_bucket_iam_member" "velero_server" {
