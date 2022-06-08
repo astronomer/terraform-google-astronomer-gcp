@@ -99,8 +99,8 @@ resource "google_container_node_pool" "node_pool_mt_green" {
 
 resource "google_container_node_pool" "node_pool_mt" {
 
-  count = var.enable_blue_mt_node_pool ? 1 : 0
-
+  count    = var.enable_blue_mt_node_pool ? 1 : 0
+  project  = data.google_project.project.project_id
   provider = google-beta
 
   version = var.kube_version_gke
@@ -435,8 +435,8 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
 
 resource "google_container_node_pool" "node_pool_platform" {
 
-  count = var.enable_blue_platform_node_pool ? 1 : 0
-
+  count    = var.enable_blue_platform_node_pool ? 1 : 0
+  project  = data.google_project.project.project_id
   provider = google-beta
   version  = var.kube_version_gke
 
