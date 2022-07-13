@@ -77,4 +77,6 @@ resource "google_compute_firewall" "istio_firewall_rule" {
     protocol = "tcp"
     ports    = ["10250", "443", "15017"]
   }
+
+  source_ranges = [google_container_cluster.primary.private_cluster_config.0.master_ipv4_cidr_block]
 }
