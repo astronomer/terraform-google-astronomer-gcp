@@ -57,10 +57,10 @@ EOF
   sensitive = true
 }
 
-output "kubeconfig" {
-  value     = local.kubeconfig
-  sensitive = true
-}
+#output "kubeconfig" {
+#  value     = local.kubeconfig
+#  sensitive = true
+#}
 
 output "kubeconfig_filename" {
   value = local_file.kubeconfig.filename
