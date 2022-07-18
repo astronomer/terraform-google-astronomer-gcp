@@ -17,6 +17,8 @@ resource "google_container_cluster" "primary" {
   provider = google-beta
   name     = "${var.deployment_id}-cluster"
 
+  project = data.google_project.project.project_id
+
   # "
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -59,7 +61,6 @@ resource "google_container_cluster" "primary" {
   enable_legacy_abac = false
 
   ip_allocation_policy {
-    use_ip_aliases                = true
     cluster_secondary_range_name  = google_compute_subnetwork.gke.secondary_ip_range[0].range_name
     services_secondary_range_name = google_compute_subnetwork.gke.secondary_ip_range[1].range_name
   }
@@ -115,9 +116,6 @@ resource "google_container_cluster" "primary" {
   */
 
   master_auth {
-    username = ""
-    password = ""
-
     client_certificate_config {
       issue_client_certificate = false
     }
