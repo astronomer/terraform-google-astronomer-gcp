@@ -61,3 +61,41 @@ resource "google_compute_firewall" "gke_iap_ssh_to_nodes" {
   source_ranges = var.iap_cidr_ranges
   target_tags   = local.gke_nodepool_network_tags
 }
+
+
+# Istio Firewall rule
+# ref: https://istio.io/latest/docs/setup/platform-setup/gke/
+resource "google_compute_firewall" "istio_firewall_rule" {
+
+  #count = var.enable_istio ? 1 : 0
+
+  name    = google_container_cluster.primary.name
+  network = google_compute_network.core.name
+  description = "Allow Istio to perform Pilot discovery validation webhook."
+
+  allow {
+    protocol = "tcp"
+    ports    = ["10250", "443", "15017"]
+  }
+
+  source_ranges = [google_container_cluster.primary.private_cluster_config.0.master_ipv4_cidr_block]
+}
+
+
+# Istio Firewall rule
+# ref: https://istio.io/latest/docs/setup/platform-setup/gke/
+resource "google_compute_firewall" "istio_firewall_rule" {
+
+  #count = var.enable_istio ? 1 : 0
+
+  name    = google_container_cluster.primary.name
+  network = google_compute_network.core.name
+  description = "Allow Istio to perform Pilot discovery validation webhook."
+
+  allow {
+    protocol = "tcp"
+    ports    = ["10250", "443", "15017"]
+  }
+
+  source_ranges = [google_container_cluster.primary.private_cluster_config.0.master_ipv4_cidr_block]
+}

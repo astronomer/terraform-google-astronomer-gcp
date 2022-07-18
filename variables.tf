@@ -465,3 +465,13 @@ variable "spotinist_token" {
   default = "12345"
   type    = string
 }
+
+variable "enable_istio" {
+  default = "false"
+  type    = string
+}
+
+variable "enable_istio" {
+  default = "false"
+  type    = string
+}
