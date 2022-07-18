@@ -25,8 +25,6 @@ resource "google_sql_database_instance" "instance" {
   database_version = var.db_version
   depends_on       = [google_service_networking_connection.private_vpc_connection]
 
-  deletion_protection = false
-
   settings {
     tier              = var.cloud_sql_tier
     availability_type = var.cloud_sql_availability_type
