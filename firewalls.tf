@@ -67,7 +67,7 @@ resource "google_compute_firewall" "gke_iap_ssh_to_nodes" {
 # ref: https://istio.io/latest/docs/setup/platform-setup/gke/
 resource "google_compute_firewall" "istio_firewall_rule" {
 
-  #count = var.enable_istio ? 1 : 0
+  count = var.enable_istio ? 1 : 0
 
   name    = google_container_cluster.primary.name
   network = google_compute_network.core.name
