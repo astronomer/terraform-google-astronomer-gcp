@@ -1,27 +1,67 @@
 ---
 version: 2.1
+
 orbs:
   slack: circleci/slack@4.1.3
+
+executors:
+  pre-commit-executor:
+    docker:
+      - image: quay.io/astronomer/ci-pre-commit:2022-06
+  terraform-executor:
+    docker:
+      - image: quay.io/astronomer/ci-terraform:2022-06
+
+workflows:
+  test:
+    jobs:
+      - run_pre_commit
+  terraform_pipeline:
+    jobs:
+      - terraform_lint:
+          context:
+            - slack
+      - terraform_apply:
+          requires:
+            - terraform_lint
+          context:
+            - slack
+            - gcp-dev
+      - terraform_destroy:
+          requires:
+            - terraform_apply
+          context:
+            - slack
+            - gcp-dev
+      #- git_tag:
+      #    context:
+      #      - github-repo
+      #      - slack
+      #    requires:
+      #      - terraform_destroy
+      #    filters:
+      #      branches:
+      #        only:
+      #          - master
+
 jobs:
   run_pre_commit:
-    docker:
-      - image: quay.io/astronomer/ci-pre-commit:2021-09
+    executor: pre-commit-executor
     steps:
       - checkout
-      - run: pre-commit run --all-files
+      - pre-commit-commands
+
   terraform_lint:
-    docker:
-      - image: quay.io/astronomer/ci-terraform:2021-09
+    executor: terraform-executor
     steps:
       - checkout
-      - run: pipeline/lint.sh
+      - pre-commit-commands
       - slack/notify:
           event: fail
           template: basic_fail_1
 
   terraform_apply:
-    docker:
-      - image: quay.io/astronomer/ci-terraform:2021-09
+    executor: terraform-executor
     steps:
       - checkout
       - run: EXAMPLE=from_scratch pipeline/run_terraform.sh
@@ -30,8 +70,7 @@ jobs:
           template: basic_fail_1
 
   terraform_destroy:
-    docker:
-      - image: quay.io/astronomer/ci-terraform:2021-09
+    executor: terraform-executor
     steps:
       - checkout
       - run: DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
@@ -40,8 +79,7 @@ jobs:
           template: basic_fail_1
 
   git_tag:
-    docker:
-      - image: quay.io/astronomer/ci-terraform:2021-09
+    executor: terraform-executor
     steps:
       - checkout
       - run: git remote set-url origin "https://astro-astronomer:${GITHUB_TOKEN}@github.com/astronomer/${CIRCLE_PROJECT_REPONAME}.git"
@@ -102,34 +140,38 @@ jobs:
               ]
             }
 
-workflows:
-  test:
-    jobs:
-      - run_pre_commit
-  terraform_pipeline:
-    jobs:
-      - terraform_lint:
-          context:
-            - slack
-      - terraform_apply:
-          requires:
-            - terraform_lint
-          context:
-            - slack
-            - gcp-dev
-      - terraform_destroy:
-          requires:
-            - terraform_apply
-          context:
-            - slack
-            - gcp-dev
-      #- git_tag:
-      #    context:
-      #      - github-repo
-      #      - slack
-      #    requires:
-      #      - terraform_destroy
-      #    filters:
-      #      branches:
-      #        only:
-      #          - master
+commands:
+  pre-commit-commands:
+    description: "Execute the pre-commit"
+    steps:
+      - run:
+          name: Create pre-commit-cache-key.txt
+          command: |
+            cp .pre-commit-config.yaml /tmp/pre-commit-cache-key.txt
+            python --version --version | sed 's/^/# /' >> /tmp/pre-commit-cache-key.txt
+      - restore_cache:
+          keys:
+            - pre-commit-cache-{{ checksum "/tmp/pre-commit-cache-key.txt" }}
+      - terraform-install
+      - run:
+          name: Install terraform-docs
+          command: go install github.com/terraform-docs/terraform-docs@v0.16.0
+      - run:
+          name: Install pre-commit hooks
+          command: pre-commit install-hooks
+      - save_cache:
+          key: pre-commit-cache-{{ checksum "/tmp/pre-commit-cache-key.txt" }}
+          paths:
+            - ~/.cache/pre-commit
+      - run:
+          name: Run pre-commit
+          command: |
+            pre-commit run --all-files --show-diff-on-failure
+
+  terraform-install:
+    steps:
+      - run:
+          name: Install terraform
+          command: |
+            tfenv install
+            tfenv use
