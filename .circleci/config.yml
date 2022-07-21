@@ -52,7 +52,7 @@ jobs:
       - pre-commit-commands
 
   terraform_lint:
-    executor: terraform-executor
+    executor: pre-commit-executor
     steps:
       - checkout
       - pre-commit-commands
