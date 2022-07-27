@@ -26,8 +26,6 @@ if [[ "$REGIONAL" -eq 1 ]]; then
   ZONAL=false
 fi
 
-DEPLOYMENT_ID=ci04ab7
-
 echo "$DEPLOYMENT_ID"
 
 cp providers.tf.example "examples/$EXAMPLE/providers.tf"
