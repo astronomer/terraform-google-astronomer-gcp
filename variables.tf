@@ -124,6 +124,12 @@ variable "db_version" {
   description = "define postgres database version"
 }
 
+variable "db_deletion_protection" {
+  type        = bool
+  default     = true
+  description = "Turn on and off deletion_protection."
+}
+
 variable "db_max_connections" {
   type        = number
   default     = 0

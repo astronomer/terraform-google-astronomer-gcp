@@ -20,7 +20,7 @@ resource "google_service_account_key" "cloud_sql_admin" {
 resource "google_sql_database_instance" "instance" {
   count = var.deploy_db ? 1 : 0
 
-  deletion_protection = false
+  deletion_protection = var.db_deletion_protection
 
   name             = "${var.deployment_id}-astro-db-${random_id.db_name_suffix.hex}"
   region           = local.region
