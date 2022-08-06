@@ -141,11 +141,6 @@ resource "random_id" "kubeconfig_suffix" {
   byte_length = 4
 }
 
-#resource "local_file" "kubeconfig" {
-#  sensitive_content = local.kubeconfig
-#  filename          = "./kubeconfig-${random_id.kubeconfig_suffix.hex}"
-#}
-
 resource "google_bigquery_dataset" "gke_metered_billing" {
   count                      = var.enable_gke_metered_billing ? 1 : 0
   dataset_id                 = "${var.deployment_id}_gke_usage_metering_dataset"

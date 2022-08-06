@@ -20,31 +20,7 @@ locals {
   cluster_name           = google_container_cluster.primary.name
   endpoint               = google_container_cluster.primary.endpoint
   cluster_ca_certificate = google_container_cluster.primary.master_auth[0].cluster_ca_certificate
-  # basic auth kubeconfig method will be removed in future release
-  # we will moving to token based auth method
-  #  kubeconfig   = <<EOF
-  #apiVersion: v1
-  #clusters:
-  #- cluster:
-  #    server: https://${google_container_cluster.primary.endpoint}
-  #    certificate-authority-data: ${google_container_cluster.primary.master_auth[0].cluster_ca_certificate}
-  #  name: cluster
-  #contexts:
-  #- context:
-  #    cluster: cluster
-  #    user: admin
-  #  name: context
-  #current-context: "context"
-  #kind: Config
-  #preferences: {}
-  #users:
-  #- name: "${google_container_cluster.primary.master_auth[0].username}"
-  #  user:
-  #    password: "${google_container_cluster.primary.master_auth[0].password}"
-  #    username: "${google_container_cluster.primary.master_auth[0].username}"
-  #
-  #  EOF
-  bastion_name = "${var.deployment_id}-bastion"
+  bastion_name           = "${var.deployment_id}-bastion"
   # the second ternary is due to a bug during terraform destroy that the random_string.postgres_airflow_password
   # is an empty array and causes an error.  this just checks and lets it keep going through destroy successfully.
   postgres_airflow_password = (
