@@ -12,7 +12,7 @@ executors:
           TFENV_AUTO_INSTALL: true
   terraform-executor:
     docker:
-      - image: quay.io/astronomer/ci-terraform:2022-06
+      - image: quay.io/astronomer/ci-terraform:2022-08
         environment:
           TFENV_AUTO_INSTALL: true
 
