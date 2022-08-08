@@ -1,3 +1,5 @@
+data "google_project" "project" {}
+
 resource "google_service_account_key" "default_key" {
   service_account_id = google_service_account.k8s_registry.account_id
   public_key_type    = "TYPE_X509_PEM_FILE"
@@ -24,6 +26,7 @@ resource "google_project_iam_audit_config" "iap" {
   }
 
   service = "iap.googleapis.com"
+  project = data.google_project.project.project_id
 }
 
 resource "google_service_account_key" "velero" {
@@ -33,6 +36,8 @@ resource "google_service_account_key" "velero" {
 resource "google_project_iam_custom_role" "velero_server" {
   role_id = "velero.server.${var.deployment_id}"
   title   = "Velero Server"
+
+  project = data.google_project.project.project_id
 
   permissions = [
     "compute.disks.get",
@@ -47,8 +52,9 @@ resource "google_project_iam_custom_role" "velero_server" {
 }
 
 resource "google_project_iam_member" "velero_server" {
-  member = "serviceAccount:${google_service_account.velero.email}"
-  role   = google_project_iam_custom_role.velero_server.id
+  member  = "serviceAccount:${google_service_account.velero.email}"
+  role    = google_project_iam_custom_role.velero_server.id
+  project = data.google_project.project.project_id
 }
 
 resource "google_storage_bucket_iam_member" "velero_server" {

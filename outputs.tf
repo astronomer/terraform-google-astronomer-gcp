@@ -15,16 +15,16 @@ output "ca_certificate" {
 }
 
 output "bastion_proxy_command" {
-  value = length(google_compute_instance.bastion) > 0 ? "gcloud beta compute ssh --zone ${element(concat(google_compute_instance.bastion.*.zone, list("")), 0)} ${element(concat(google_compute_instance.bastion.*.name, list("")), 0)} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'" : "Not applicable - no bastion"
+  value = length(google_compute_instance.bastion) > 0 ? "gcloud beta compute ssh --zone ${element(concat(tolist(google_compute_instance.bastion.*.zone)), 0)} ${element(concat(tolist(google_compute_instance.bastion.*.name)), 0)} --tunnel-through-iap --ssh-flag='-L 1234:127.0.0.1:8888 -C -N'" : "Not applicable - no bastion"
 }
 
 output "db_connection_string" {
-  value     = var.deploy_db ? "postgres://${element(concat(google_sql_user.airflow.*.name, list("")), 0)}:${local.postgres_airflow_password}@${element(concat(google_sql_database_instance.instance.*.private_ip_address, list("")), 0)}:5432" : "N/A: DB is not deployed with the terraform-google-astronomer-gcp module. Set deploy_db = true"
+  value     = var.deploy_db ? "postgres://${element(concat(tolist(google_sql_user.airflow.*.name)), 0)}:${local.postgres_airflow_password}@${element(concat(tolist(google_sql_database_instance.instance.*.private_ip_address)), 0)}:5432" : "N/A: DB is not deployed with the terraform-google-astronomer-gcp module. Set deploy_db = true"
   sensitive = true
 }
 
 output "db_connection_user" {
-  value = var.deploy_db ? element(concat(google_sql_user.airflow.*.name, list("")), 0) : "N/A"
+  value = var.deploy_db ? element(concat(tolist(google_sql_user.airflow.*.name)), 0) : "N/A"
 }
 
 output "db_connection_password" {
@@ -33,11 +33,11 @@ output "db_connection_password" {
 }
 
 output "db_instance_private_ip" {
-  value = var.deploy_db ? element(concat(google_sql_database_instance.instance.*.private_ip_address, list("")), 0) : "N/A"
+  value = var.deploy_db ? element(concat(tolist(google_sql_database_instance.instance.*.private_ip_address)), 0) : "N/A"
 }
 
 output "db_instance_name" {
-  value = var.deploy_db ? element(concat(google_sql_database_instance.instance.*.name, list("")), 0) : "N/A"
+  value = var.deploy_db ? element(concat(tolist(google_sql_database_instance.instance.*.name)), 0) : "N/A"
 }
 
 output "base_domain" {
@@ -55,15 +55,6 @@ ${acme_certificate.lets_encrypt[0].certificate_pem}
 ${acme_certificate.lets_encrypt[0].issuer_pem}
 EOF
   sensitive = true
-}
-
-output "kubeconfig" {
-  value     = local.kubeconfig
-  sensitive = true
-}
-
-output "kubeconfig_filename" {
-  value = local_file.kubeconfig.filename
 }
 
 output "container_registry_bucket_name" {

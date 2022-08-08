@@ -3,8 +3,7 @@ terraform {
   required_version = ">= 0.13"
   required_providers {
     acme = {
-      source  = "vancluever/acme"
-      version = "~> 2.0"
+      source = "vancluever/acme"
     }
     google = {
       source = "hashicorp/google"
@@ -13,28 +12,22 @@ terraform {
       source = "hashicorp/google-beta"
     }
     http = {
-      source  = "hashicorp/http"
-      version = "~> 1.1"
+      source = "hashicorp/http"
     }
     local = {
-      source  = "hashicorp/local"
-      version = "~> 1.3"
+      source = "hashicorp/local"
     }
     null = {
-      source  = "hashicorp/null"
-      version = "~> 2.1"
+      source = "hashicorp/null"
     }
     random = {
-      source  = "hashicorp/random"
-      version = "~> 2.2"
+      source = "hashicorp/random"
     }
     spotinst = {
-      source  = "spotinst/spotinst"
-      version = "~> 1.17"
+      source = "spotinst/spotinst"
     }
     tls = {
-      source  = "hashicorp/tls"
-      version = "~> 2.1"
+      source = "hashicorp/tls"
     }
   }
 }

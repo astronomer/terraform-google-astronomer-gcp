@@ -37,7 +37,6 @@ resource "tls_private_key" "cert_private_key" {
 resource "tls_cert_request" "req" {
   count = var.lets_encrypt ? 1 : 0
 
-  key_algorithm   = "RSA"
   private_key_pem = tls_private_key.cert_private_key.0.private_key_pem
   dns_names       = ["*.${local.base_domain}"]
 

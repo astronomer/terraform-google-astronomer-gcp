@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TERRAFORM="${TERRAFORM:-terraform-0.13.7}"
+TERRAFORM="${TERRAFORM:-terraform}"
 
 "${TERRAFORM}" -v
 

@@ -17,6 +17,8 @@ resource "google_container_cluster" "primary" {
   provider = google-beta
   name     = "${var.deployment_id}-cluster"
 
+  project = data.google_project.project.project_id
+
   # "
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -59,7 +61,6 @@ resource "google_container_cluster" "primary" {
   enable_legacy_abac = false
 
   ip_allocation_policy {
-    use_ip_aliases                = true
     cluster_secondary_range_name  = google_compute_subnetwork.gke.secondary_ip_range[0].range_name
     services_secondary_range_name = google_compute_subnetwork.gke.secondary_ip_range[1].range_name
   }
@@ -74,7 +75,7 @@ resource "google_container_cluster" "primary" {
     cidr_blocks {
       # display_name = google_compute_subnetwork.bastion.name
       # either whitelist the caller's IP or only allow access from bastion
-      cidr_block = var.management_endpoint == "public" ? var.kube_api_whitelist_cidr == "" ? "${trimspace(data.http.local_ip.body)}/32" : var.kube_api_whitelist_cidr : google_compute_subnetwork.bastion[0].ip_cidr_range
+      cidr_block = var.management_endpoint == "public" ? var.kube_api_whitelist_cidr == "" ? "${trimspace(data.http.local_ip.response_body)}/32" : var.kube_api_whitelist_cidr : google_compute_subnetwork.bastion[0].ip_cidr_range
     }
 
   }
@@ -115,9 +116,6 @@ resource "google_container_cluster" "primary" {
   */
 
   master_auth {
-    username = ""
-    password = ""
-
     client_certificate_config {
       issue_client_certificate = false
     }
@@ -141,11 +139,6 @@ resource "google_container_cluster" "primary" {
 
 resource "random_id" "kubeconfig_suffix" {
   byte_length = 4
-}
-
-resource "local_file" "kubeconfig" {
-  sensitive_content = local.kubeconfig
-  filename          = "./kubeconfig-${random_id.kubeconfig_suffix.hex}"
 }
 
 resource "google_bigquery_dataset" "gke_metered_billing" {

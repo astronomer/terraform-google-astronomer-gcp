@@ -17,5 +17,6 @@ module "astronomer_gcp" {
   management_endpoint        = "public"
   enable_gke_metered_billing = true
   db_max_connections         = 1000
-  db_version                 = "POSTGRES_12"
+  db_version                 = "POSTGRES_14"
+  db_deletion_protection     = false
 }
