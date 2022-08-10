@@ -447,6 +447,24 @@ variable "enable_gvisor_dynamic_green" {
   description = "Should gvisor be enabled for the green dynamic node pool?"
 }
 
+variable "compute_router_nat_max_port_vm" {
+  type        = number
+  default     = 65536
+  description = "Maximum number of ports allocated to a VM from this NAT."
+}
+
+variable "compute_router_nat_min_port_vm" {
+  type        = number
+  default     = 1024
+  description = "Minimum number of ports allocated to a VM from this NAT."
+}
+
+variable "compute_router_nat_enable_dynamic_port_allocation" {
+  type        = bool
+  default     = true
+  description = "Enable Dynamic Port Allocation."
+}
+
 ## Extra stuff
 
 variable "kube_api_whitelist_cidr" {
