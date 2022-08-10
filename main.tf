@@ -18,7 +18,7 @@ resource "google_container_cluster" "primary" {
   name     = "${var.deployment_id}-cluster"
 
   project               = data.google_project.project.project_id
-  enable_shielded_nodes = false
+  enable_shielded_nodes = var.gke_enable_shielded_nodes
 
   # "
   # We can't create a cluster with no node pool defined, but we want to only use

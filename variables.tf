@@ -19,6 +19,12 @@ variable "gke_release_channel" {
   description = "The GKE Release channel to use. Blank for none"
 }
 
+variable "gke_enable_shielded_nodes" {
+  type        = bool
+  default     = false
+  description = "Enable shield nodes for GKE cluster."
+}
+
 variable "machine_type_bastion" {
   default     = "g1-small"
   description = "The GCP machine type for the bastion"
