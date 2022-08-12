@@ -19,6 +19,12 @@ variable "gke_release_channel" {
   description = "The GKE Release channel to use. Blank for none"
 }
 
+variable "gke_enable_shielded_nodes" {
+  type        = bool
+  default     = false
+  description = "Enable shield nodes for GKE cluster."
+}
+
 variable "machine_type_bastion" {
   default     = "g1-small"
   description = "The GCP machine type for the bastion"
@@ -433,6 +439,30 @@ variable "enable_gvisor_dynamic_green" {
   type        = bool
   default     = false
   description = "Should gvisor be enabled for the green dynamic node pool?"
+}
+
+variable "router_nat_max_port_vm" {
+  type        = number
+  default     = 65536
+  description = "Maximum number of ports allocated to a VM from this NAT."
+}
+
+variable "router_nat_min_port_vm" {
+  type        = number
+  default     = 1024
+  description = "Minimum number of ports allocated to a VM from this NAT."
+}
+
+variable "router_nat_enable_dynamic_port_allocation" {
+  type        = bool
+  default     = true
+  description = "Enable Dynamic Port Allocation."
+}
+
+variable "router_nat_enable_endpoint_independent_mapping" {
+  type        = bool
+  default     = false
+  description = "Enable endpoint independent mapping."
 }
 
 ## Extra stuff
