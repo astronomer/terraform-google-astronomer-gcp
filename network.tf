@@ -34,7 +34,8 @@ resource "google_compute_router" "router" {
   network = google_compute_network.core.self_link
 
   bgp {
-    asn = 64514
+    keepalive_interval = 0
+    asn                = 64514
   }
 
 }
@@ -49,14 +50,22 @@ resource "google_compute_address" "address" {
 # Cloud NAT
 resource "google_compute_router_nat" "nat" {
 
-  name                               = "${var.deployment_id}-gke-${formatdate("MM-DD-hh-mm", timestamp())}"
-  region                             = local.region
-  min_ports_per_vm                   = 128
-  router                             = google_compute_router.router.name
-  nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = length(var.natgateway_external_ip_list) == 0 ? google_compute_address.address.*.self_link : var.natgateway_external_ip_list
-  source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
-  tcp_established_idle_timeout_sec   = 7200
+  name                                = "${var.deployment_id}-gke-${formatdate("MM-DD-hh-mm", timestamp())}"
+  region                              = local.region
+  max_ports_per_vm                    = var.router_nat_max_port_vm
+  min_ports_per_vm                    = var.router_nat_min_port_vm
+  enable_dynamic_port_allocation      = var.router_nat_enable_dynamic_port_allocation
+  router                              = google_compute_router.router.name
+  nat_ip_allocate_option              = "MANUAL_ONLY"
+  nat_ips                             = length(var.natgateway_external_ip_list) == 0 ? google_compute_address.address.*.self_link : var.natgateway_external_ip_list
+  source_subnetwork_ip_ranges_to_nat  = "LIST_OF_SUBNETWORKS"
+  tcp_established_idle_timeout_sec    = 7200
+  enable_endpoint_independent_mapping = var.router_nat_enable_endpoint_independent_mapping
+
+  log_config {
+    enable = false
+    filter = "ALL"
+  }
 
   lifecycle {
     ignore_changes = [name]
