@@ -14,7 +14,7 @@ variable "kube_version_gke" {
 }
 
 variable "gke_release_channel" {
-  default     = "REGULAR"
+  default     = "STABLE"
   type        = string
   description = "The GKE Release channel to use. Blank for none"
 }
