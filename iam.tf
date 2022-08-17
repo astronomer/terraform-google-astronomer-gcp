@@ -29,10 +29,6 @@ resource "google_project_iam_audit_config" "iap" {
   project = data.google_project.project.project_id
 }
 
-resource "google_service_account_key" "velero" {
-  service_account_id = google_service_account.velero.account_id
-}
-
 resource "google_project_iam_custom_role" "velero_server" {
   role_id = "velero.server.${var.deployment_id}"
   title   = "Velero Server"

@@ -8,8 +8,3 @@ resource "google_service_account" "k8s_registry" {
   account_id   = "${var.deployment_id}-svc-registry"
   display_name = "${var.deployment_id}-svc-registry"
 }
-
-resource "google_service_account" "velero" {
-  account_id   = "${var.deployment_id}-svc-velero"
-  display_name = "${var.deployment_id}-svc-velero"
-}
