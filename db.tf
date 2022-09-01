@@ -67,4 +67,6 @@ resource "google_sql_user" "airflow" {
   name     = "airflow"
   instance = google_sql_database_instance.instance[0].name
   password = local.postgres_airflow_password
+
+  deletion_policy = "ABANDON"
 }
