@@ -472,7 +472,7 @@ variable "router_nat_enable_endpoint_independent_mapping" {
 }
 
 variable "recurring_window" {
-  type = map(object({
+  type = list(object({
     start_time = string
     end_time   = string
     recurrence = string
@@ -481,7 +481,7 @@ variable "recurring_window" {
 }
 
 variable "daily_maintenance_window" {
-  type = map(object({
+  type = list(object({
     start_time = string
   }))
   default = {
@@ -497,13 +497,14 @@ variable "daily_maintenance_window" {
 }
 
 variable "maintenance_exclusion" {
-  type = map(object({
+  type = list(object({
     start_time     = string
     end_time       = string
     exclusion_name = string
-    exclusion_options = {
+
+    exclusion_options = object({
       scope = string
-    }
+    })
   }))
   default = {}
 }
