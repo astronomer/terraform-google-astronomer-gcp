@@ -34,16 +34,39 @@ resource "google_container_cluster" "primary" {
   }
 
   maintenance_policy {
-    daily_maintenance_window {
-      # 9am EST
-      # For maintenance windows in general,
-      # people usually choose a time of least-use.
-      # The nature of Airflow is such that the jobs
-      # are likely to run in those same windows, so
-      # it's best to just choose a time where support
-      # will likely be available.
-      start_time = "13:00"
+
+    dynamic "recurring_window" {
+      for_each = var.recurring_window
+      content {
+        start_time = lookup(recurring_window.value, "start_time", null)
+        end_time   = lookup(recurring_window.value, "end_time", null)
+        recurrence = lookup(recurring_window.value, "recurrence", null)
+      }
     }
+
+    dynamic "daily_maintenance_window" {
+      for_each = var.daily_maintenance_window
+      content {
+        start_time = lookup(daily_maintenance_window.value, "start_time", null)
+      }
+    }
+
+    dynamic "maintenance_exclusion" {
+      for_each = var.maintenance_exclusion
+      content {
+        start_time     = lookup(maintenance_exclusion.value, "start_time", null)
+        end_time       = lookup(maintenance_exclusion.value, "end_time", null)
+        exclusion_name = lookup(maintenance_exclusion.value, "exclusion_name", null)
+
+        dynamic "exclusion_options" {
+          for_each = lookup(maintenance_exclusion.value, "exclusion_options", {})
+          content {
+            scope = exclusion_options.value.scope
+          }
+        }
+      }
+    }
+
   }
 
   # This only applies to the default node pool, which we will delete

@@ -471,6 +471,30 @@ variable "router_nat_enable_endpoint_independent_mapping" {
   description = "Enable endpoint independent mapping."
 }
 
+variable "recurring_window" {
+  type    = map(string)
+  default = {}
+}
+
+variable "daily_maintenance_window" {
+  type = map(string)
+  default = {
+    # 9am EST
+    # For maintenance windows in general,
+    # people usually choose a time of least-use.
+    # The nature of Airflow is such that the jobs
+    # are likely to run in those same windows, so
+    # it's best to just choose a time where support
+    # will likely be available.
+    start_time = "13:00"
+  }
+}
+
+variable "maintenance_exclusion" {
+  type    = map(string)
+  default = {}
+}
+
 ## Extra stuff
 
 variable "kube_api_whitelist_cidr" {

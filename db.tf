@@ -63,8 +63,9 @@ resource "random_string" "postgres_airflow_password" {
 }
 
 resource "google_sql_user" "airflow" {
-  count    = var.deploy_db ? 1 : 0
-  name     = "airflow"
-  instance = google_sql_database_instance.instance[0].name
-  password = local.postgres_airflow_password
+  count           = var.deploy_db ? 1 : 0
+  name            = "airflow"
+  deletion_policy = "ABANDON"
+  instance        = google_sql_database_instance.instance[0].name
+  password        = local.postgres_airflow_password
 }
