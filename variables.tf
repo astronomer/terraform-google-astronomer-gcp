@@ -484,18 +484,7 @@ variable "daily_maintenance_window" {
   type = list(object({
     start_time = string
   }))
-  default = [
-    {
-      # 9am EST
-      # For maintenance windows in general,
-      # people usually choose a time of least-use.
-      # The nature of Airflow is such that the jobs
-      # are likely to run in those same windows, so
-      # it's best to just choose a time where support
-      # will likely be available.
-      start_time = "13:00"
-    }
-  ]
+  default = []
 }
 
 variable "maintenance_exclusion" {
