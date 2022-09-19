@@ -472,12 +472,12 @@ variable "router_nat_enable_endpoint_independent_mapping" {
 }
 
 variable "recurring_window" {
-  type    = map(string)
+  type    = map(object())
   default = {}
 }
 
 variable "daily_maintenance_window" {
-  type = map(string)
+  type = map(object())
   default = {
     # 9am EST
     # For maintenance windows in general,
@@ -491,7 +491,7 @@ variable "daily_maintenance_window" {
 }
 
 variable "maintenance_exclusion" {
-  type    = map(string)
+  type    = map(object())
   default = {}
 }
 
