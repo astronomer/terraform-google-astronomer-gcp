@@ -38,28 +38,28 @@ resource "google_container_cluster" "primary" {
     dynamic "recurring_window" {
       for_each = var.recurring_window
       content {
-        start_time = lookup(recurring_window.value, "start_time", null)
-        end_time   = lookup(recurring_window.value, "end_time", null)
-        recurrence = lookup(recurring_window.value, "recurrence", null)
+        start_time = element(recurring_window.value, "start_time", null)
+        end_time   = element(recurring_window.value, "end_time", null)
+        recurrence = element(recurring_window.value, "recurrence", null)
       }
     }
 
     dynamic "daily_maintenance_window" {
       for_each = var.daily_maintenance_window
       content {
-        start_time = lookup(daily_maintenance_window.value, "start_time", null)
+        start_time = element(daily_maintenance_window.value, "start_time", null)
       }
     }
 
     dynamic "maintenance_exclusion" {
       for_each = var.maintenance_exclusion
       content {
-        start_time     = lookup(maintenance_exclusion.value, "start_time", null)
-        end_time       = lookup(maintenance_exclusion.value, "end_time", null)
-        exclusion_name = lookup(maintenance_exclusion.value, "exclusion_name", null)
+        start_time     = element(maintenance_exclusion.value, "start_time", null)
+        end_time       = element(maintenance_exclusion.value, "end_time", null)
+        exclusion_name = element(maintenance_exclusion.value, "exclusion_name", null)
 
         dynamic "exclusion_options" {
-          for_each = lookup(maintenance_exclusion.value, "exclusion_options", {})
+          for_each = element(maintenance_exclusion.value, "exclusion_options", {})
           content {
             scope = exclusion_options.value.scope
           }
