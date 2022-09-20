@@ -1,7 +1,6 @@
 #!/bin/bash
 
 TERRAFORM="${TERRAFORM:-terraform}"
-EXIT_CODE=0
 
 "${TERRAFORM}" -v
 
@@ -38,16 +37,7 @@ sed -i "s/REPLACE/$DEPLOYMENT_ID/g" backend.tf
 if [[ "$DESTROY" -eq 1 ]]; then
   "${TERRAFORM}" destroy --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -var "zonal=$ZONAL" -lock=false -refresh=false
 else
-
-  {
     # this helps to fail fast in the pipeline, but it's not necessary
     "${TERRAFORM}" apply --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -var "zonal=$ZONAL" -lock=false --target=module.astronomer_gcp.google_service_networking_connection.private_vpc_connection
     "${TERRAFORM}" apply --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -var "zonal=$ZONAL" -lock=false
-
-  } ||
-    {
-      "${TERRAFORM}" destroy --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -var "zonal=$ZONAL" -lock=false -refresh=false
-      return 1
-    }
-
 fi

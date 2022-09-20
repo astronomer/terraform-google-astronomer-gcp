@@ -68,7 +68,13 @@ jobs:
     executor: terraform-executor
     steps:
       - checkout
-      - run: EXAMPLE=from_scratch pipeline/run_terraform.sh
+      - run:
+          name: terraform apply
+          command: EXAMPLE=from_scratch pipeline/run_terraform.sh
+      - run:
+          name: terraform destroy
+          command: DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
+          when: on_fail
       - slack/notify:
           event: fail
           template: basic_fail_1
