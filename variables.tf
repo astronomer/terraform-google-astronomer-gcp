@@ -9,12 +9,12 @@ variable "dns_managed_zone" {
 }
 
 variable "kube_version_gke" {
-  default     = "1.21.12-gke.2200"
+  default     = "1.21.14-gke.3000"
   description = "The kubernetes version to use in GKE"
 }
 
 variable "gke_release_channel" {
-  default     = "STABLE"
+  default     = "UNSPECIFIED"
   type        = string
   description = "The GKE Release channel to use. Blank for none"
 }
@@ -484,7 +484,11 @@ variable "daily_maintenance_window" {
   type = list(object({
     start_time = string
   }))
-  default = []
+  default = [
+    {
+      start_time = "13:00"
+    }
+  ]
 }
 
 variable "maintenance_exclusion" {
