@@ -9,12 +9,12 @@ variable "dns_managed_zone" {
 }
 
 variable "kube_version_gke" {
-  default     = "1.20.9-gke.1001"
+  default     = "1.21.14-gke.3000"
   description = "The kubernetes version to use in GKE"
 }
 
 variable "gke_release_channel" {
-  default     = "REGULAR"
+  default     = "UNSPECIFIED"
   type        = string
   description = "The GKE Release channel to use. Blank for none"
 }
@@ -126,8 +126,14 @@ variable "deploy_db" {
 variable "db_version" {
   type = string
   # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#argument-reference
-  default     = "POSTGRES_9_6"
+  default     = "POSTGRES_14"
   description = "define postgres database version"
+}
+
+variable "db_deletion_protection" {
+  type        = bool
+  default     = true
+  description = "Turn on and off deletion_protection."
 }
 
 variable "db_max_connections" {
@@ -522,5 +528,10 @@ variable "natgateway_external_ip_list" {
 
 variable "spotinist_token" {
   default = "12345"
+  type    = string
+}
+
+variable "enable_istio" {
+  default = "false"
   type    = string
 }
