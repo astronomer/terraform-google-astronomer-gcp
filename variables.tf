@@ -465,6 +465,35 @@ variable "router_nat_enable_endpoint_independent_mapping" {
   description = "Enable endpoint independent mapping."
 }
 
+variable "recurring_window" {
+  type = list(object({
+    start_time = string
+    end_time   = string
+    recurrence = string
+  }))
+  default = []
+}
+
+variable "daily_maintenance_window" {
+  type = list(object({
+    start_time = string
+  }))
+  default = []
+}
+
+variable "maintenance_exclusion" {
+  type = list(object({
+    start_time     = string
+    end_time       = string
+    exclusion_name = string
+
+    exclusion_options = object({
+      scope = string
+    })
+  }))
+  default = []
+}
+
 ## Extra stuff
 
 variable "kube_api_whitelist_cidr" {
