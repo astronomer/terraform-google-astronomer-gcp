@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TERRAFORM="${TERRAFORM:-terraform}"
+EXIT_CODE=0
 
 "${TERRAFORM}" -v
 
@@ -46,6 +47,7 @@ else
   } ||
     {
       "${TERRAFORM}" destroy --auto-approve -var "deployment_id=$DEPLOYMENT_ID" -var "zonal=$ZONAL" -lock=false -refresh=false
+      return 1
     }
 
 fi
