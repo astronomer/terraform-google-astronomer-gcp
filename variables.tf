@@ -484,7 +484,11 @@ variable "daily_maintenance_window" {
   type = list(object({
     start_time = string
   }))
-  default = []
+  default = [
+    {
+      start_time = "13:00"
+    }
+  ]
 }
 
 variable "maintenance_exclusion" {
