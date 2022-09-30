@@ -34,8 +34,7 @@ resource "google_compute_router" "router" {
   network = google_compute_network.core.self_link
 
   bgp {
-    keepalive_interval = 0
-    asn                = 64514
+    asn = 64514
   }
 
 }

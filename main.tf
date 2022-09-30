@@ -17,7 +17,6 @@ resource "google_container_cluster" "primary" {
   provider = google-beta
   name     = "${var.deployment_id}-cluster"
 
-  project               = data.google_project.project.project_id
   enable_shielded_nodes = var.gke_enable_shielded_nodes
 
   # "

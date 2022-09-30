@@ -62,10 +62,6 @@ output "kubeconfig" {
   sensitive = true
 }
 
-output "kubeconfig_filename" {
-  value = local_file.kubeconfig.filename
-}
-
 output "container_registry_bucket_name" {
   value       = google_storage_bucket.container_registry.name
   description = "Cloud Storage Bucket Name to be used for Container Registry"
