@@ -575,5 +575,8 @@ resource "google_container_node_pool" "node_pool_platform_green" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+      initial_node_count
+    ]
   }
 }
