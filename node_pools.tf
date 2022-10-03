@@ -24,7 +24,10 @@ resource "google_container_node_pool" "node_pool_mt_green" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = [name]
+    ignore_changes = [
+      name,
+      initial_node_count
+    ]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
@@ -93,12 +96,6 @@ resource "google_container_node_pool" "node_pool_mt_green" {
     }
 
   }
-
-  lifecycle {
-    ignore_changes = [
-      initial_node_count
-    ]
-  }
 }
 
 ## Multi-tenant node pool blue
@@ -120,7 +117,10 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   lifecycle {
     create_before_destroy = true
-    ignore_changes        = [name]
+    ignore_changes = [
+      name,
+      initial_node_count
+    ]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
@@ -185,11 +185,6 @@ resource "google_container_node_pool" "node_pool_mt" {
 
   }
 
-  lifecycle {
-    ignore_changes = [
-      initial_node_count
-    ]
-  }
 }
 
 ## Legacy dynamic pods pool (before dynamic pods blue/green)
@@ -210,6 +205,9 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+      initial_node_count
+    ]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
@@ -274,11 +272,6 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
 
   }
 
-  lifecycle {
-    ignore_changes = [
-      initial_node_count
-    ]
-  }
 }
 
 ## Blue dynamic pods pool (added 2020-12-16)
@@ -299,6 +292,9 @@ resource "google_container_node_pool" "dynamic_blue_node_pool" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+      initial_node_count
+    ]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
@@ -363,12 +359,6 @@ resource "google_container_node_pool" "dynamic_blue_node_pool" {
     }
 
   }
-
-  lifecycle {
-    ignore_changes = [
-      initial_node_count
-    ]
-  }
 }
 
 ## Green dynamic pods pool (added 2020-12-16)
@@ -389,6 +379,9 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
 
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+      initial_node_count
+    ]
   }
 
   location = var.zonal_cluster ? local.zone : local.region
@@ -452,12 +445,6 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
       }
     }
 
-  }
-
-  lifecycle {
-    ignore_changes = [
-      initial_node_count
-    ]
   }
 }
 
