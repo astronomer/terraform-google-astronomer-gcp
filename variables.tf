@@ -497,9 +497,9 @@ variable "maintenance_exclusion" {
     end_time       = string
     exclusion_name = string
 
-    exclusion_options = object({
+    exclusion_options = list(object({
       scope = string
-    })
+    }))
   }))
   default = []
 }
