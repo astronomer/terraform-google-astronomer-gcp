@@ -3,10 +3,6 @@ resource "random_string" "password" {
   special = true
 }
 
-data "http" "local_ip" {
-  url = "https://api.ipify.org/"
-}
-
 # data "google_container_engine_versions" "versions" {
 #   location       = var.zonal_cluster ? local.zone : local.region
 #   version_prefix = "1.14."
@@ -96,12 +92,14 @@ resource "google_container_cluster" "primary" {
   }
 
   master_authorized_networks_config {
-    cidr_blocks {
-      # display_name = google_compute_subnetwork.bastion.name
-      # either whitelist the caller's IP or only allow access from bastion
-      cidr_block = var.management_endpoint == "public" ? var.kube_api_whitelist_cidr == "" ? "${trimspace(data.http.local_ip.response_body)}/32" : var.kube_api_whitelist_cidr : google_compute_subnetwork.bastion[0].ip_cidr_range
+    dynamic "cidr_blocks" {
+      for_each = var.management_endpoint == "public" ? var.kube_api_whitelist_cidr : toset([google_compute_subnetwork.bastion[0].ip_cidr_range])
+      content {
+        # display_name = google_compute_subnetwork.bastion.name
+        # either whitelist the caller's IP or only allow access from bastion
+        cidr_block = cidr_blocks.key
+      }
     }
-
   }
 
   pod_security_policy_config {
