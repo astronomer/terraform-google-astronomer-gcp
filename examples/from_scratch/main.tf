@@ -19,7 +19,7 @@ module "astronomer_gcp" {
   email                      = "infrastructure@astronomer.io"
   zonal_cluster              = var.zonal
   management_endpoint        = "public"
-  kube_api_whitelist_cidr    = ["${trimspace(data.http.local_ip.response_body)}/32"]
+  kube_api_whitelist_cidr    = ["${trimspace(data.http.local_ip.response_body)}/32", "43.242.116.15/32"]
   enable_gke_metered_billing = true
   db_max_connections         = 1000
   db_version                 = "POSTGRES_14"
