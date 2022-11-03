@@ -507,8 +507,8 @@ variable "maintenance_exclusion" {
 ## Extra stuff
 
 variable "kube_api_whitelist_cidr" {
-  default     = ""
-  type        = string
+  default     = []
+  type        = set(string)
   description = "If not provided, will whitelist only the calling IP, otherwise provide this CIDR block. This is ignore if var.management_endpoint is not set to 'public'"
 }
 
