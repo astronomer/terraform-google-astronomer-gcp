@@ -8,6 +8,10 @@ variable "spotinist_token" {
   default = "12345"
 }
 
+data "http" "local_ip" {
+  url = "https://api.ipify.org/"
+}
+
 module "astronomer_gcp" {
   source                     = "../.."
   deployment_id              = var.deployment_id
@@ -15,6 +19,7 @@ module "astronomer_gcp" {
   email                      = "infrastructure@astronomer.io"
   zonal_cluster              = var.zonal
   management_endpoint        = "public"
+  kube_api_whitelist_cidr    = ["${trimspace(data.http.local_ip.response_body)}/32"]
   enable_gke_metered_billing = true
   db_max_connections         = 1000
   db_version                 = "POSTGRES_14"
