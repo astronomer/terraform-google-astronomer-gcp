@@ -22,13 +22,21 @@ workflows:
       - run_pre_commit
   terraform_pipeline:
     jobs:
-      - terraform:
+      - terraform-apply:
           region: us-east4
           project_id: astronomer-cloud-dev-236021
           tf_state_bucket: cloud2-dev-terraform
           zonal: true
           context:
             - gcp-dev
+      - terraform-destroy:
+          region: us-east4
+          project_id: astronomer-cloud-dev-236021
+          tf_state_bucket: cloud2-dev-terraform
+          zonal: true
+          context:
+            - gcp-dev
+
 
 jobs:
   run_pre_commit:
@@ -39,7 +47,7 @@ jobs:
       - ci-init
       - pre-commit-commands
 
-  terraform:
+  terraform-apply:
     executor: terraform-executor
     resource_class: medium
     parameters:
@@ -61,7 +69,27 @@ jobs:
       - run:
           name: Run Terraform Destroy
           command: make init destroy-auto-approve PROJECT_ID=<< parameters.project_id >> REGION=<< parameters.region >> DEPLOYMENT_ID="${CIRCLE_PROJECT_REPONAME}${CIRCLE_SHA1}" ZONAL=<< parameters.zonal >> TF_STATE_BUCKET=<< parameters.tf_state_bucket >>
-          when: always
+          when: on_fail
+
+  terraform-destroy:
+    executor: terraform-executor
+    resource_class: medium
+    parameters:
+      region:
+        type: string
+      project_id:
+        type: string
+      tf_state_bucket:
+        type: string
+      zonal:
+        type: bool
+    steps:
+      - checkout
+      - ci-init
+      - terraform-install
+      - run:
+          name: Run Terraform Destroy
+          command: make init destroy-auto-approve PROJECT_ID=<< parameters.project_id >> REGION=<< parameters.region >> DEPLOYMENT_ID="${CIRCLE_PROJECT_REPONAME}${CIRCLE_SHA1}" ZONAL=<< parameters.zonal >> TF_STATE_BUCKET=<< parameters.tf_state_bucket >>
 
 commands:
   pre-commit-commands:
