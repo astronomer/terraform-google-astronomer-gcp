@@ -61,7 +61,6 @@ jobs:
         type: boolean
     steps:
       - checkout
-      - ci-init
       - terraform-install
       - run:
           name: Run Terraform Apply
@@ -85,7 +84,6 @@ jobs:
         type: boolean
     steps:
       - checkout
-      - ci-init
       - terraform-install
       - run:
           name: Run Terraform Destroy
