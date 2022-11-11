@@ -58,7 +58,7 @@ jobs:
       tf_state_bucket:
         type: string
       zonal:
-        type: bool
+        type: boolean
     steps:
       - checkout
       - ci-init
@@ -82,7 +82,7 @@ jobs:
       tf_state_bucket:
         type: string
       zonal:
-        type: bool
+        type: boolean
     steps:
       - checkout
       - ci-init
