@@ -1,6 +1,6 @@
-
 terraform {
   required_version = ">= 0.13"
+  backend "gcs" {}
   required_providers {
     acme = {
       source  = "vancluever/acme"
@@ -37,4 +37,22 @@ terraform {
       version = "~> 2.1"
     }
   }
+}
+
+provider "google" {
+  region  = var.region
+  project = var.project_id
+}
+
+provider "google-beta" {
+  region  = var.region
+  project = var.project_id
+}
+
+provider "acme" {
+  server_url = "https://acme-staging-v02.api.letsencrypt.org/directory"
+}
+
+provider "spotinst" {
+  token = var.spotinist_token
 }

@@ -17,135 +17,51 @@ executors:
           TFENV_AUTO_INSTALL: true
 
 workflows:
-  test:
+  pre-commit:
     jobs:
       - run_pre_commit
   terraform_pipeline:
     jobs:
-      - terraform_lint:
+      - terraform:
+          region: us-east4
+          project_id: astronomer-cloud-dev-236021
+          tf_state_bucket: cloud2-dev-terraform
+          zonal: true
           context:
-            - slack
-      - terraform_apply:
-          requires:
-            - terraform_lint
-          context:
-            - slack
             - gcp-dev
-      - terraform_destroy:
-          requires:
-            - terraform_apply
-          context:
-            - slack
-            - gcp-dev
-      #- git_tag:
-      #    context:
-      #      - github-repo
-      #      - slack
-      #    requires:
-      #      - terraform_destroy
-      #    filters:
-      #      branches:
-      #        only:
-      #          - master
 
 jobs:
   run_pre_commit:
     executor: pre-commit-executor
+    resource_class: small
     steps:
       - checkout
+      - ci-init
       - pre-commit-commands
 
-  terraform_lint:
-    executor: pre-commit-executor
-    steps:
-      - checkout
-      - pre-commit-commands
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-
-  terraform_apply:
+  terraform:
     executor: terraform-executor
+    resource_class: medium
+    parameters:
+      region:
+        type: string
+      project_id:
+        type: string
+      tf_state_bucket:
+        type: string
+      zonal:
+        type: bool
     steps:
       - checkout
-      - run: EXAMPLE=from_scratch pipeline/run_terraform.sh
+      - ci-init
+      - terraform-install
       - run:
-          command: DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
-          when: on_fail
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-
-  terraform_destroy:
-    executor: terraform-executor
-    steps:
-      - checkout
-      - run: DESTROY=1 EXAMPLE=from_scratch pipeline/run_terraform.sh
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-
-  git_tag:
-    executor: terraform-executor
-    steps:
-      - checkout
-      - run: git remote set-url origin "https://astro-astronomer:${GITHUB_TOKEN}@github.com/astronomer/${CIRCLE_PROJECT_REPONAME}.git"
-      - run: git tag 1.2.<< pipeline.number >>
-      - run: git push origin << pipeline.git.branch >> --tags
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          custom: |
-            {
-              "text": "",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Release Successful! :tada:",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Project*:\n$CIRCLE_PROJECT_REPONAME"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*When*:\n$(date +'%m/%d/%Y %T')"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Tag*:\n1.2.<< pipeline.number >>"
-                    }
-                  ],
-                  "accessory": {
-                    "type": "image",
-                    "image_url": "https://assets.brandfolder.com/otz5mn-bw4j2w-6jzqo8/original/circle-logo-badge-black.png",
-                    "alt_text": "CircleCI logo"
-                  }
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Job"
-                      },
-                      "url": "${CIRCLE_BUILD_URL}"
-                    }
-                  ]
-                }
-              ]
-            }
+          name: Run Terraform Apply
+          command: make init apply-auto-approve PROJECT_ID=<< parameters.project_id >> REGION=<< parameters.region >> DEPLOYMENT_ID="${CIRCLE_PROJECT_REPONAME}${CIRCLE_SHA1}" ZONAL=<< parameters.zonal >> TF_STATE_BUCKET=<< parameters.tf_state_bucket >>
+      - run:
+          name: Run Terraform Destroy
+          command: make init destroy-auto-approve PROJECT_ID=<< parameters.project_id >> REGION=<< parameters.region >> DEPLOYMENT_ID="${CIRCLE_PROJECT_REPONAME}${CIRCLE_SHA1}" ZONAL=<< parameters.zonal >> TF_STATE_BUCKET=<< parameters.tf_state_bucket >>
+          when: always
 
 commands:
   pre-commit-commands:

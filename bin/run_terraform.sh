@@ -28,7 +28,7 @@ echo "$DEPLOYMENT_ID"
 
 cp providers.tf.example "examples/$EXAMPLE/providers.tf"
 cp backend.tf.example "examples/$EXAMPLE/backend.tf"
-cp versions.tf "examples/$EXAMPLE/versions.tf"
+cp main.tf "examples/$EXAMPLE/versions.tf"
 cd "examples/$EXAMPLE"
 sed -i "s/REPLACE/$DEPLOYMENT_ID/g" backend.tf
 

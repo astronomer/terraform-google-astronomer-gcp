@@ -1,19 +1,9 @@
-variable "deployment_id" {}
-
-variable "zonal" {
-  default = false
-}
-
-variable "spotinist_token" {
-  default = "12345"
-}
-
 data "http" "local_ip" {
   url = "https://api.ipify.org/"
 }
 
 module "astronomer_gcp" {
-  source                     = "../.."
+  source                     = "../terraform"
   deployment_id              = var.deployment_id
   dns_managed_zone           = "astrodev"
   email                      = "infrastructure@astronomer.io"
