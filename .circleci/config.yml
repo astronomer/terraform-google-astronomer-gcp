@@ -36,6 +36,8 @@ workflows:
           zonal: true
           context:
             - gcp-dev
+          requires:
+            - terraform-apply
 
 
 jobs:
