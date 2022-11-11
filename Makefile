@@ -31,8 +31,8 @@ install:
 init: clean
 	terraform -chdir=$(TF_MODULE_PATH) init \
 		-backend=true \
-		-bucket='bucket=$(TF_STATE_BUCKET)' \
-		-prefix='prefix=$(DEPLOYMENT_ID)/terraform.tfstate'
+		-backend-config='bucket=$(TF_STATE_BUCKET)' \
+		-backend-config='prefix=$(DEPLOYMENT_ID)/terraform.tfstate'
 
 upgrade: clean
 	terraform -chdir=$(TF_MODULE_PATH) init \

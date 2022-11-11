@@ -39,7 +39,6 @@ workflows:
           requires:
             - terraform-apply
 
-
 jobs:
   run_pre_commit:
     executor: pre-commit-executor
