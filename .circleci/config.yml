@@ -44,7 +44,6 @@ jobs:
     resource_class: small
     steps:
       - checkout
-      - ci-init
       - pre-commit-commands
 
   terraform-apply:
