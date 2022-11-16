@@ -64,9 +64,10 @@ jobs:
       - terraform-install
       - run:
           name: Provision GCloud Credentials
-          command: echo "$GCP_TOKEN" > /tmp/account.json
-          environment:
-            GOOGLE_APPLICATION_CREDENTIALS: /tmp/account.json
+          command: |
+            echo "$GCP_TOKEN" > /tmp/account.json
+            echo 'export GOOGLE_APPLICATION_CREDENTIALS=/tmp/account.json' >>"$BASH_ENV"
+            source "$BASH_ENV"
       - run:
           name: Run Terraform Apply
           command: |
@@ -96,9 +97,10 @@ jobs:
       - terraform-install
       - run:
           name: Provision GCloud Credentials
-          command: echo "$GCP_TOKEN" > /tmp/account.json
-          environment:
-            GOOGLE_APPLICATION_CREDENTIALS: /tmp/account.json
+          command: |
+            echo "$GCP_TOKEN" > /tmp/account.json
+            echo 'export GOOGLE_APPLICATION_CREDENTIALS=/tmp/account.json' >>"$BASH_ENV"
+            source "$BASH_ENV"
       - run:
           name: Run Terraform Destroy
           command: |
