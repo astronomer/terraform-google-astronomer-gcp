@@ -65,12 +65,12 @@ jobs:
       - run:
           name: Run Terraform Apply
           command: |
-            DEPLOYMENT_ID=ci$(echo "${CIRCLE_PROJECT_REPONAME}${CIRCLE_SHA1}" | md5sum | awk '{print substr($1,0,5)}')
+            DEPLOYMENT_ID=ci$(echo "${CIRCLE_PROJECT_REPONAME}${CIRCLE_WORKFLOW_ID}" | md5sum | awk '{print substr($1,0,5)}')
             make init apply-auto-approve PROJECT_ID=<< parameters.project_id >> REGION=<< parameters.region >> DEPLOYMENT_ID=$DEPLOYMENT_ID ZONAL=<< parameters.zonal >> TF_STATE_BUCKET=<< parameters.tf_state_bucket >>
       - run:
           name: Run Terraform Destroy
           command: |
-            DEPLOYMENT_ID=ci$(echo "${CIRCLE_PROJECT_REPONAME}${CIRCLE_SHA1}" | md5sum | awk '{print substr($1,0,5)}')
+            DEPLOYMENT_ID=ci$(echo "${CIRCLE_PROJECT_REPONAME}${CIRCLE_WORKFLOW_ID}" | md5sum | awk '{print substr($1,0,5)}')
             make init destroy-auto-approve PROJECT_ID=<< parameters.project_id >> REGION=<< parameters.region >> DEPLOYMENT_ID=$DEPLOYMENT_ID ZONAL=<< parameters.zonal >> TF_STATE_BUCKET=<< parameters.tf_state_bucket >>
           when: on_fail
 
