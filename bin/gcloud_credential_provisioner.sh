@@ -1,11 +1,9 @@
 #!/bin/bash
 
-echo "$GCP_TOKEN" >/tmp/account.json
+echo "$GCP_TOKEN" >$1
 
 set -xe
 
-if [ ! -f /tmp/account.json ]; then
+if [ ! -f $1 ]; then
   echo "google credential json does not exists"
 fi
-
-export GOOGLE_APPLICATION_CREDENTIALS='/tmp/account.json'
