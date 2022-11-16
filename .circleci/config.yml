@@ -64,7 +64,7 @@ jobs:
       - terraform-install
       - run:
           name: Provision GCloud Credentials
-          command: bib/gcloud_credential_provisioner.sh
+          command: bin/gcloud_credential_provisioner.sh
       - run:
           name: Run Terraform Apply
           command: |
@@ -94,7 +94,7 @@ jobs:
       - terraform-install
       - run:
           name: Provision GCloud Credentials
-          command: bib/gcloud_credential_provisioner.sh
+          command: bin/gcloud_credential_provisioner.sh
       - run:
           name: Run Terraform Destroy
           command: |
