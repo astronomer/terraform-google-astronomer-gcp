@@ -63,6 +63,9 @@ jobs:
       - checkout
       - terraform-install
       - run:
+          name: Provision GCloud Credentials
+          command: bib/gcloud_credential_provisioner.sh
+      - run:
           name: Run Terraform Apply
           command: |
             DEPLOYMENT_ID=ci$(echo "${CIRCLE_PROJECT_REPONAME}${CIRCLE_WORKFLOW_ID}" | md5sum | awk '{print substr($1,0,5)}')
@@ -89,6 +92,9 @@ jobs:
     steps:
       - checkout
       - terraform-install
+      - run:
+          name: Provision GCloud Credentials
+          command: bib/gcloud_credential_provisioner.sh
       - run:
           name: Run Terraform Destroy
           command: |
