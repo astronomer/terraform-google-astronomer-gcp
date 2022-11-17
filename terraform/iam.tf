@@ -47,7 +47,8 @@ resource "google_project_iam_custom_role" "velero_server" {
     "compute.snapshots.create",
     "compute.snapshots.useReadOnly",
     "compute.snapshots.delete",
-    "compute.zones.get"
+    "compute.zones.get",
+    "storage.objects.list"
   ]
 }
 
