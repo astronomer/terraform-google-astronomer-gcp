@@ -54,4 +54,10 @@ locals {
   # node_version = var.node_version == "" ? data.google_container_engine_versions.gke.latest_node_version : var.node_version
 
   gke_nodepool_network_tags = data.google_compute_instance.sample_instance.tags
+
+  tls_key  = var.lets_encrypt ? tls_private_key.cert_private_key.0.private_key_pem : ""
+  tls_cert = var.dns_managed_zone == "" ? "" : <<EOF
+${acme_certificate.lets_encrypt[0].certificate_pem}
+${acme_certificate.lets_encrypt[0].issuer_pem}
+EOF
 }
