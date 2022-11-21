@@ -45,15 +45,12 @@ output "base_domain" {
 }
 
 output "tls_key" {
-  value     = var.lets_encrypt ? tls_private_key.cert_private_key.0.private_key_pem : ""
+  value     = local.tls_key
   sensitive = true
 }
 
 output "tls_cert" {
-  value     = var.dns_managed_zone == "" ? "" : <<EOF
-${acme_certificate.lets_encrypt[0].certificate_pem}
-${acme_certificate.lets_encrypt[0].issuer_pem}
-EOF
+  value     = local.tls_cert
   sensitive = true
 }
 
@@ -64,13 +61,15 @@ output "container_registry_bucket_name" {
 
 # https://github.com/hashicorp/terraform/issues/1178
 resource "null_resource" "dependency_setter" {
-  depends_on = [google_container_cluster.primary,
+  depends_on = [
+    google_container_cluster.primary,
     google_container_node_pool.node_pool_mt,
     google_container_node_pool.node_pool_mt_green,
     google_container_node_pool.node_pool_platform,
     google_container_node_pool.node_pool_platform_green,
     google_sql_database_instance.instance,
-  acme_certificate.lets_encrypt]
+    acme_certificate.lets_encrypt
+  ]
 
   provisioner "local-exec" {
     # wait 10 minutes after the first
