@@ -84,8 +84,8 @@ resource "google_container_node_pool" "node_pool_mt_green" {
       }
     }
 
-    # COS_CONTAINERD is required for sandbox_config to work
-    image_type = var.enable_gvisor_green ? "COS_CONTAINERD" : "COS"
+    # COS_CONTAINERD is required for sandbox_config to work, and is the default from k8s 1.23 on
+    image_type = var.image_type_green_mt
 
     # Only include sandbox config if we are using gvisor
     dynamic "sandbox_config" {
@@ -172,8 +172,8 @@ resource "google_container_node_pool" "node_pool_mt" {
       }
     }
 
-    # COS_CONTAINERD is required for sandbox_config to work
-    image_type = var.enable_gvisor_blue ? "COS_CONTAINERD" : "COS"
+    # COS_CONTAINERD is required for sandbox_config to work, and is the default from k8s 1.23 on
+    image_type = var.image_type_blue_mt
 
     # Only include sandbox config if we are using gvisor
     dynamic "sandbox_config" {
@@ -259,8 +259,8 @@ resource "google_container_node_pool" "node_pool_dynamic_pods" {
       }
     }
 
-    # COS_CONTAINERD is required for sandbox_config to work
-    image_type = var.enable_gvisor_dynamic ? "COS_CONTAINERD" : "COS"
+    # COS_CONTAINERD is required for sandbox_config to work, and is the default from k8s 1.23 on
+    image_type = var.image_type_dynamic
 
     # Only include sandbox config if we are using gvisor
     dynamic "sandbox_config" {
@@ -347,8 +347,8 @@ resource "google_container_node_pool" "dynamic_blue_node_pool" {
       }
     }
 
-    # COS_CONTAINERD is required for sandbox_config to work
-    image_type = var.enable_gvisor_dynamic_blue ? "COS_CONTAINERD" : "COS"
+    # COS_CONTAINERD is required for sandbox_config to work, and is the default from k8s 1.23 on
+    image_type = var.image_type_dynamic_blue
 
     # Only include sandbox config if we are using gvisor
     dynamic "sandbox_config" {
@@ -434,8 +434,8 @@ resource "google_container_node_pool" "dynamic_green_node_pool" {
       }
     }
 
-    # COS_CONTAINERD is required for sandbox_config to work
-    image_type = var.enable_gvisor_dynamic_green ? "COS_CONTAINERD" : "COS"
+    # COS_CONTAINERD is required for sandbox_config to work, and is the default from k8s 1.23 on
+    image_type = var.image_type_dynamic_green
 
     # Only include sandbox config if we are using gvisor
     dynamic "sandbox_config" {
@@ -479,8 +479,7 @@ resource "google_container_node_pool" "node_pool_platform" {
 
   node_config {
 
-    # Container-Optimized OS
-    image_type = "COS"
+    image_type = var.image_type_blue_platform
 
     machine_type = var.machine_type_platform_blue
     disk_size_gb = var.disk_size_platform_blue
@@ -554,8 +553,7 @@ resource "google_container_node_pool" "node_pool_platform_green" {
 
   node_config {
 
-    # Container-Optimized OS
-    image_type = "COS"
+    image_type = var.image_type_green_platform
 
     machine_type = var.machine_type_platform_green
     disk_size_gb = var.disk_size_platform_green
