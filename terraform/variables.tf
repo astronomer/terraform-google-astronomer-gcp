@@ -9,7 +9,7 @@ variable "dns_managed_zone" {
 }
 
 variable "kube_version_gke" {
-  default     = "1.21.14-gke.3000"
+  default     = "1.22.17-gke.1400" # 1.23 will drop the ability to create COS node-pools
   description = "The kubernetes version to use in GKE"
 }
 
@@ -150,6 +150,12 @@ variable "db_max_connections" {
 
 ## Platform node pool: Blue
 
+variable "image_type_blue_platform" {
+  type        = string
+  default     = "COS"
+  description = "Base OS image. COS or COS_CONTAINERD"
+}
+
 variable "enable_blue_platform_node_pool" {
   type        = bool
   default     = true
@@ -187,6 +193,12 @@ variable "platform_node_pool_taints_blue" {
 }
 
 ## Platform node pool: Green
+
+variable "image_type_green_platform" {
+  type        = string
+  default     = "COS"
+  description = "Base OS image. COS or COS_CONTAINERD"
+}
 
 variable "enable_green_platform_node_pool" {
   type        = bool
@@ -226,6 +238,12 @@ variable "platform_node_pool_taints_green" {
 
 
 ## Multi-tenant node pool: Blue
+
+variable "image_type_blue_mt" {
+  type        = string
+  default     = "COS"
+  description = "Base OS image. COS or COS_CONTAINERD"
+}
 
 variable "enable_blue_mt_node_pool" {
   type        = bool
@@ -269,6 +287,12 @@ variable "enable_gvisor_blue" {
 
 ## Multi-tenant node pool: Green
 
+variable "image_type_green_mt" {
+  type        = string
+  default     = "COS"
+  description = "Base OS image. COS or COS_CONTAINERD"
+}
+
 variable "enable_green_mt_node_pool" {
   type        = bool
   default     = false
@@ -311,6 +335,12 @@ variable "enable_gvisor_green" {
 
 ## Dynamic node pool (legacy pre-blue-green pool)
 
+variable "image_type_dynamic" {
+  type        = string
+  default     = "COS"
+  description = "Base OS image. COS or COS_CONTAINERD"
+}
+
 variable "create_dynamic_pods_nodepool" {
   type        = bool
   default     = false
@@ -352,6 +382,12 @@ variable "machine_type_dynamic" {
 }
 
 ## Dynamic node pool blue (added 2020-12-16)
+
+variable "image_type_dynamic_blue" {
+  type        = string
+  default     = "COS"
+  description = "Base OS image. COS or COS_CONTAINERD"
+}
 
 variable "enable_dynamic_blue_node_pool" {
   type        = bool
@@ -400,6 +436,12 @@ variable "enable_gvisor_dynamic_blue" {
 }
 
 ## Dynamic node pool green (added 2020-12-16)
+
+variable "image_type_dynamic_green" {
+  type        = string
+  default     = "COS"
+  description = "Base OS image. COS or COS_CONTAINERD"
+}
 
 variable "enable_dynamic_green_node_pool" {
   type        = bool
