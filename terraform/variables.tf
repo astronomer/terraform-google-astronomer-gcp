@@ -152,7 +152,7 @@ variable "db_max_connections" {
 
 variable "image_type_blue_platform" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -196,7 +196,7 @@ variable "platform_node_pool_taints_blue" {
 
 variable "image_type_green_platform" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -241,7 +241,7 @@ variable "platform_node_pool_taints_green" {
 
 variable "image_type_blue_mt" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -337,7 +337,7 @@ variable "enable_gvisor_green" {
 
 variable "image_type_dynamic" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -385,7 +385,7 @@ variable "machine_type_dynamic" {
 
 variable "image_type_dynamic_blue" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -439,7 +439,7 @@ variable "enable_gvisor_dynamic_blue" {
 
 variable "image_type_dynamic_green" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
