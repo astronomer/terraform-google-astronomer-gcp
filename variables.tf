@@ -68,7 +68,7 @@ variable "bastion_image_family" {
   description = "The Name & Project of the Image Family with which Bastion will be created."
 
   default = {
-    name    = "ubuntu-1804-lts"
+    name    = "ubuntu-2204-lts"
     project = "ubuntu-os-cloud"
   }
 }
