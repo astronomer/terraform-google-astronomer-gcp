@@ -9,7 +9,7 @@ variable "dns_managed_zone" {
 }
 
 variable "kube_version_gke" {
-  default     = "1.22.17-gke.1400" # 1.23 will drop the ability to create COS node-pools
+  default     = "1.24.12-gke.500"
   description = "The kubernetes version to use in GKE"
 }
 
@@ -74,7 +74,7 @@ variable "bastion_image_family" {
   description = "The Name & Project of the Image Family with which Bastion will be created."
 
   default = {
-    name    = "ubuntu-1804-lts"
+    name    = "ubuntu-2204-lts"
     project = "ubuntu-os-cloud"
   }
 }
@@ -152,7 +152,7 @@ variable "db_max_connections" {
 
 variable "image_type_blue_platform" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -196,7 +196,7 @@ variable "platform_node_pool_taints_blue" {
 
 variable "image_type_green_platform" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -241,7 +241,7 @@ variable "platform_node_pool_taints_green" {
 
 variable "image_type_blue_mt" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -289,7 +289,7 @@ variable "enable_gvisor_blue" {
 
 variable "image_type_green_mt" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -337,7 +337,7 @@ variable "enable_gvisor_green" {
 
 variable "image_type_dynamic" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -385,7 +385,7 @@ variable "machine_type_dynamic" {
 
 variable "image_type_dynamic_blue" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
@@ -439,7 +439,7 @@ variable "enable_gvisor_dynamic_blue" {
 
 variable "image_type_dynamic_green" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
