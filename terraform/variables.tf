@@ -289,7 +289,7 @@ variable "enable_gvisor_blue" {
 
 variable "image_type_green_mt" {
   type        = string
-  default     = "COS"
+  default     = "COS_CONTAINERD"
   description = "Base OS image. COS or COS_CONTAINERD"
 }
 
