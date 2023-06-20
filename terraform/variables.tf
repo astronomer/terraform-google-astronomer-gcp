@@ -9,7 +9,7 @@ variable "dns_managed_zone" {
 }
 
 variable "kube_version_gke" {
-  default     = "1.22.17-gke.1400" # 1.23 will drop the ability to create COS node-pools
+  default     = "1.24.12-gke.500" # 1.23 will drop the ability to create COS node-pools
   description = "The kubernetes version to use in GKE"
 }
 
