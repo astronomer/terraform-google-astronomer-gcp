@@ -584,6 +584,6 @@ variable "enable_istio" {
 
 
 variable "enable_dataplane_v2" {
-  default = "true"
+  default = "false"
   type    = bool
 }
