@@ -143,9 +143,12 @@ resource "google_container_cluster" "primary" {
     }
   }
   network_policy {
-    enabled  = true
-    provider = "CALICO"
+    enabled  = var.enable_dataplane_v2 ? false : true
+    provider = var.enable_dataplane_v2 ? "PROVIDER_UNSPECIFIED" : "CALICO"
   }
+
+  # Setting dataplane v2 for GKE
+  datapath_provider = var.enable_dataplane_v2 ? "ADVANCED_DATAPATH" : "LEGACY_DATAPATH"
 
   dynamic "resource_usage_export_config" {
     for_each = var.enable_gke_metered_billing ? ["placeholder"] : []

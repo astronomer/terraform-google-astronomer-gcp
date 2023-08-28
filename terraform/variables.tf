@@ -9,7 +9,7 @@ variable "dns_managed_zone" {
 }
 
 variable "kube_version_gke" {
-  default     = "1.24.12-gke.500"
+  default     = "1.24.15-gke.1700"
   description = "The kubernetes version to use in GKE"
 }
 
@@ -580,4 +580,10 @@ variable "spotinist_token" {
 variable "enable_istio" {
   default = "false"
   type    = string
+}
+
+
+variable "enable_dataplane_v2" {
+  default = "false"
+  type    = bool
 }
