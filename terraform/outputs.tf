@@ -106,7 +106,7 @@ output "gcp_project" {
 }
 
 output "gcp_velero_backups_bucket_name" {
-  value = google_storage_bucket.velero_k8s_backup.name
+  value = google_storage_bucket.velero_k8s_backup[count.index].name
 }
 
 output "gcp_velero_service_account_email" {
