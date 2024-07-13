@@ -61,7 +61,7 @@ resource "google_project_iam_member" "velero_server" {
 
 resource "google_storage_bucket_iam_member" "velero_server" {
   count  = var.enable_velero ? 1 : 0
-  bucket = google_storage_bucket.velero_k8s_backup.name
+  bucket = google_storage_bucket.velero_k8s_backup[count.index].name
   member = "serviceAccount:${google_service_account.velero.email}"
   role   = "roles/storage.objectAdmin"
 }
