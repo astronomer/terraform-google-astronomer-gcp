@@ -105,7 +105,7 @@ output "gcp_project" {
   value = local.project
 }
 output "gcp_velero_backups_bucket_name" {
-  value = var.enable_velero ? google_storage_bucket.velero_k8s_backup[count.index].name : "N/A"
+  value = var.enable_velero ? google_storage_bucket.velero_k8s_backup[0].name : "N/A"
 }
 
 
