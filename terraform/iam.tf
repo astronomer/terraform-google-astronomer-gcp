@@ -53,12 +53,14 @@ resource "google_project_iam_custom_role" "velero_server" {
 }
 
 resource "google_project_iam_member" "velero_server" {
+  count   = var.enable_velero ? 1 : 0
   member  = "serviceAccount:${google_service_account.velero.email}"
   role    = google_project_iam_custom_role.velero_server.id
   project = data.google_project.project.project_id
 }
 
 resource "google_storage_bucket_iam_member" "velero_server" {
+  count  = var.enable_velero ? 1 : 0
   bucket = google_storage_bucket.velero_k8s_backup.name
   member = "serviceAccount:${google_service_account.velero.email}"
   role   = "roles/storage.objectAdmin"
