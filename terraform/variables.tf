@@ -123,6 +123,12 @@ variable "deploy_db" {
   description = "Do you want a database deployed in this project?"
 }
 
+variable "enable_velero" {
+  type        = bool
+  default     = true
+  description = "Do you want a velero bucket created in this project?"
+}
+
 variable "db_version" {
   type = string
   # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#argument-reference

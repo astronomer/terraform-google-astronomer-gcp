@@ -14,6 +14,7 @@ resource "google_storage_bucket" "container_registry" {
 }
 
 resource "google_storage_bucket" "velero_k8s_backup" {
+  count = var.enable_velero ? 1 : 0
   name          = "${var.deployment_id}-velero-backups"
   location      = local.region
   storage_class = "REGIONAL"
