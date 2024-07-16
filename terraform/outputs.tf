@@ -104,10 +104,10 @@ output "gcp_region" {
 output "gcp_project" {
   value = local.project
 }
-
 output "gcp_velero_backups_bucket_name" {
-  value = google_storage_bucket.velero_k8s_backup.name
+  value = var.enable_velero ? google_storage_bucket.velero_k8s_backup[0].name : "N/A"
 }
+
 
 output "gcp_velero_service_account_email" {
   value = google_service_account.velero.email
