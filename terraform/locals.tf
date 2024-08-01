@@ -28,6 +28,10 @@ locals {
     ? random_string.postgres_airflow_password != [] ? random_string.postgres_airflow_password[0].result : ""
     : var.postgres_airflow_password
   )
+
+  db_engine = lower(split("_",var.db_version)[0])
+
+
   core_network_id = format(
     "projects/%s/global/networks/%s",
     google_compute_network.core.project,
