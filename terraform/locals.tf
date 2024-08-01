@@ -29,7 +29,7 @@ locals {
     : var.postgres_airflow_password
   )
 
-  db_engine = lower(split("_",var.db_version)[0])
+  db_engine = lower(split("_", var.db_version)[0])
 
 
   core_network_id = format(

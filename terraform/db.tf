@@ -36,10 +36,10 @@ resource "google_sql_database_instance" "instance" {
       private_network = google_compute_network.core.self_link
     }
 
-  
+
     backup_configuration {
-      enabled  = true
-      binary_log_enabled = (local.db_engine == "mysql" ) ? true : false
+      enabled            = true
+      binary_log_enabled = (local.db_engine == "mysql") ? true : false
     }
 
     dynamic "database_flags" {
