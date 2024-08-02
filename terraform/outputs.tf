@@ -19,7 +19,7 @@ output "bastion_proxy_command" {
 }
 
 output "db_connection_string" {
-  value     = var.deploy_db ? "postgres://${element(concat(tolist(google_sql_user.airflow.*.name)), 0)}:${local.postgres_airflow_password}@${element(concat(tolist(google_sql_database_instance.instance.*.private_ip_address)), 0)}:5432" : "N/A: DB is not deployed with the terraform-google-astronomer-gcp module. Set deploy_db = true"
+  value     = var.deploy_db ? "${local.db_engine == "mysql" ? "mysql://" : "postgres://"}${element(concat(tolist(google_sql_user.airflow.*.name)), 0)}:${local.postgres_airflow_password}@${element(concat(tolist(google_sql_database_instance.instance.*.private_ip_address)), 0)}:${var.database_ports[local.db_engine].port}" : "N/A: DB is not deployed with the terraform-google-astronomer-gcp module. Set deploy_db = true"
   sensitive = true
 }
 
