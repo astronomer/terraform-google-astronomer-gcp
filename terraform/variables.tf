@@ -136,6 +136,19 @@ variable "db_version" {
   description = "define postgres database version"
 }
 
+variable "database_ports" {
+  type = map(any)
+  default = {
+    "mysql" = {
+      port = 3306
+    }
+    "postgres" = {
+      port = 5432
+    }
+  }
+  description = "Optional configuration to define postgres db version"
+}
+
 variable "db_deletion_protection" {
   type        = bool
   default     = true
