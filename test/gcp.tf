@@ -14,4 +14,5 @@ module "astronomer_gcp" {
   db_max_connections         = 1000
   db_version                 = "POSTGRES_14"
   db_deletion_protection     = false
+  wait_for                   = 100
 }
