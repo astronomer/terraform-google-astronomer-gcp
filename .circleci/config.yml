@@ -7,12 +7,12 @@ orbs:
 executors:
   pre-commit-executor:
     docker:
-      - image: quay.io/astronomer/ci-pre-commit:2025-04
+      - image: quay.io/astronomer/ci-pre-commit:2025-05
         environment:
           TFENV_AUTO_INSTALL: true
   terraform-executor:
     docker:
-      - image: quay.io/astronomer/ci-terraform:2025-04
+      - image: quay.io/astronomer/ci-terraform:2025-05
         environment:
           TFENV_AUTO_INSTALL: true
 
