@@ -38,7 +38,7 @@ resource "google_sql_database_instance" "instance" {
 
     insights_config {
       query_insights_enabled = true
-      query_string_length    = 2048
+      query_string_length    = 1024
       record_client_address  = true
       record_application_tags = true
     }
