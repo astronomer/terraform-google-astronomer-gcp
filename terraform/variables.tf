@@ -132,7 +132,7 @@ variable "enable_velero" {
 variable "db_version" {
   type = string
   # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#argument-reference
-  default     = "POSTGRES_14"
+  default     = "POSTGRES_15"
   description = "define postgres database version"
 }
 
