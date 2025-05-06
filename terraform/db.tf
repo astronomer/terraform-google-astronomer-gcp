@@ -36,6 +36,13 @@ resource "google_sql_database_instance" "instance" {
       private_network = google_compute_network.core.self_link
     }
 
+    insights_config {
+      query_insights_enabled  = true
+      query_string_length     = 1024
+      record_client_address   = true
+      record_application_tags = true
+    }
+
 
     backup_configuration {
       enabled            = true
